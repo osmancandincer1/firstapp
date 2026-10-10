@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Nokuzo",
+    "tagline": "Every evening at nine, nine people."
+  },
+  "foundation": {
+    "title": "Foundation",
+    "subtitle": "Phase 0: design system and settings",
+    "themeSection": "Theme",
+    "languageSection": "Language",
+    "motionSection": "Reduce motion",
+    "componentsSection": "Components",
+    "servicesSection": "Service status",
+    "servicesHint": "NEEDS_SETUP: this service stays off until an account and key are provided.",
+    "environment": "Environment: {{env}}"
+  },
+  "theme": {
+    "system": "System",
+    "night": "Night",
+    "day": "Day"
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "motion": {
+    "system": "Follow system",
+    "on": "On",
+    "off": "Off"
+  },
+  "demo": {
+    "primaryButton": "Primary button",
+    "secondaryButton": "Secondary button",
+    "dangerButton": "Delete",
+    "loadingButton": "Sending",
+    "inputLabel": "Door Question",
+    "inputPlaceholder": "Sunday breakfast: big spread or simit and tea?",
+    "inputHelp": "Up to 90 characters.",
+    "inputError": "Write at least 10 characters.",
+    "cardTitle": "Card",
+    "cardBody": "Content cards never use the glass effect.",
+    "bannerInfo": "Info banner: calm and short.",
+    "bannerWarning": "Scammers usually want to move to another app right away. Take your time.",
+    "bannerDanger": "This can't be undone.",
+    "openSheet": "Open sheet",
+    "sheetTitle": "Sheet",
+    "sheetBody": "Close it with the Close button or the back gesture.",
+    "skeletonLabel": "Loading content"
+  },
+  "common": {
+    "close": "Close",
+    "loading": "Loading",
+    "retry": "Try again",
+    "selected": "selected",
+    "characterCount": "{{count}} / {{max}} characters"
+  }
+}

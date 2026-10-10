@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Nokuzo",
+    "tagline": "Her akşam dokuzda, dokuz kişi."
+  },
+  "foundation": {
+    "title": "Temel",
+    "subtitle": "Faz 0: tasarım sistemi ve ayarlar",
+    "themeSection": "Tema",
+    "languageSection": "Dil",
+    "motionSection": "Hareketi azalt",
+    "componentsSection": "Bileşenler",
+    "servicesSection": "Servis durumu",
+    "servicesHint": "NEEDS_SETUP: hesap ve anahtar girilene kadar bu servis kapalı kalır.",
+    "environment": "Ortam: {{env}}"
+  },
+  "theme": {
+    "system": "Sistem",
+    "night": "Gece",
+    "day": "Gündüz"
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "motion": {
+    "system": "Sistemi izle",
+    "on": "Açık",
+    "off": "Kapalı"
+  },
+  "demo": {
+    "primaryButton": "Ana düğme",
+    "secondaryButton": "İkincil düğme",
+    "dangerButton": "Sil",
+    "loadingButton": "Gönderiliyor",
+    "inputLabel": "Kapı Sorusu",
+    "inputPlaceholder": "Pazar kahvaltısı: serpme mi, simit-çay mı?",
+    "inputHelp": "En fazla 90 karakter.",
+    "inputError": "En az 10 karakter yaz.",
+    "cardTitle": "Kart",
+    "cardBody": "İçerik kartlarında cam efekti kullanılmaz.",
+    "bannerInfo": "Bilgi bandı: sakin ve kısa.",
+    "bannerWarning": "Dolandırıcılar genelde hemen başka uygulamaya geçmek ister. Acele etme.",
+    "bannerDanger": "Bu işlem geri alınamaz.",
+    "openSheet": "Sayfayı aç",
+    "sheetTitle": "Açılır sayfa",
+    "sheetBody": "Kapat düğmesiyle ya da geri hareketiyle kapatılır.",
+    "skeletonLabel": "İçerik yükleniyor"
+  },
+  "common": {
+    "close": "Kapat",
+    "loading": "Yükleniyor",
+    "retry": "Tekrar dene",
+    "selected": "seçili",
+    "characterCount": "{{count}} / {{max}} karakter"
+  }
+}

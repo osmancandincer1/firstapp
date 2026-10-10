@@ -1,0 +1,42 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+apps/mobile/ios/
+apps/mobile/android/
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+.metro-health-check*
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# env — only .env.example is committed
+.env
+.env.*
+!.env.example
+
+# misc
+coverage/
+*.tsbuildinfo
+npm-debug.*
+.DS_Store
+
+# logs
+*.log
