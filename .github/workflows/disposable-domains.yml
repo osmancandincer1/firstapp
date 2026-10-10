@@ -1,0 +1,28 @@
+# APP.md §6.3: the disposable email domain list is refreshed weekly.
+# Opens a pull request when the upstream list changed; nothing merges on its own.
+name: Update disposable email domains
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: node scripts/update-disposable-domains.mjs
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/disposable-domains
+          title: 'chore: update disposable email domain list'
+          commit-message: 'chore: update disposable email domain list'
+          body: Weekly refresh of supabase/functions/_shared/data/disposable_domains.json (CC0 source).

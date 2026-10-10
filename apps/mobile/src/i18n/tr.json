@@ -52,6 +52,172 @@
     "loading": "Yükleniyor",
     "retry": "Tekrar dene",
     "selected": "seçili",
-    "characterCount": "{{count}} / {{max}} karakter"
+    "characterCount": "{{count}} / {{max}} karakter",
+    "continue": "Devam",
+    "back": "Geri",
+    "next": "İleri",
+    "skip": "Atla",
+    "signOut": "Çıkış yap",
+    "required": "Zorunlu",
+    "optional": "İsteğe bağlı",
+    "progress": "Adım {{index}} / {{total}}",
+    "offline": "İnternet bağlantısı yok. Bağlanınca yeniden dene.",
+    "dev": "GELİŞTİRME"
+  },
+  "welcome": {
+    "cards": [
+      {
+        "title": "Tur",
+        "body": "Her akşam 21:00'de doğrulanmış 9 kişi. Sonsuz kaydırma yok."
+      },
+      {
+        "title": "Kapı Sorusu",
+        "body": "Beğeni butonu yok. İlgini, onun sorusuna cevap yazarak gösterirsin."
+      },
+      {
+        "title": "Masa",
+        "body": "Aynı anda en fazla 3 sohbet. Kapatırken nazikçe vedalaşırsın; sessizce kaybolmak yok."
+      }
+    ],
+    "start": "Başla",
+    "cardLabel": "Tanıtım {{index}} / {{total}}"
+  },
+  "signIn": {
+    "title": "Nasıl devam etmek istersin?",
+    "email": "E-posta ile devam et",
+    "apple": "Apple ile devam et",
+    "google": "Google ile devam et"
+  },
+  "email": {
+    "title": "E-posta adresin",
+    "label": "E-posta",
+    "placeholder": "ornek@eposta.com",
+    "help": "Sana 6 haneli bir kod göndereceğiz.",
+    "submit": "Kod gönder"
+  },
+  "code": {
+    "title": "Kodu gir",
+    "emailSubtitle": "{{target}} adresine gönderdiğimiz 6 haneli kodu yaz.",
+    "phoneSubtitle": "{{target}} numarasına gönderdiğimiz 6 haneli kodu yaz.",
+    "label": "Doğrulama kodu",
+    "submit": "Doğrula",
+    "resend": "Kodu yeniden gönder",
+    "resendIn": "{{seconds}} sn sonra yeniden gönderebilirsin",
+    "resent": "Yeni kod gönderildi.",
+    "change": "Bilgiyi değiştir"
+  },
+  "phone": {
+    "title": "Telefon numaran",
+    "subtitle": "Her numara yalnızca bir hesaba bağlanır. Sanal numaralar kabul edilmiyor.",
+    "label": "Cep telefonu",
+    "placeholder": "05xx xxx xx xx",
+    "submit": "Kod gönder"
+  },
+  "birthDate": {
+    "title": "Doğum tarihin",
+    "subtitle": "Nokuzo 18 yaş ve üzeri içindir. Profilinde yalnızca yaşın görünür; doğum tarihini sonradan değiştiremezsin.",
+    "day": "Gün",
+    "month": "Ay",
+    "year": "Yıl",
+    "invalid": "Geçerli bir tarih gir.",
+    "locked": "18 yaşından küçükler kayıt olamaz. {{time}} sonra yeniden deneyebilirsin."
+  },
+  "consents": {
+    "title": "Onayların",
+    "subtitle": "Zorunlu olanları onaylamadan devam edemezsin. Hiçbir kutu önceden işaretli değil.",
+    "draft": "TASLAK: hukuki inceleme bekliyor",
+    "read": "Metni oku",
+    "pending": "Metin hazırlanıyor",
+    "submit": "Onayla ve devam et",
+    "loadError": "Metinler yüklenemedi.",
+    "items": {
+      "terms": {
+        "label": "Kullanım Koşulları'nı kabul ediyorum."
+      },
+      "community_guidelines": {
+        "label": "Topluluk Kuralları'na uyacağım."
+      },
+      "kvkk_notice": {
+        "label": "KVKK Aydınlatma Metni'ni okudum."
+      },
+      "biometric": {
+        "label": "Canlılık doğrulaması için yüz verimin (biyometrik veri) işlenmesine açık rıza veriyorum.",
+        "help": "Video hemen silinir; yalnızca geri döndürülemez yüz vektörü ve doğrulama sonucu saklanır."
+      },
+      "special_category": {
+        "label": "Kimi görmek istediğim gibi özel nitelikli verilerimin işlenmesine açık rıza veriyorum.",
+        "help": "Bu bilgiler yalnızca sana uygun kişileri göstermek için kullanılır."
+      },
+      "cross_border_transfer": {
+        "label": "Verilerimin yurt dışındaki sunuculara aktarılmasına açık rıza veriyorum.",
+        "help": "Sunucularımız Avrupa Birliği'nde (Frankfurt) bulunur."
+      },
+      "marketing": {
+        "label": "Kampanya ve duyurular için ileti almak istiyorum."
+      }
+    }
+  },
+  "liveness": {
+    "title": "Canlılık doğrulaması",
+    "body": "Kısa bir video selfie çekeceğiz. Böylece fotoğraflarındaki kişinin gerçekten sen olduğunu doğrularız.",
+    "tips": [
+      "Video kaydedilmez, hemen silinir.",
+      "Yüzünü iyi aydınlatılmış bir yerde tut.",
+      "Şapka ve güneş gözlüğünü çıkar."
+    ],
+    "start": "Doğrulamaya başla",
+    "devTitle": "Taklit sağlayıcı",
+    "devBody": "Bu ortamda gerçek kamera yerine taklit canlılık kullanılıyor ve sonuç her zaman başarılı döner. Gerçek kullanıcılar bu ekranı görmez.",
+    "devComplete": "Doğrulamayı tamamla",
+    "nativeMissing": "Canlılık kamerası bu sürümde henüz hazır değil.",
+    "failed": "Doğrulama tamamlanamadı. Işığı kontrol edip yeniden dene.",
+    "cooldown": "Çok sayıda başarısız deneme oldu. {{time}} sonra yeniden deneyebilirsin. Sorun sürerse destek ekibine yaz."
+  },
+  "needsId": {
+    "title": "Kimlik doğrulaması gerekiyor",
+    "body": "Yaşını kesinleştirmek için resmî bir kimlik belgesiyle doğrulama gerekiyor. Bu adım yakında uygulamada olacak; şimdilik destek ekibine yazabilirsin.",
+    "support": "Destek: {{email}}"
+  },
+  "done": {
+    "title": "Doğrulandın",
+    "body": "Telefonun, yaşın ve canlılık doğrulaman tamam. Profil oluşturma adımları bir sonraki sürümde geliyor.",
+    "foundation": "Tasarım sistemi (geliştirme)"
+  },
+  "blocked": {
+    "title": "Hesap oluşturulamıyor",
+    "body": "Bu bilgilerle hesap oluşturulamıyor. Yardım için {{email}} adresine yazabilirsin."
+  },
+  "gate": {
+    "loading": "Yükleniyor",
+    "error": "Bilgilerin yüklenemedi.",
+    "notConfiguredTitle": "Sunucu bağlı değil",
+    "notConfiguredBody": "Bu derlemede sunucu ayarları yok (NEEDS_SETUP). Geliştiriciler için: docs/SETUP.md"
+  },
+  "errors": {
+    "invalid_input": "Bilgileri kontrol edip yeniden dene.",
+    "not_authenticated": "Oturumun sona erdi. Yeniden giriş yap.",
+    "rate_limited": "Çok fazla deneme yaptın. Biraz sonra yeniden dene.",
+    "invalid_email": "Geçerli bir e-posta adresi gir.",
+    "disposable_email": "Tek kullanımlık e-posta adresleri kabul edilmiyor.",
+    "invalid_phone": "Geçerli bir telefon numarası gir.",
+    "unsupported_country": "Şimdilik yalnızca Türkiye (+90) numaralarıyla kayıt olunabiliyor.",
+    "voip_number": "Sanal (VoIP) numaralar kabul edilmiyor. Cep telefonu numaranı gir.",
+    "unsupported_line": "Yalnızca cep telefonu numaraları kabul ediliyor.",
+    "otp_invalid": "Kod yanlış. Yeniden dene.",
+    "otp_expired": "Kodun süresi doldu. Yeni kod iste.",
+    "otp_locked": "Çok fazla yanlış kod girildi. 15 dakika sonra yeniden dene.",
+    "underage": "Nokuzo yalnızca 18 yaş ve üzeri içindir.",
+    "age_locked": "18 yaşından küçükler kayıt olamaz. 24 saat sonra yeniden deneyebilirsin.",
+    "birth_date_already_set": "Doğum tarihin zaten kayıtlı.",
+    "consents_incomplete": "Zorunlu onayların hepsini işaretle.",
+    "consents_outdated": "Metinler güncellendi. Lütfen yeniden gözden geçir.",
+    "wrong_step": "Bu adım şu an yapılamıyor. Kaldığın yerden devam edelim.",
+    "liveness_cooldown": "Çok sayıda başarısız deneme oldu. Daha sonra yeniden dene.",
+    "liveness_failed": "Doğrulama tamamlanamadı. Yeniden dene.",
+    "registration_blocked": "Bu bilgilerle hesap oluşturulamıyor. Yardım için destek ekibine yaz.",
+    "service_unavailable": "Bu özellik şu an kullanılamıyor. Biraz sonra yeniden dene.",
+    "internal": "Bir şeyler ters gitti. Yeniden dene.",
+    "network": "İnternet bağlantısı yok. Bağlanınca yeniden dene.",
+    "not_configured": "Sunucu bağlı değil."
   }
 }

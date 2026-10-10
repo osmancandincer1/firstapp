@@ -16,21 +16,25 @@
     "format:check": "prettier --check .",
     "test": "npm run test --workspaces --if-present",
     "i18n:check": "node scripts/check-i18n.mjs",
-    "ci": "npm run typecheck && npm run lint && npm run format:check && npm run i18n:check && npm run test",
+    "ci": "npm run typecheck && npm run lint && npm run format:check && npm run i18n:check && npm run test && npm run functions:check && npm run functions:test",
     "mobile": "npm run start --workspace @nokuzo/mobile",
     "web": "npm run dev --workspace @nokuzo/web",
     "db:start": "supabase start",
-    "db:test": "supabase test db"
+    "db:test": "supabase test db",
+    "functions:check": "cd supabase/functions && deno check --config deno.json */index.ts",
+    "functions:test": "cd supabase/functions && deno test --config deno.json --allow-env tests/"
   },
   "allowScripts": {
     "@sentry/cli": false,
-    "unrs-resolver": false
+    "unrs-resolver": false,
+    "deno": false
   },
   "overrides": {
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "deno": "^2.9.6",
     "eslint": "^9.39.5",
     "eslint-config-expo": "~57.0.2",
     "eslint-config-next": "^16.4.0",

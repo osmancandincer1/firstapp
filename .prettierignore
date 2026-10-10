@@ -6,3 +6,4 @@ coverage
 package-lock.json
 supabase/.temp
 APP.md
+supabase/functions/_shared/data/

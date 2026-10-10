@@ -1,1 +1,1 @@
-export { FoundationScreen as default } from '@/features/foundation/FoundationScreen';
+export { GateScreen as default } from '@/features/onboarding/GateScreen';

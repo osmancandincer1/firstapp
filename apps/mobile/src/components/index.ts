@@ -7,3 +7,6 @@ export * from './SegmentedControl';
 export * from './Sheet';
 export * from './Skeleton';
 export * from './Icon';
+export * from './Checkbox';
+export * from './Screen';
+export * from './StepProgress';

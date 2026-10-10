@@ -15,3 +15,4 @@ export const WarningOctagonIcon: Icon =
   require('phosphor-react-native/src/icons/WarningOctagon').WarningOctagonIcon;
 export const WarningCircleIcon: Icon =
   require('phosphor-react-native/src/icons/WarningCircle').WarningCircleIcon;
+export const CheckIcon: Icon = require('phosphor-react-native/src/icons/Check').CheckIcon;

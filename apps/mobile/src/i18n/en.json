@@ -52,6 +52,172 @@
     "loading": "Loading",
     "retry": "Try again",
     "selected": "selected",
-    "characterCount": "{{count}} / {{max}} characters"
+    "characterCount": "{{count}} / {{max}} characters",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "signOut": "Sign out",
+    "required": "Required",
+    "optional": "Optional",
+    "progress": "Step {{index}} of {{total}}",
+    "offline": "No internet connection. Try again once you are online.",
+    "dev": "DEVELOPMENT"
+  },
+  "welcome": {
+    "cards": [
+      {
+        "title": "The Round",
+        "body": "Nine verified people every evening at 9 pm. No endless swiping."
+      },
+      {
+        "title": "The Door Question",
+        "body": "There is no like button. You show interest by answering their question."
+      },
+      {
+        "title": "The Table",
+        "body": "At most three chats at a time. You close one with a kind goodbye; nobody just vanishes."
+      }
+    ],
+    "start": "Get started",
+    "cardLabel": "Introduction {{index}} of {{total}}"
+  },
+  "signIn": {
+    "title": "How would you like to continue?",
+    "email": "Continue with email",
+    "apple": "Continue with Apple",
+    "google": "Continue with Google"
+  },
+  "email": {
+    "title": "Your email address",
+    "label": "Email",
+    "placeholder": "you@example.com",
+    "help": "We will send you a 6-digit code.",
+    "submit": "Send code"
+  },
+  "code": {
+    "title": "Enter the code",
+    "emailSubtitle": "Type the 6-digit code we sent to {{target}}.",
+    "phoneSubtitle": "Type the 6-digit code we sent to {{target}}.",
+    "label": "Verification code",
+    "submit": "Verify",
+    "resend": "Send a new code",
+    "resendIn": "You can ask for a new code in {{seconds}} s",
+    "resent": "A new code is on its way.",
+    "change": "Change it"
+  },
+  "phone": {
+    "title": "Your phone number",
+    "subtitle": "Each number can belong to one account only. Virtual numbers are not accepted.",
+    "label": "Mobile number",
+    "placeholder": "05xx xxx xx xx",
+    "submit": "Send code"
+  },
+  "birthDate": {
+    "title": "Your date of birth",
+    "subtitle": "Nokuzo is for people aged 18 and over. Only your age is shown on your profile, and you cannot change your date of birth later.",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "invalid": "Enter a valid date.",
+    "locked": "People under 18 cannot sign up. You can try again in {{time}}."
+  },
+  "consents": {
+    "title": "Your consents",
+    "subtitle": "You cannot continue without the required ones. Nothing is pre-selected.",
+    "draft": "DRAFT: awaiting legal review",
+    "read": "Read the text",
+    "pending": "Text in preparation",
+    "submit": "Agree and continue",
+    "loadError": "The texts could not be loaded.",
+    "items": {
+      "terms": {
+        "label": "I accept the Terms of Use."
+      },
+      "community_guidelines": {
+        "label": "I will follow the Community Guidelines."
+      },
+      "kvkk_notice": {
+        "label": "I have read the Privacy Notice (KVKK)."
+      },
+      "biometric": {
+        "label": "I explicitly consent to the processing of my face data (biometric data) for the liveness check.",
+        "help": "The video is deleted right away; only an irreversible face vector and the result are kept."
+      },
+      "special_category": {
+        "label": "I explicitly consent to the processing of special category data, such as who I want to see.",
+        "help": "This is used only to show you people who match what you are looking for."
+      },
+      "cross_border_transfer": {
+        "label": "I explicitly consent to my data being transferred to servers abroad.",
+        "help": "Our servers are in the European Union (Frankfurt)."
+      },
+      "marketing": {
+        "label": "I would like to receive news and offers."
+      }
+    }
+  },
+  "liveness": {
+    "title": "Liveness check",
+    "body": "We will take a short video selfie to confirm that the person in your photos is really you.",
+    "tips": [
+      "The video is not recorded; it is deleted right away.",
+      "Keep your face in good light.",
+      "Take off hats and sunglasses."
+    ],
+    "start": "Start the check",
+    "devTitle": "Mock provider",
+    "devBody": "This environment uses a mock liveness check instead of the camera, and it always passes. Real users never see this screen.",
+    "devComplete": "Complete the check",
+    "nativeMissing": "The liveness camera is not available in this build yet.",
+    "failed": "The check could not be completed. Check the light and try again.",
+    "cooldown": "There were too many failed attempts. You can try again in {{time}}. If the problem continues, contact support."
+  },
+  "needsId": {
+    "title": "ID check needed",
+    "body": "To confirm your age we need to check an official ID document. This step is coming to the app soon; for now you can contact support.",
+    "support": "Support: {{email}}"
+  },
+  "done": {
+    "title": "You are verified",
+    "body": "Your phone, age and liveness check are done. Profile creation arrives in the next version.",
+    "foundation": "Design system (development)"
+  },
+  "blocked": {
+    "title": "An account cannot be created",
+    "body": "An account cannot be created with these details. For help, write to {{email}}."
+  },
+  "gate": {
+    "loading": "Loading",
+    "error": "Your details could not be loaded.",
+    "notConfiguredTitle": "No server connected",
+    "notConfiguredBody": "This build has no server settings (NEEDS_SETUP). For developers: docs/SETUP.md"
+  },
+  "errors": {
+    "invalid_input": "Please check the details and try again.",
+    "not_authenticated": "Your session has ended. Please sign in again.",
+    "rate_limited": "Too many attempts. Please try again a little later.",
+    "invalid_email": "Enter a valid email address.",
+    "disposable_email": "Disposable email addresses are not accepted.",
+    "invalid_phone": "Enter a valid phone number.",
+    "unsupported_country": "For now, only Turkish (+90) numbers can sign up.",
+    "voip_number": "Virtual (VoIP) numbers are not accepted. Enter your mobile number.",
+    "unsupported_line": "Only mobile numbers are accepted.",
+    "otp_invalid": "That code is not right. Try again.",
+    "otp_expired": "The code has expired. Ask for a new one.",
+    "otp_locked": "Too many wrong codes. Try again in 15 minutes.",
+    "underage": "Nokuzo is only for people aged 18 and over.",
+    "age_locked": "People under 18 cannot sign up. You can try again in 24 hours.",
+    "birth_date_already_set": "Your date of birth is already saved.",
+    "consents_incomplete": "Please tick all the required consents.",
+    "consents_outdated": "The texts have been updated. Please review them again.",
+    "wrong_step": "This step is not available right now. Let us continue where you left off.",
+    "liveness_cooldown": "There were too many failed attempts. Please try again later.",
+    "liveness_failed": "The check could not be completed. Try again.",
+    "registration_blocked": "An account cannot be created with these details. Please contact support.",
+    "service_unavailable": "This feature is not available right now. Please try again later.",
+    "internal": "Something went wrong. Try again.",
+    "network": "No internet connection. Try again once you are online.",
+    "not_configured": "No server connected."
   }
 }

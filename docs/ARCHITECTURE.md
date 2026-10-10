@@ -40,6 +40,24 @@ firstapp/                    (APP.md §13.2'deki dokuz/ kökü)
 - **Sırlar:** istemciye yalnızca `EXPO_PUBLIC_*` gider. `@nokuzo/shared > parsePublicEnv` gizli anahtar adlarını görürse hata verir.
 - **Veritabanı:** her tabloda RLS açık; politika yazılmadan istemci erişemez. pgTAP testi bunu her tablo için denetler.
 
-## Veri akışı (Faz 0)
+## Kayıt akışı (Faz 1)
 
-Henüz sunucu çağrısı yok. Uygulama yalnızca yerel görünüm tercihlerini (tema, dil, hareket) tutar.
+```
+Uygulama ekranı      Edge Function                  Veritabanı (srv_* SQL, yalnızca servis rolü)
+E-posta          ->  email-otp-request          ->  srv_rate_limit_hit, srv_ban_lookup, srv_otp_create
+Kod              ->  email-otp-verify           ->  srv_otp_verify, srv_register_device, srv_bind_identifier
+(Kapı)           ->  my_onboarding_state()      ->  hangi adım? (istemcinin doğrudan çağırdığı tek fonksiyon)
+Telefon          ->  phone-otp-request          ->  ülke + hat türü + ban, srv_otp_create (hesaba bağlı)
+Kod              ->  phone-otp-verify           ->  srv_mark_phone_verified
+Doğum tarihi     ->  onboarding-birth-date      ->  srv_set_birth_date (İstanbul takvimi)
+Rızalar          ->  onboarding-consents        ->  consents (+ IP HMAC), current_legal_documents()
+Canlılık         ->  liveness-start / complete  ->  AWS oturumu, yüz arama, yaş; srv_face_owners, srv_liveness_finish
+Apple/Google     ->  session-register           ->  cihaz + OAuth kimliği ban denetimi
+(Supabase Auth)  ->  auth-hook-before-user-created -> banlı / tek kullanımlık e-postayı reddet
+```
+
+- **Kapı (`GateScreen`)** uygulamanın tek karar noktası: sunucudaki durumu okur ve kullanıcıyı ilk bitmemiş adıma yönlendirir. Uygulama kapanıp açılınca kaldığı yerden devam edilir (AUTH-06).
+- **İş kuralları** `packages/shared` içinde saf fonksiyonlar: e-posta/telefon normalizasyonu, yaş, rızalar, OTP politikası, canlılık kararı, adım sırası. Aynı dosyalar uygulamada (anlık geri bildirim) ve Edge Function'larda (son söz) kullanılır.
+- **Atomik kurallar** SQL'de (`public.srv_*`): OTP kilidi, hız sınırı, tanımlayıcı bağlama, yaş kapısı, ban atlatma.
+- **Edge Function katmanları:** `index.ts` → `_shared/http.ts` (yöntem, JSON, IP, en kısa yanıt süresi) → `_shared/services/*` (iş akışı; bağımlılıkları dışarıdan alır, sahtelerle test edilir) → `_shared/db.ts` ve `_shared/providers/*` (Supabase, Resend, Twilio, AWS).
+- **Sağlayıcı yoksa özellik kapalı:** anahtarı girilmemiş servis `null` olur ve ilgili adım `service_unavailable` döner (§0.9).
