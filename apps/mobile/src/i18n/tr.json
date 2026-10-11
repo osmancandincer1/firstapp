@@ -264,7 +264,7 @@
     "photos": {
       "title": "Fotoğrafların",
       "subtitle": "En az 3, en fazla 6 fotoğraf. İlki yüzünün net göründüğü, sana ait bir fotoğraf olmalı.",
-      "add": "Fotoğraf ekle",
+      "add": "Fotoğraf seç",
       "main": "Ana fotoğraf",
       "makeMain": "Ana yap",
       "moveUp": "Öne al",
@@ -297,7 +297,26 @@
         "possible_minor": "Bir kişinin incelemesi gerekiyor.",
         "text": "Fotoğraftaki yazı nedeniyle inceleniyor.",
         "under_review": "Moderasyon ekibi inceleyecek."
-      }
+      },
+      "confirm": "Onayla ve ekle ({{count}})",
+      "selected": "Seçtiklerin",
+      "trayHelp": "Kırpmak için fotoğrafa dokun. Biçimi uygun olanları kırpman gerekmez.",
+      "selectedN": "Seçilen fotoğraf {{index}}",
+      "cropHint": "Kırpma ekranını açar",
+      "badgeTooSmall": "Çok küçük",
+      "badgeCrop": "Kırpılmalı",
+      "badgeFailed": "Gönderilemedi",
+      "remove": "Çıkar",
+      "fixFirst": "İşaretli fotoğrafları önce kırp ya da çıkar. Çok küçük olanlar kullanılamaz (kısa kenar en az 800 piksel).",
+      "sending": "Gönderiliyor: {{done}} / {{total}}",
+      "cropTitle": "Kırp",
+      "cropHelp": "Fotoğrafı sürükle; iki parmakla ya da −/+ ile yakınlaştır.",
+      "cropFrame": "Kırpma çerçevesi",
+      "zoomIn": "Yakınlaştırır",
+      "zoomOut": "Uzaklaştırır",
+      "centre": "Ortala",
+      "cropDone": "Kırp",
+      "cropCancel": "Vazgeç"
     },
     "intent": {
       "title": "Ne arıyorsun?",

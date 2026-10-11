@@ -264,7 +264,7 @@
     "photos": {
       "title": "Your photos",
       "subtitle": "At least 3, at most 6 photos. The first must clearly show your own face.",
-      "add": "Add a photo",
+      "add": "Choose photos",
       "main": "Main photo",
       "makeMain": "Make main",
       "moveUp": "Move up",
@@ -297,7 +297,26 @@
         "possible_minor": "A person needs to review this.",
         "text": "In review because of the text in the photo.",
         "under_review": "Our moderation team will review it."
-      }
+      },
+      "confirm": "Confirm and add ({{count}})",
+      "selected": "Selected",
+      "trayHelp": "Tap a photo to crop it. Photos that already fit do not need cropping.",
+      "selectedN": "Selected photo {{index}}",
+      "cropHint": "Opens the crop screen",
+      "badgeTooSmall": "Too small",
+      "badgeCrop": "Needs crop",
+      "badgeFailed": "Not sent",
+      "remove": "Remove",
+      "fixFirst": "Crop or remove the marked photos first. Very small photos cannot be used (short side at least 800 pixels).",
+      "sending": "Sending: {{done}} / {{total}}",
+      "cropTitle": "Crop",
+      "cropHelp": "Drag the photo; pinch or use −/+ to zoom.",
+      "cropFrame": "Crop frame",
+      "zoomIn": "Zooms in",
+      "zoomOut": "Zooms out",
+      "centre": "Centre",
+      "cropDone": "Crop",
+      "cropCancel": "Cancel"
     },
     "intent": {
       "title": "What are you looking for?",

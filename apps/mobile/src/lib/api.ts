@@ -18,6 +18,28 @@ export interface CallOptions {
 
 const KNOWN = new Set<string>(API_ERROR_CODES);
 
+const SIGNED_STORAGE = /^https?:\/\/[^/]+(\/storage\/v1\/object\/sign\/.*)$/;
+
+/**
+ * Local development only: Edge Functions run inside Docker and sign storage
+ * URLs with the internal host (http://kong:8000), which a phone cannot reach.
+ * Signed storage URLs are pointed at the app's own Supabase URL instead.
+ * Hosted Supabase already signs with the public URL, so nothing changes there.
+ */
+export function localMediaUrls<T>(value: T, base: string): T {
+  if (typeof value === 'string') {
+    const m = SIGNED_STORAGE.exec(value);
+    return (m ? `${base}${m[1]}` : value) as T;
+  }
+  if (Array.isArray(value)) return value.map((v) => localMediaUrls(v, base)) as T;
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, localMediaUrls(v, base)]),
+    ) as T;
+  }
+  return value;
+}
+
 /**
  * Calls an Edge Function and normalizes the outcome. Never throws: network
  * problems become `network` so screens can show the offline state (§8.2).
@@ -55,7 +77,10 @@ export async function callFunction<T>(
   } catch {
     // fall through with null
   }
-  if (res.ok) return { ok: true, data: json as T };
+  if (res.ok) {
+    const data = env.APP_ENV === 'local' ? localMediaUrls(json, env.SUPABASE_URL) : json;
+    return { ok: true, data: data as T };
+  }
   const err = (json ?? {}) as { error?: string; retryAt?: string; field?: string; reason?: string };
   const code = err.error && KNOWN.has(err.error) ? (err.error as ApiErrorCode) : 'internal';
   return {

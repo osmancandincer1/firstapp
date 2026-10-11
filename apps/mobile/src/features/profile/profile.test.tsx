@@ -27,8 +27,14 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: (...a: unknown[]) => mockPick(...a),
 }));
 const mockPrepare = jest.fn();
+const mockCrop = jest.fn();
+jest.mock('expo-image-manipulator', () => ({}));
+jest.mock('expo-file-system', () => ({}));
+// Real crop geometry and shape checks; only the image work is faked.
 jest.mock('@/lib/media', () => ({
+  ...jest.requireActual('@/lib/media'),
   prepareImage: (...a: unknown[]) => mockPrepare(...a),
+  cropImage: (...a: unknown[]) => mockCrop(...a),
   readBytes: jest.fn(),
 }));
 const mockLocation = {
@@ -355,51 +361,140 @@ describe('PhotosScreen', () => {
     expect(screen.getByRole('button', { name: 'Devam' })).toBeDisabled();
   });
 
-  it('runs the pipeline: pick → prepare → upload URL → upload → process', async () => {
-    mockState = { photosComplete: false };
-    mockPick.mockResolvedValue({
-      canceled: false,
-      assets: [{ uri: 'file://a.heic', width: 3000, height: 4000 }],
-    });
+  const asset = (uri: string, width: number, height: number) => ({ uri, width, height });
+  /** The picker opens once the saved photos are known (free slots). */
+  const pressPick = async () => {
+    const button = screen.getByRole('button', { name: 'Fotoğraf seç' });
+    await waitFor(() => expect(button).toBeEnabled());
+    await fireEvent.press(button);
+  };
+  const uploadOk = () => {
+    let n = 0;
     mockPrepare.mockResolvedValue({
       ok: true,
       bytes: new Uint8Array([1]),
       width: 1536,
       height: 2048,
     });
-    m.requestPhotoUpload.mockResolvedValue({
-      ok: true,
-      data: { ok: true, id: UUID(9), bucket: 'quarantine', path: 'p1/photos/9.jpg', token: 'tok' },
+    m.requestPhotoUpload.mockImplementation(() => {
+      n += 1;
+      return Promise.resolve({
+        ok: true,
+        data: {
+          ok: true,
+          id: UUID(90 + n),
+          bucket: 'quarantine',
+          path: `p1/photos/${n}.jpg`,
+          token: 'tok',
+        },
+      });
     });
     m.uploadToQuarantine.mockResolvedValue({ ok: true, data: true });
-    m.processPhoto.mockResolvedValue({
-      ok: true,
-      data: { ok: true, status: 'rejected', reason: 'not_you' },
+    m.processPhoto.mockResolvedValue({ ok: true, data: { ok: true, status: 'approved' } });
+  };
+
+  it('picks several photos at once, shows them side by side and uploads only after confirming', async () => {
+    mockState = { photosComplete: false };
+    m.fetchMyProfile.mockResolvedValue({ ...emptyProfile, photos: [photo(0, 'approved')] });
+    mockPick.mockResolvedValue({
+      canceled: false,
+      assets: [asset('file://a.heic', 3000, 4000), asset('file://b.jpg', 1080, 1350)],
     });
+    uploadOk();
     await renderLoaded(<PhotosScreen mode="onboarding" />);
-    await fireEvent.press(screen.getByRole('button', { name: 'Fotoğraf ekle' }));
-    await waitFor(() => expect(m.processPhoto).toHaveBeenCalledWith(UUID(9)));
+    expect(await screen.findByText('Yayında')).toBeOnTheScreen();
+    await pressPick();
+    expect(mockPick).toHaveBeenCalledWith(
+      expect.objectContaining({ allowsMultipleSelection: true, selectionLimit: 5 }),
+    );
+    expect(await screen.findByTestId('tray')).toBeOnTheScreen();
+    expect(screen.getByTestId('tray-0')).toBeOnTheScreen();
+    expect(screen.getByTestId('tray-1')).toBeOnTheScreen();
+    // Nothing is sent before the user confirms.
+    expect(m.requestPhotoUpload).not.toHaveBeenCalled();
+    // Continue is hidden while photos wait in the tray.
+    expect(screen.queryByRole('button', { name: 'Devam' })).toBeNull();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Onayla ve ekle (2)' }));
+    await waitFor(() => expect(m.processPhoto).toHaveBeenCalledTimes(2));
     expect(mockPrepare).toHaveBeenCalledWith('file://a.heic', 3000, 4000);
     expect(m.uploadToQuarantine).toHaveBeenCalledWith(
       expect.objectContaining({ token: 'tok' }),
       new Uint8Array([1]),
       'image/jpeg',
     );
-    expect(
-      await screen.findByText('Fotoğraftaki kişi canlılık doğrulamandaki kişiyle eşleşmedi.'),
-    ).toBeOnTheScreen();
+    await waitFor(() => expect(screen.queryByTestId('tray')).toBeNull());
   });
 
-  it('refuses too-small photos before uploading', async () => {
+  it('marks photos that must be cropped or are too small, and blocks confirming until fixed', async () => {
     mockPick.mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file://s.jpg', width: 600, height: 500 }],
+      assets: [asset('file://wide.jpg', 4000, 3000), asset('file://tiny.jpg', 600, 500)],
     });
-    mockPrepare.mockResolvedValue({ ok: false, reason: 'too_small' });
+    mockCrop.mockResolvedValue({ uri: 'file://wide-cropped.jpg', width: 2400, height: 3000 });
+    uploadOk();
     await renderLoaded(<PhotosScreen mode="onboarding" />);
-    await fireEvent.press(screen.getByRole('button', { name: 'Fotoğraf ekle' }));
-    expect(await screen.findByTestId('photo-notice')).toBeOnTheScreen();
-    expect(m.requestPhotoUpload).not.toHaveBeenCalled();
+    await pressPick();
+    expect(await screen.findByText('Kırpılmalı')).toBeOnTheScreen();
+    expect(screen.getByText('Çok küçük')).toBeOnTheScreen();
+    expect(screen.getByTestId('tray-blocked')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Onayla ve ekle (0)' })).toBeDisabled();
+
+    // Quick crop: keep the centre and confirm.
+    await fireEvent.press(screen.getByTestId('tray-0'));
+    expect(await screen.findByTestId('crop')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Kırp' }));
+    await waitFor(() => expect(screen.queryByTestId('crop')).toBeNull());
+    expect(mockCrop).toHaveBeenCalledWith('file://wide.jpg', {
+      originX: 800,
+      originY: 0,
+      width: 2400,
+      height: 3000,
+    });
+    expect(screen.queryByText('Kırpılmalı')).toBeNull();
+
+    // The too-small one cannot be used; removing it unblocks the rest.
+    await fireEvent.press(screen.getAllByRole('button', { name: 'Çıkar' })[1]!);
+    await fireEvent.press(screen.getByRole('button', { name: 'Onayla ve ekle (1)' }));
+    await waitFor(() =>
+      expect(mockPrepare).toHaveBeenCalledWith('file://wide-cropped.jpg', 2400, 3000),
+    );
+  });
+
+  it('does not ask to crop photos that already fit; cropping stays optional', async () => {
+    mockPick.mockResolvedValue({ canceled: false, assets: [asset('file://ok.jpg', 3000, 4000)] });
+    await renderLoaded(<PhotosScreen mode="onboarding" />);
+    await pressPick();
+    expect(await screen.findByTestId('tray-0')).toBeOnTheScreen();
+    expect(screen.queryByText('Kırpılmalı')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Onayla ve ekle (1)' })).toBeEnabled();
+    await fireEvent.press(screen.getByTestId('tray-0'));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Vazgeç' }));
+    expect(screen.queryByTestId('crop')).toBeNull();
+    expect(mockCrop).not.toHaveBeenCalled();
+  });
+
+  it('keeps photos that could not be sent in the tray with the error', async () => {
+    mockPick.mockResolvedValue({ canceled: false, assets: [asset('file://a.jpg', 3000, 4000)] });
+    uploadOk();
+    m.uploadToQuarantine.mockResolvedValue({ ok: false, error: 'network' });
+    await renderLoaded(<PhotosScreen mode="onboarding" />);
+    await pressPick();
+    await fireEvent.press(await screen.findByRole('button', { name: 'Onayla ve ekle (1)' }));
+    expect(await screen.findByText('Gönderilemedi')).toBeOnTheScreen();
+    expect(screen.getByTestId('error-notice')).toBeOnTheScreen();
+    expect(m.processPhoto).not.toHaveBeenCalled();
+  });
+
+  it('limits the picker to the free slots (max 6)', async () => {
+    m.fetchMyProfile.mockResolvedValue({
+      ...emptyProfile,
+      photos: [0, 1, 2, 3, 4, 5].map((n) => photo(n, 'approved')),
+    });
+    await renderLoaded(<PhotosScreen mode="onboarding" />);
+    expect(
+      await screen.findByRole('button', { name: 'En fazla 6 fotoğraf ekleyebilirsin.' }),
+    ).toBeDisabled();
   });
 
   it('reorders, deletes and continues when the step is complete', async () => {

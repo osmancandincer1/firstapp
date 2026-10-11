@@ -64,6 +64,24 @@ describe('callFunction', () => {
     expect(init.body).toBe('{"a":1}');
   });
 
+  it('locally, points signed storage URLs at the app’s Supabase URL (Docker host is unreachable)', async () => {
+    const signed = 'http://kong:8000/storage/v1/object/sign/public-photos/p/1.jpg?token=t';
+    const fetchFn = jest.fn(() =>
+      response(200, { media: { a: signed }, list: [{ url: signed }], other: 'http://kong:8000/x' }),
+    );
+    const r = await callFunction('profile-view', {}, { auth: false, fetchFn });
+    expect(r).toEqual({
+      ok: true,
+      data: {
+        media: { a: 'http://supabase.test/storage/v1/object/sign/public-photos/p/1.jpg?token=t' },
+        list: [
+          { url: 'http://supabase.test/storage/v1/object/sign/public-photos/p/1.jpg?token=t' },
+        ],
+        other: 'http://kong:8000/x',
+      },
+    });
+  });
+
   it('uses the session token, or reports not_authenticated without one', async () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
     expect(await callFunction('x', {}, { fetchFn: jest.fn() })).toEqual({

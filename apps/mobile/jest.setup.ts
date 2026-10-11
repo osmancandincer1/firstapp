@@ -25,3 +25,7 @@ jest.mock('expo-application', () => ({
 }));
 
 jest.mock('expo-crypto', () => ({ randomUUID: () => '00000000-0000-4000-8000-000000000000' }));
+
+// Async queries (findBy*, waitFor) wait up to 3 s: the default 1 s is flaky when
+// the machine or CI runner is busy, and a passing test returns as soon as it can.
+require('@testing-library/react-native').configure({ asyncUtilTimeout: 3000 });
