@@ -1,0 +1,9 @@
+# Gitleaks configuration: the default rules plus a narrow allowlist.
+# Only exact, known test values belong here — never paths or whole rules.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fake HMAC key used only by the Edge Function unit tests (supabase/functions/tests/fakes.ts)"
+regexTarget = "match"
+regexes = ['''test-secret-that-is-long-enough-123456''']
