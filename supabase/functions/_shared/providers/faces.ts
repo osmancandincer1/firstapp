@@ -97,11 +97,15 @@ export class MockLiveness implements LivenessService, FaceIndex {
   getResult(sessionId: string): Promise<LivenessResult> {
     return Promise.resolve({ confidence: 99, referenceImage: new TextEncoder().encode(sessionId) });
   }
-  search(): Promise<string[]> {
-    return Promise.resolve([]);
+  /** No duplicate faces locally; a profile photo is always the user's own face. */
+  search(_image: Uint8Array, _threshold: number, ownPhotoOf?: string): Promise<string[]> {
+    return Promise.resolve(ownPhotoOf ? [this.faceId(`u_${ownPhotoOf}`)] : []);
+  }
+  private faceId(externalId: string) {
+    return `mock-face-${externalId}`;
   }
   index(_image: Uint8Array, externalId: string): Promise<string | null> {
-    return Promise.resolve(`mock-face-${externalId}`);
+    return Promise.resolve(this.faceId(externalId));
   }
   ageLow(): Promise<{ low: number; high: number } | null> {
     return Promise.resolve({ low: 25, high: 32 });

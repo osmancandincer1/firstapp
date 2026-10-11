@@ -263,15 +263,21 @@ Deno.test(
   },
 );
 
-Deno.test('mock liveness: always live, adult and unmatched (local only)', async () => {
-  const m = new MockLiveness();
-  const s = await m.createSession();
-  assert(s.startsWith('mock-'));
-  assertEquals((await m.getResult(s)).confidence, 99);
-  assertEquals(await m.search(), []);
-  assertEquals(await m.index(new Uint8Array(), 'u_1'), 'mock-face-u_1');
-  assertEquals(await m.ageLow(), { low: 25, high: 32 });
-});
+Deno.test(
+  'mock liveness: always live, adult, no duplicate faces; own photos match (local only)',
+  async () => {
+    const m = new MockLiveness();
+    const s = await m.createSession();
+    assert(s.startsWith('mock-'));
+    assertEquals((await m.getResult(s)).confidence, 99);
+    const img = new Uint8Array();
+    assertEquals(await m.search(img, 90), [], 'sign-up never finds another account');
+    const indexed = await m.index(img, 'u_1');
+    assertEquals(indexed, 'mock-face-u_1');
+    assertEquals(await m.search(img, 90, '1'), [indexed], "a profile photo is the user's own face");
+    assertEquals(await m.ageLow(), { low: 25, high: 32 });
+  },
+);
 
 // --- auth hook ----------------------------------------------------------------------
 const hookSecret = 'v1,whsec_' + btoa('a-very-secret-signing-key-123456');

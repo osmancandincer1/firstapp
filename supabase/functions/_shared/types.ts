@@ -266,8 +266,12 @@ export interface LivenessService {
 }
 
 export interface FaceIndex {
-  /** Face ids in the collection similar to the image, above the threshold. */
-  search(image: Uint8Array, threshold: number): Promise<string[]>;
+  /**
+   * Face ids in the collection similar to the image, above the threshold.
+   * `ownPhotoOf` is only read by the local mock: a profile photo of that user
+   * then counts as their own face (real providers compare the image).
+   */
+  search(image: Uint8Array, threshold: number, ownPhotoOf?: string): Promise<string[]>;
   /** Adds the face to the collection; returns its face id. */
   index(image: Uint8Array, externalId: string): Promise<string | null>;
   /** Lower bound of the estimated age, or null if no face is found. */

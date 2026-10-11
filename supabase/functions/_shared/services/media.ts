@@ -157,7 +157,7 @@ async function processPhoto(
   let selfMatch = false;
   if (signals.faces.length > 0) {
     const threshold = await deps.db.flag<number>('liveness.face_match_threshold', 90);
-    const ids = await deps.faces.search(file.clean, threshold);
+    const ids = await deps.faces.search(file.clean, threshold, userId);
     const hashes = await Promise.all(
       ids.map((id) => identifierHash(deps.env.hmacSecret, 'face', id)),
     );
