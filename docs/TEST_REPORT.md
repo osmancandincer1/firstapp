@@ -10,17 +10,17 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ### Özet
 
-| Katman                              | Komut                                                               | Sonuç                                                             |
-| ----------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 532 = EN 532 anahtar                              |
-| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **146/146** · satır kapsamı **%100**                              |
-| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                         |
-| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **151/151** · satır kapsamı %88,6 (eşik %80)                      |
-| Edge Functions                      | `npm run functions:check` (17 fonksiyon) + `npm run functions:test` | **0 tip hatası · 99/99**                                          |
-| Veritabanı (pgTAP), PGlite          | göçler + içerik + yerel tohum + 4 test dosyası                      | **176/176** (Faz 0: 13, Faz 1: 57, Faz 2: 55, Faz 3: 51)          |
-| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db`                                              | **ÇALIŞTIRILAMADI** (Docker; CI'daki `database` işi çalıştıracak) |
-| Mobil paketleme                     | `expo export --platform android`                                    | **başarılı** (7,4 MB)                                             |
-| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                                  |
+| Katman                              | Komut                                                               | Sonuç                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 532 = EN 532 anahtar                                   |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **146/146** · satır kapsamı **%100**                                   |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                              |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **151/151** · satır kapsamı %88,6 (eşik %80)                           |
+| Edge Functions                      | `npm run functions:check` (17 fonksiyon) + `npm run functions:test` | **0 tip hatası · 99/99**                                               |
+| Veritabanı (pgTAP), PGlite          | göçler + içerik + yerel tohum + 4 test dosyası                      | **176/176** (Faz 0: 13, Faz 1: 57, Faz 2: 55, Faz 3: 51)               |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db` (yerel Docker) ve CI `database` işi          | **176/176** — hem bu makinede hem GitHub Actions'ta geçti (tüm fazlar) |
+| Mobil paketleme                     | `expo export --platform android`                                    | **başarılı** (7,4 MB)                                                  |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                                       |
 
 ### Faz 3 kabul kriterleri (APP.md §21)
 
@@ -54,8 +54,8 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ### ÇALIŞTIRILAMAYAN / EKSİK
 
-- **pgTAP, gerçek Supabase'de: ÇALIŞTIRILAMADI.** Docker yok. PGlite'ta `auth`, `storage` ve roller taklit edildi; pg_cron PGlite'ta olmadığından zamanlama satırları atlandı (göç, pg_cron yoksa zamanlamayı kurmuyor). **Nasıl çalıştırılır:** CI'daki `database` işi ya da `npx supabase start` + `npx supabase test db`.
-- **pg_cron zamanlaması (20:30 İstanbul): ÇALIŞTIRILAMADI.** Gerçek Supabase'de `select * from cron.job` ile iki işin (`tur-generate`, `daily-expiry`) kurulduğu görülmeli.
+- **pgTAP, gerçek Supabase'de: sonradan çalıştırıldı, 176/176 geçti.** Docker kurulduktan sonra bu makinede (`npx supabase test db`, Supabase CLI 2.120.0) ve GitHub Actions'taki `database` işinde. Faz 0–2'deki "ÇALIŞTIRILAMADI" notları da bununla kapanıyor.
+- **pg_cron zamanlaması: kuruldu.** Yerel Supabase'de `cron.job` iki işi gösteriyor: `tur-generate` (`30 17 * * *` = 20:30 İstanbul) ve `daily-expiry` (`15 * * * *`). İşin gerçekten zamanında çalıştığı henüz gözlenmedi.
 - **MAS-04 gerçek eşzamanlılık: ÇALIŞTIRILAMADI** (yukarıda).
 - **Ses cevabının gerçek kaydı ve yüklemesi: ÇALIŞTIRILAMADI.** Mikrofon ve Supabase Storage testlerde sahtelendi; gerçek cihazda elle denenmeli (§16.5).
 - **"Neden bu kişi?" çevirme animasyonu gerçek cihazda: ÇALIŞTIRILAMADI.** Hareket azaltma açıkken kısa geçişe düştüğü kodda; görsel kontrol elle yapılmalı.
