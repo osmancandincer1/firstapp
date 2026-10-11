@@ -8,3 +8,4 @@ export * from './onboarding.ts';
 export * from './otp.ts';
 export * from './moderation.ts';
 export * from './profile.ts';
+export * from './tur.ts';

@@ -156,6 +156,9 @@ export class SupabaseProfileDb implements ProfileDb {
       p_user_id: userId,
     });
   }
+  updatePreferences(userId: string, prefs: unknown) {
+    return rpc<string>(this.c, 'srv_update_preferences', { p_user_id: userId, p_prefs: prefs });
+  }
   myMedia(userId: string) {
     return rpc<{ id: string; kind: 'photo' | 'voice'; bucket: Bucket; path: string }[]>(
       this.c,

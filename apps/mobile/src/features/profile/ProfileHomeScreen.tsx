@@ -18,8 +18,8 @@ const SECTIONS = [
 ] as const;
 
 /**
- * Where an active account lands until the tabs arrive in Phase 3: preview and
- * edit every part of the profile (§8.1 "Ben" — partial).
+ * The "Ben" tab (§8.1 #28, partial): preview and edit every part of the
+ * profile, discovery filters and the saved list.
  */
 export function ProfileHomeScreen() {
   const { t } = useTranslation();
@@ -48,6 +48,12 @@ export function ProfileHomeScreen() {
       {me.data?.name ? <AppText variant="heading">{me.data.name}</AppText> : null}
       {pending > 0 ? <Banner message={t('profile.home.pending', { count: pending })} /> : null}
       <Button label={t('profile.home.preview')} onPress={() => router.push('/profile/preview')} />
+      <Button
+        variant="secondary"
+        label={t('tur.filters')}
+        onPress={() => router.push('/filters')}
+      />
+      <Button variant="secondary" label={t('tur.saved')} onPress={() => router.push('/saved')} />
       {SECTIONS.map(([key, href]) => (
         <Button
           key={key}

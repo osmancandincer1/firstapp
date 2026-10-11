@@ -66,5 +66,5 @@ export const STEP_ROUTES: Record<OnboardingStep, string> = {
   interests: '/onboarding/interests',
   location: '/onboarding/location',
   reverify: '/onboarding/reverify',
-  done: '/profile',
+  done: '/tur',
 };

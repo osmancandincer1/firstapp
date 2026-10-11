@@ -222,7 +222,12 @@
     "text_blocked": "This text was not accepted.",
     "change_limited": "You changed this recently; you can try again later.",
     "photo_limit": "You can add up to 6 photos.",
-    "not_found": "Not found. Refresh and try again."
+    "not_found": "Not found. Refresh and try again.",
+    "not_in_tur": "This person is no longer in your Round.",
+    "saved_limit": "You can save up to 9 people. Remove someone first.",
+    "answer_invalid": "The answer could not be sent. Check the text or the recording.",
+    "answer_duplicate": "This answer is very similar to your recent ones. Write something just for this person.",
+    "answer_limit": "You cannot send more answers right now."
   },
   "profile": {
     "saved": "Saved",
@@ -513,8 +518,8 @@
       "empty": "Nothing visible yet."
     },
     "home": {
-      "title": "Your profile",
-      "active": "Your profile is ready. The Rounds open in phase 3.",
+      "title": "Me",
+      "active": "Your profile is live. You can edit it here.",
       "preview": "How others see you",
       "sections": {
         "basics": "Name and gender",
@@ -532,5 +537,164 @@
       "title": "Your main photo changed",
       "body": "We need to check again that the person in your photos is you."
     }
+  },
+  "tabs": {
+    "tur": "Round",
+    "answers": "Answers",
+    "tables": "Tables",
+    "me": "Me"
+  },
+  "tur": {
+    "title": "Tonight’s Round",
+    "welcomeTitle": "Welcome Round",
+    "error": "The Round could not be loaded.",
+    "filters": "Filters",
+    "saved": "Saved",
+    "openFilters": "Open filters",
+    "notOpenTitle": "The Round opens at 21:00",
+    "notOpenBody": "Every evening at 21:00, 9 people are waiting for you. Until then you can polish your profile.",
+    "countdown": "{{hours}} h {{minutes}} min left",
+    "emptyTitle": "Nobody matches your criteria today",
+    "emptyBody": "We never show anyone outside your filters. You may want to widen them a little.",
+    "finishedTitle": "Round finished",
+    "finishedBody": "You have seen everyone for today. The next Round opens tomorrow at 21:00.",
+    "completeProfile": "Complete your profile",
+    "browseAgain": "Look at the cards again",
+    "answer": "Answer",
+    "pass": "Pass",
+    "save": "Save for later",
+    "unsave": "Remove from saved",
+    "position": "Card {{index}} of {{total}}",
+    "decided": {
+      "answered": "You answered. If they reply, you will see it in Tables.",
+      "passed": "You passed. You will not see this person for 60 days.",
+      "saved": "Saved for later. You can answer within 7 days."
+    },
+    "why": "Why this person?",
+    "whyHint": "Flips the card to explain why this person is shown",
+    "showProfile": "Back to profile",
+    "unavailable": "This profile can no longer be shown.",
+    "noReasons": "They match your filters; we found no stand-out common ground.",
+    "howItWorks": "Payment, device and spending never affect the order. Compatibility, activity and reply reliability do.",
+    "lessLikeThis": "Show fewer like this",
+    "lessQuestion": "What would you like to see less of?",
+    "lessDone": "Got it, we will weigh this less in future Rounds.",
+    "less": {
+      "same_intent": "Same intent",
+      "shared_interests": "These interests",
+      "same_tempo": "Same pace",
+      "same_first_date": "Same first-date idea"
+    },
+    "reasons": {
+      "same_intent": "You both said “{{value}}”",
+      "neighbour_intent": "Your intents are close: “{{value}}”",
+      "shared_interests": "Shared interests: {{items}}",
+      "same_tempo": "Same pace: {{value}}",
+      "same_first_date": "Same first-date idea: {{value}}",
+      "both_non_smokers": "Neither of you smokes",
+      "both_active": "You both exercise regularly"
+    },
+    "difference": "One difference: {{field}} — they “{{theirs}}”, you “{{yours}}”",
+    "small": "{{count}} people match your criteria today.",
+    "widerDistance": "Adding 10 km to the distance would bring {{count}} more.",
+    "widerAge": "Widening the age range by 3 years each way would bring {{count}} more.",
+    "playVoice": "Play voice card"
+  },
+  "answer": {
+    "title": "Your answer",
+    "gone": "This card is no longer open.",
+    "mode": "Answer type",
+    "text": "Text",
+    "voice": "Voice",
+    "textLabel": "Your answer",
+    "textHelp": "10–200 characters. Emoji alone is not enough.",
+    "voiceHelp": "A voice recording of 3–20 seconds.",
+    "send": "Send",
+    "sentTitle": "Your answer is on its way",
+    "sentBody": "If {{name}} replies, a table opens in Tables.",
+    "backToTur": "Back to the Round",
+    "similarWarning": "Your recent answers are very similar. If the next one is not personal, it will not be sent.",
+    "openSettings": "Open settings",
+    "invalid": {
+      "too_short": "The answer must be at least 10 characters.",
+      "too_long": "The answer can be at most 200 characters.",
+      "emoji_only": "Emoji alone is not enough; write a few words.",
+      "voice_duration": "The recording must be 3–20 seconds."
+    },
+    "limit": {
+      "daily": "You sent 15 answers today. You can send more tomorrow.",
+      "pending": "You have 15 answers waiting. You can send a new one when one drops."
+    }
+  },
+  "inbox": {
+    "title": "Answers",
+    "error": "Answers could not be loaded.",
+    "incoming": "Received ({{count}})",
+    "outgoing": "Sent",
+    "emptyIncoming": "No answers yet. An interesting Door Question brings answers.",
+    "emptyOutgoing": "You have not answered anyone yet.",
+    "voiceAnswer": "Voice answer · {{seconds}} s",
+    "nameAge": "{{name}}, {{age}}",
+    "someone": "Someone",
+    "open": "See the answer and profile",
+    "status": {
+      "waiting": "Waiting",
+      "reciprocated": "Replied",
+      "dropped": "Dropped"
+    },
+    "gone": "This answer is no longer available.",
+    "playAnswer": "Play answer",
+    "messageLabel": "Your reply",
+    "messageHelp": "Write a message; a table opens and the chat starts with it.",
+    "reciprocate": "Reply",
+    "pass": "Pass",
+    "passHint": "The sender is not notified",
+    "openedTitle": "Table opened",
+    "openedBody": "Your message is on the table. It is their turn now.",
+    "waitingTitle": "Table waiting",
+    "waitingBody": "One of you has no free table. If a slot opens within 72 hours the chat starts; otherwise we tell you both why.",
+    "goTables": "Go to Tables"
+  },
+  "tables": {
+    "title": "Tables",
+    "error": "Tables could not be loaded.",
+    "slots": "{{used}} of {{total}} tables in use",
+    "empty": "No tables yet. They appear here when you reply to an answer or someone replies to yours.",
+    "yourTurn": "Your turn",
+    "chatSoon": "Chat arrives with the next update.",
+    "waitingTitle": "Tables waiting",
+    "waitingBody": "They open in order when a table frees up.",
+    "waitingLeft": "{{hours}} h {{minutes}} min for a slot to open"
+  },
+  "filters": {
+    "title": "Filters",
+    "subtitle": "The Round only shows people who match these filters and match you back.",
+    "error": "Filters could not be loaded.",
+    "age": "Age range",
+    "ageMin": "From",
+    "ageMax": "To",
+    "ageHelp": "The range must be at least {{span}} years.",
+    "increase": "Increases {{label}}",
+    "decrease": "Decreases {{label}}",
+    "distance": "Distance",
+    "km": "{{km}} km",
+    "wholeCity": "Whole city",
+    "intents": "Intent",
+    "intentRequired": "Choose at least one intent.",
+    "voiceOnly": "Only people with a voice card",
+    "more": "Dealbreakers and who I want to see",
+    "estimate": "About {{count}} people match these filters.",
+    "smallPool": "The pool is small; your Rounds may not fill 9 cards. Consider widening the filters.",
+    "save": "Save",
+    "saved": "Saved. The next Round uses these filters."
+  },
+  "saved": {
+    "title": "Saved",
+    "subtitle": "{{count}} of {{max}} people. They are not told.",
+    "error": "The list could not be loaded.",
+    "empty": "Nobody saved. Use “Save for later” in the Round to add someone here.",
+    "left": "{{days}} d {{hours}} h left",
+    "showProfile": "See profile",
+    "hideProfile": "Hide profile"
   }
 }

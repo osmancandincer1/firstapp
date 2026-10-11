@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { AppText, Button, Card, Icon, Screen, Skeleton } from '@/components';
 import { CheckIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
-import { useCities, useProfileView } from './queries';
+import { useProfileView } from './queries';
+import { useDetailText } from './useDetailText';
 
 interface Preview {
   name?: string;
@@ -32,25 +33,9 @@ export function PreviewScreen() {
   const { colors } = useTheme();
   const router = useRouter();
   const view = useProfileView();
-  const cities = useCities();
   const p = (view.data?.preview ?? null) as Preview | null;
   const lang = i18n.language === 'en' ? 'en' : 'tr';
-  const detailText = (k: string, v: unknown): string => {
-    if (Array.isArray(v)) {
-      return v
-        .map((x) =>
-          k === 'pets' || k === 'languages'
-            ? t(k === 'pets' ? `profile.details.options.pets.${x}` : `profile.languages.${x}`)
-            : String(x),
-        )
-        .join(', ');
-    }
-    if (k === 'height') return `${v} cm`;
-    if (k === 'about' || k === 'school' || k === 'occupation' || k === 'workplace')
-      return String(v);
-    if (k === 'hometown_city_id') return cities.data?.find((c) => c.id === v)?.name ?? '';
-    return t(`profile.details.options.${k}.${v}`);
-  };
+  const detailText = useDetailText();
 
   return (
     <Screen

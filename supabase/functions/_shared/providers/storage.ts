@@ -36,4 +36,17 @@ export class SupabaseMediaStore implements MediaStore {
       .createSignedUrl(path, expiresInSeconds);
     return error || !data ? null : data.signedUrl;
   }
+
+  async signedUrls(bucket: Bucket, paths: string[], expiresInSeconds: number) {
+    if (paths.length === 0) return {};
+    const { data, error } = await this.c.storage
+      .from(bucket)
+      .createSignedUrls(paths, expiresInSeconds);
+    if (error || !data) return {};
+    return Object.fromEntries(
+      data
+        .filter((d) => d.signedUrl && d.path)
+        .map((d) => [d.path as string, d.signedUrl as string]),
+    );
+  }
 }

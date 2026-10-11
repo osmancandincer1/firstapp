@@ -34,6 +34,21 @@
 
 **Üçüncü taraflara giden veri (yalnızca anahtarlar girildiğinde):** Resend (e-posta adresi + kod), Twilio (telefon numarası + kod; numara türü sorgusu), AWS Rekognition (canlılık videosu ve referans karesi; yüz vektörü). Hepsi yurt dışına aktarımdır; açık rıza ekranında ayrıca soruluyor. Veri işleme sözleşmeleri: TODO(owner).
 
+## Faz 3 itibarıyla eklenen veriler
+
+| Veri                                                    | Nerede                                                    | Kim görür                                            | Saklama                                                                        |
+| ------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Keşif filtreleri (yaş, mesafe, niyet, yalnız ses kartı) | `preferences`                                             | Yalnızca sahibi                                      | Hesap süresince                                                                |
+| Son etkinlik zamanı                                     | `profiles.last_active_at` (en sık 5 dakikada bir yazılır) | Hiç kimse; yalnızca Tur seçiminde kullanılır         | Hesap süresince                                                                |
+| Kime hangi kart gösterildi, puan ve nedenler            | `tur_batches`, `tur_cards`                                | Yalnızca kartı gören kişi (nedenler); puan hiç kimse | TODO(owner): şu an süresiz; 60 günlük "Geç" kuralı için en az 60 gün gerekiyor |
+| Sonraya saklananlar                                     | `saved_cards`                                             | Yalnızca saklayan; karşı taraf bilmez                | 7 gün                                                                          |
+| "Bunun gibileri daha az göster"                         | `less_like_this`                                          | Yalnızca sahibi (sıralamaya etki)                    | Hesap süresince                                                                |
+| Cevaplar (metin ya da ses) ve sorunun o anki hâli       | `answers`; ses: `public-voice/u_<kullanıcı>/answers/`     | Gönderen ve alıcı                                    | 14 gün bekler; TODO(owner): süresi dolan cevabın silinme süresi                |
+| Masalar ve ilk mesajlar                                 | `tables`, `messages`                                      | Yalnızca iki taraf (RLS)                             | Faz 4'te tanımlanacak (sohbet arşivi)                                          |
+| Engellemeler                                            | `blocks`                                                  | Hiç kimse; Tur'da iki yönlü uygulanır                | Hesap süresince                                                                |
+
+**Not:** "Geç" bilgisi gönderene hiçbir yanıtta dönmez (D-058). Tur sıralaması abonelik, ödeme ya da cihaz verisi kullanmaz (TUR-07).
+
 ## Planlanan veri (APP.md'den; her faz eklendikçe bu tablo gerçek uygulamayla güncellenecek)
 
 | Veri sınıfı                              | Örnek            | Özel nitelikli mi | Faz | Not                                               |

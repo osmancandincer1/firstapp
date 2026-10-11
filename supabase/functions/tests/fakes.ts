@@ -9,6 +9,9 @@ import type {
 import { identifierHash } from '../_shared/crypto.ts';
 import type {
   AuthAdmin,
+  Bucket,
+  MediaStore,
+  ProfileDb,
   Db,
   EmailSender,
   FaceIndex,
@@ -206,5 +209,140 @@ export class FakeLiveness implements LivenessService, FaceIndex {
   }
   ageLow() {
     return Promise.resolve(this.age);
+  }
+}
+
+const UUID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+
+/** Records every ProfileDb call; results can be overridden per method. */
+export class FakeProfileDb implements ProfileDb {
+  calls: { fn: string; args: unknown[] }[] = [];
+  results: Partial<Record<keyof ProfileDb, unknown>> = {};
+  photo = {
+    id: UUID(1),
+    status: 'pending' as const,
+    quarantinePath: 'p1/photos/x.jpg',
+    isMain: true,
+  };
+  voice = { id: UUID(2), status: 'pending' as const, quarantinePath: 'p1/voice/v.m4a' };
+  private r<T>(fn: keyof ProfileDb, fallback: T, ...args: unknown[]): Promise<T> {
+    this.calls.push({ fn, args });
+    return Promise.resolve((fn in this.results ? this.results[fn] : fallback) as T);
+  }
+  called(fn: keyof ProfileDb) {
+    return this.calls.filter((c) => c.fn === fn);
+  }
+  updateBasics(...a: unknown[]) {
+    return this.r('updateBasics', 'ok' as const, ...a);
+  }
+  updateIntent(...a: unknown[]) {
+    return this.r('updateIntent', 'ok', ...a);
+  }
+  setDoorQuestion(...a: unknown[]) {
+    return this.r('setDoorQuestion', 'ok' as const, ...a);
+  }
+  setInterests(...a: unknown[]) {
+    return this.r('setInterests', 'ok' as const, ...a);
+  }
+  updateDetails(...a: unknown[]) {
+    return this.r('updateDetails', 'ok', ...a);
+  }
+  setLocation(...a: unknown[]) {
+    return this.r('setLocation', 'ok' as const, ...a);
+  }
+  addPendingEdit(...a: unknown[]) {
+    return this.r('addPendingEdit', undefined, ...a);
+  }
+  tryCompleteOnboarding(...a: unknown[]) {
+    return this.r('tryCompleteOnboarding', 'onboarding', ...a);
+  }
+  photoCreate(...a: unknown[]) {
+    return this.r<string | null>('photoCreate', UUID(1), ...a);
+  }
+  photoGet(...a: unknown[]) {
+    return this.r('photoGet', this.photo, ...a);
+  }
+  photoFinish(...a: unknown[]) {
+    return this.r('photoFinish', 'ok' as const, ...a);
+  }
+  photoReorder(...a: unknown[]) {
+    return this.r('photoReorder', 'ok' as const, ...a);
+  }
+  photoDelete(...a: unknown[]) {
+    return this.r<string[] | null>('photoDelete', ['p1/photos/x.jpg'], ...a);
+  }
+  photoCaption(...a: unknown[]) {
+    return this.r('photoCaption', 'ok' as const, ...a);
+  }
+  voiceCreate(...a: unknown[]) {
+    return this.r<string | null>('voiceCreate', UUID(2), ...a);
+  }
+  voiceGet(...a: unknown[]) {
+    return this.r('voiceGet', this.voice, ...a);
+  }
+  voiceFinish(...a: unknown[]) {
+    return this.r<string[] | null>('voiceFinish', [], ...a);
+  }
+  voiceDelete(...a: unknown[]) {
+    return this.r('voiceDelete', ['p1/voice/v.m4a'], ...a);
+  }
+  updatePreferences(...a: unknown[]) {
+    return this.r('updatePreferences', 'ok', ...a);
+  }
+  myPublicProfile(...a: unknown[]) {
+    return this.r('myPublicProfile', { name: 'Ece', age: 30 }, ...a);
+  }
+  myMedia(...a: unknown[]) {
+    return this.r(
+      'myMedia',
+      [
+        {
+          id: UUID(1),
+          kind: 'photo' as const,
+          bucket: 'public-photos' as Bucket,
+          path: 'p1/photos/a.jpg',
+        },
+        {
+          id: UUID(3),
+          kind: 'photo' as const,
+          bucket: 'quarantine' as Bucket,
+          path: 'p1/photos/b.jpg',
+        },
+      ],
+      ...a,
+    );
+  }
+}
+
+export class FakeStore implements MediaStore {
+  objects = new Map<string, Uint8Array>();
+  removed: string[] = [];
+  signed: { bucket: string; path: string; ttl: number }[] = [];
+  signedUploadUrl(_b: Bucket, path: string) {
+    return Promise.resolve({ path, token: 'upload-token' });
+  }
+  download(b: Bucket, path: string) {
+    return Promise.resolve(this.objects.get(`${b}/${path}`) ?? null);
+  }
+  upload(b: Bucket, path: string, bytes: Uint8Array) {
+    this.objects.set(`${b}/${path}`, bytes);
+    return Promise.resolve();
+  }
+  remove(b: Bucket, paths: string[]) {
+    for (const p of paths) {
+      this.removed.push(`${b}/${p}`);
+      this.objects.delete(`${b}/${p}`);
+    }
+    return Promise.resolve();
+  }
+  signedUrl(b: Bucket, path: string, ttl: number) {
+    this.signed.push({ bucket: b, path, ttl });
+    return Promise.resolve(`https://signed/${b}/${path}?ttl=${ttl}`);
+  }
+  signedUrls(b: Bucket, paths: string[], ttl: number) {
+    for (const path of paths) this.signed.push({ bucket: b, path, ttl });
+    return Promise.resolve(
+      Object.fromEntries(paths.map((path) => [path, `https://signed/${b}/${path}?ttl=${ttl}`])),
+    );
   }
 }

@@ -2,6 +2,7 @@
 import disposable from './data/disposable_domains.json' with { type: 'json' };
 import { adminClient, authAdmin, SupabaseDb } from './db.ts';
 import { SupabaseProfileDb } from './profileDb.ts';
+import { SupabaseTurDb } from './turDb.ts';
 import { loadServerEnv, type ServerEnv } from './env.ts';
 import { livenessProviders } from './providers/faces.ts';
 import { imageModeration } from './providers/imageModeration.ts';
@@ -18,6 +19,7 @@ import type {
   MediaStore,
   ProfileDb,
   SmsSender,
+  TurDb,
 } from './types.ts';
 
 export interface AppDeps {
@@ -33,6 +35,7 @@ export interface AppDeps {
   profile: ProfileDb;
   store: MediaStore;
   moderation: ImageModeration | null;
+  tur: TurDb;
 }
 
 let cached: AppDeps | null = null;
@@ -45,6 +48,7 @@ export function appDeps(): AppDeps {
     env,
     db: new SupabaseDb(admin),
     profile: new SupabaseProfileDb(admin),
+    tur: new SupabaseTurDb(admin),
     store: new SupabaseMediaStore(admin),
     moderation: imageModeration(env),
     auth: authAdmin(env),

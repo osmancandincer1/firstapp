@@ -108,6 +108,7 @@ export interface ProfileDb {
   }): Promise<string[] | null>;
   voiceDelete(userId: string): Promise<string[]>;
   myPublicProfile(userId: string): Promise<Record<string, unknown> | null>;
+  updatePreferences(userId: string, prefs: unknown): Promise<string>;
   myMedia(
     userId: string,
   ): Promise<{ id: string; kind: 'photo' | 'voice'; bucket: Bucket; path: string }[]>;
@@ -120,6 +121,42 @@ export interface MediaStore {
   upload(bucket: Bucket, path: string, bytes: Uint8Array, contentType: string): Promise<void>;
   remove(bucket: Bucket, paths: string[]): Promise<void>;
   signedUrl(bucket: Bucket, path: string, expiresInSeconds: number): Promise<string | null>;
+  /** Many signed URLs in one call; missing objects are left out. */
+  signedUrls(
+    bucket: Bucket,
+    paths: string[],
+    expiresInSeconds: number,
+  ): Promise<Record<string, string>>;
+}
+
+/** Round, answers and tables (srv_* functions of the tur migration). */
+export interface TurDb {
+  currentTur(userId: string): Promise<Record<string, unknown> | null>;
+  saved(userId: string): Promise<Record<string, unknown>[]>;
+  turAction(
+    userId: string,
+    cardId: string,
+    action: 'pass' | 'save' | 'unsave',
+  ): Promise<'ok' | 'not_found' | 'saved_limit'>;
+  lessLikeThis(userId: string, reasonKey: string): Promise<void>;
+  recentAnswerTexts(userId: string): Promise<string[]>;
+  answerCreate(input: {
+    userId: string;
+    candidateId: string;
+    text: string | null;
+    voicePath: string | null;
+    voiceMs: number | null;
+  }): Promise<{ result: string; answerId?: string }>;
+  answerRespond(
+    userId: string,
+    answerId: string,
+    action: 'reciprocate' | 'pass',
+    message: string | null,
+  ): Promise<{ result: string; tableId?: string; tableStatus?: 'active' | 'waiting_slot' }>;
+  inbox(
+    userId: string,
+  ): Promise<{ incoming: Record<string, unknown>[]; outgoing: Record<string, unknown>[] }>;
+  myTables(userId: string): Promise<Record<string, unknown>[]>;
 }
 
 /** Image signals for decidePhoto (§7.2). */

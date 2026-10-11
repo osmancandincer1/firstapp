@@ -16,3 +16,13 @@ export const WarningOctagonIcon: Icon =
 export const WarningCircleIcon: Icon =
   require('phosphor-react-native/src/icons/WarningCircle').WarningCircleIcon;
 export const CheckIcon: Icon = require('phosphor-react-native/src/icons/Check').CheckIcon;
+export const CardsIcon: Icon = require('phosphor-react-native/src/icons/Cards').CardsIcon;
+export const ChatsCircleIcon: Icon =
+  require('phosphor-react-native/src/icons/ChatsCircle').ChatsCircleIcon;
+export const CoffeeIcon: Icon = require('phosphor-react-native/src/icons/Coffee').CoffeeIcon;
+export const UserIcon: Icon = require('phosphor-react-native/src/icons/User').UserIcon;
+export const PlayIcon: Icon = require('phosphor-react-native/src/icons/Play').PlayIcon;
+export const ArrowLeftIcon: Icon =
+  require('phosphor-react-native/src/icons/ArrowLeft').ArrowLeftIcon;
+export const ArrowRightIcon: Icon =
+  require('phosphor-react-native/src/icons/ArrowRight').ArrowRightIcon;

@@ -1,4 +1,5 @@
 import {
+  answerActionSchema,
   birthDateSchema,
   consentsSchema,
   emailOtpRequestSchema,
@@ -7,6 +8,8 @@ import {
   phoneOtpRequestSchema,
   phoneOtpVerifySchema,
   sessionRegisterSchema,
+  tablesActionSchema,
+  turActionSchema,
 } from './api.ts';
 
 const deviceId = 'install-1234-abcd';
@@ -43,5 +46,51 @@ describe('function request schemas', () => {
       consentsSchema.safeParse({ consents: [{ type: 'unknown', version: 'v1', granted: true }] })
         .success,
     ).toBe(false);
+  });
+});
+
+describe('Round, answer and table actions (§4.1, §4.2)', () => {
+  const id = '00000000-0000-4000-8000-000000000001';
+
+  it('accepts the Round actions and rejects unknown "less like this" reasons', () => {
+    expect(turActionSchema.safeParse({ action: 'view' }).success).toBe(true);
+    expect(turActionSchema.safeParse({ action: 'pass', cardId: id }).success).toBe(true);
+    expect(turActionSchema.safeParse({ action: 'pass' }).success).toBe(false);
+    expect(turActionSchema.safeParse({ action: 'less', reasonKey: 'same_intent' }).success).toBe(
+      true,
+    );
+    expect(turActionSchema.safeParse({ action: 'less', reasonKey: 'both_active' }).success).toBe(
+      false,
+    );
+  });
+
+  it('needs exactly one of text or voice in an answer', () => {
+    expect(
+      answerActionSchema.safeParse({ action: 'send', candidateId: id, text: 'Merhaba dünya' })
+        .success,
+    ).toBe(true);
+    expect(
+      answerActionSchema.safeParse({ action: 'send', candidateId: id, voiceId: id }).success,
+    ).toBe(true);
+    expect(answerActionSchema.safeParse({ action: 'send', candidateId: id }).success).toBe(false);
+    expect(
+      answerActionSchema.safeParse({
+        action: 'send',
+        candidateId: id,
+        text: 'Merhaba dünya',
+        voiceId: id,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('needs a non-empty reply to reciprocate', () => {
+    expect(
+      answerActionSchema.safeParse({ action: 'reciprocate', answerId: id, message: 'Olur' })
+        .success,
+    ).toBe(true);
+    expect(
+      answerActionSchema.safeParse({ action: 'reciprocate', answerId: id, message: '   ' }).success,
+    ).toBe(false);
+    expect(tablesActionSchema.safeParse({ action: 'list' }).success).toBe(true);
   });
 });

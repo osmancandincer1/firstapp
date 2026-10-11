@@ -222,7 +222,12 @@
     "text_blocked": "Bu metin kabul edilmedi.",
     "change_limited": "Bunu kısa süre önce değiştirdin; daha sonra yeniden deneyebilirsin.",
     "photo_limit": "En fazla 6 fotoğraf ekleyebilirsin.",
-    "not_found": "Bulunamadı. Sayfayı yenileyip yeniden dene."
+    "not_found": "Bulunamadı. Sayfayı yenileyip yeniden dene.",
+    "not_in_tur": "Bu kişi artık Tur’unda değil.",
+    "saved_limit": "En fazla 9 kişi saklayabilirsin. Önce birini çıkar.",
+    "answer_invalid": "Cevap gönderilemedi. Metni ya da kaydı kontrol et.",
+    "answer_duplicate": "Bu cevap son gönderdiklerine çok benziyor. Bu kişiye özel bir şey yaz.",
+    "answer_limit": "Şu an daha fazla cevap gönderemezsin."
   },
   "profile": {
     "saved": "Kaydedildi",
@@ -513,8 +518,8 @@
       "empty": "Henüz görünür bir şey yok."
     },
     "home": {
-      "title": "Profilin",
-      "active": "Profilin hazır. Turlar 3. fazda açılacak.",
+      "title": "Ben",
+      "active": "Profilin yayında. Buradan düzenleyebilirsin.",
       "preview": "Başkası nasıl görüyor?",
       "sections": {
         "basics": "Ad ve cinsiyet",
@@ -532,5 +537,164 @@
       "title": "Ana fotoğrafın değişti",
       "body": "Fotoğraflarındaki kişinin sen olduğunu yeniden doğrulamamız gerekiyor."
     }
+  },
+  "tabs": {
+    "tur": "Tur",
+    "answers": "Cevaplar",
+    "tables": "Masalar",
+    "me": "Ben"
+  },
+  "tur": {
+    "title": "Bu akşamın Tur’u",
+    "welcomeTitle": "Hoş geldin Tur’u",
+    "error": "Tur yüklenemedi.",
+    "filters": "Filtreler",
+    "saved": "Sakladıklarım",
+    "openFilters": "Filtreleri aç",
+    "notOpenTitle": "Tur saat 21:00’de açılıyor",
+    "notOpenBody": "Her akşam 21:00’de 9 kişi seni bekliyor. O saate kadar profilini güzelleştirebilirsin.",
+    "countdown": "{{hours}} sa {{minutes}} dk kaldı",
+    "emptyTitle": "Bugün kriterlerine uyan kimse yok",
+    "emptyBody": "Filtrelerinin dışında birini asla göstermeyiz. Filtreleri biraz genişletmek isteyebilirsin.",
+    "finishedTitle": "Tur bitti",
+    "finishedBody": "Bugünkü herkese baktın. Yeni Tur yarın 21:00’de.",
+    "completeProfile": "Profilini tamamla",
+    "browseAgain": "Kartlara yeniden bak",
+    "answer": "Cevapla",
+    "pass": "Geç",
+    "save": "Sonraya sakla",
+    "unsave": "Saklananlardan çıkar",
+    "position": "Kart {{index}} / {{total}}",
+    "decided": {
+      "answered": "Cevapladın. Karşılık gelirse Masalar’da görürsün.",
+      "passed": "Geçtin. Bu kişiyi 60 gün görmeyeceksin.",
+      "saved": "Sonraya sakladın. 7 gün içinde cevaplayabilirsin."
+    },
+    "why": "Neden bu kişi?",
+    "whyHint": "Kartı çevirip bu kişinin neden gösterildiğini anlatır",
+    "showProfile": "Profile dön",
+    "unavailable": "Bu profil artık görüntülenemiyor.",
+    "noReasons": "Filtrelerine uyuyor; öne çıkan ortak bir nokta bulamadık.",
+    "howItWorks": "Ödeme, cihaz ya da harcama sıralamaya hiç girmez. Uyum, etkinlik ve yanıt güvenilirliği girer.",
+    "lessLikeThis": "Bunun gibileri daha az göster",
+    "lessQuestion": "Neyi daha az görmek istersin?",
+    "lessDone": "Tamam, sonraki Turlarda bunun ağırlığını düşüreceğiz.",
+    "less": {
+      "same_intent": "Aynı niyet",
+      "shared_interests": "Bu ilgi alanları",
+      "same_tempo": "Aynı tempo",
+      "same_first_date": "Aynı ilk buluşma fikri"
+    },
+    "reasons": {
+      "same_intent": "İkiniz de “{{value}}” diyorsunuz",
+      "neighbour_intent": "Niyetleriniz yakın: “{{value}}”",
+      "shared_interests": "Ortak ilgi: {{items}}",
+      "same_tempo": "Temponuz aynı: {{value}}",
+      "same_first_date": "İlk buluşma fikriniz aynı: {{value}}",
+      "both_non_smokers": "İkiniz de sigara içmiyorsunuz",
+      "both_active": "İkiniz de düzenli spor yapıyorsunuz"
+    },
+    "difference": "Bir fark: {{field}} — o “{{theirs}}”, sen “{{yours}}”",
+    "small": "Bugün kriterlerine uyan {{count}} kişi var.",
+    "widerDistance": "Mesafeyi 10 km artırırsan {{count}} kişi daha çıkıyor.",
+    "widerAge": "Yaş aralığını iki yönde 3 yıl genişletirsen {{count}} kişi daha çıkıyor.",
+    "playVoice": "Ses kartını dinle"
+  },
+  "answer": {
+    "title": "Cevabın",
+    "gone": "Bu kart artık açık değil.",
+    "mode": "Cevap türü",
+    "text": "Yazı",
+    "voice": "Ses",
+    "textLabel": "Cevabın",
+    "textHelp": "10–200 karakter. Yalnızca emoji yetmez.",
+    "voiceHelp": "3–20 saniyelik bir ses kaydı.",
+    "send": "Gönder",
+    "sentTitle": "Cevabın gitti",
+    "sentBody": "{{name}} karşılık verirse Masalar’da sohbet açılır.",
+    "backToTur": "Tur’a dön",
+    "similarWarning": "Son cevapların birbirine çok benziyor. Bir sonrakinde kişiye özel yazmazsan gönderilmeyecek.",
+    "openSettings": "Ayarları aç",
+    "invalid": {
+      "too_short": "Cevap en az 10 karakter olmalı.",
+      "too_long": "Cevap en fazla 200 karakter olabilir.",
+      "emoji_only": "Yalnızca emoji yetmez; birkaç kelime yaz.",
+      "voice_duration": "Ses kaydı 3–20 saniye olmalı."
+    },
+    "limit": {
+      "daily": "Bugün 15 cevap gönderdin. Yarın yeniden gönderebilirsin.",
+      "pending": "Yanıt bekleyen 15 cevabın var. Biri düşünce yenisini gönderebilirsin."
+    }
+  },
+  "inbox": {
+    "title": "Cevaplar",
+    "error": "Cevaplar yüklenemedi.",
+    "incoming": "Gelenler ({{count}})",
+    "outgoing": "Gönderdiklerim",
+    "emptyIncoming": "Henüz gelen cevap yok. Kapı Sorun ilginç olursa cevaplar gelir.",
+    "emptyOutgoing": "Henüz kimseye cevap göndermedin.",
+    "voiceAnswer": "Sesli cevap · {{seconds}} sn",
+    "nameAge": "{{name}}, {{age}}",
+    "someone": "Biri",
+    "open": "Cevabı ve profili gör",
+    "status": {
+      "waiting": "Bekliyor",
+      "reciprocated": "Karşılık geldi",
+      "dropped": "Düştü"
+    },
+    "gone": "Bu cevap artık yok.",
+    "playAnswer": "Cevabı dinle",
+    "messageLabel": "Karşılık mesajın",
+    "messageHelp": "Bir mesaj yaz; Masa açılır ve sohbet onunla başlar.",
+    "reciprocate": "Karşılık ver",
+    "pass": "Geç",
+    "passHint": "Gönderene bildirim gitmez",
+    "openedTitle": "Masa açıldı",
+    "openedBody": "Mesajın Masa’da. Sıra artık onda.",
+    "waitingTitle": "Masa bekliyor",
+    "waitingBody": "Masalardan biri dolu. 72 saat içinde yer açılırsa sohbet başlar; açılmazsa ikinize de nedenini söyleriz.",
+    "goTables": "Masalara git"
+  },
+  "tables": {
+    "title": "Masalar",
+    "error": "Masalar yüklenemedi.",
+    "slots": "{{used}} / {{total}} masa dolu",
+    "empty": "Henüz masan yok. Bir cevaba karşılık verdiğinde ya da cevabına karşılık geldiğinde burada görünür.",
+    "yourTurn": "Sıra sende",
+    "chatSoon": "Sohbet bir sonraki güncellemeyle açılacak.",
+    "waitingTitle": "Masa bekliyor",
+    "waitingBody": "Bir masa boşalınca sırayla açılır.",
+    "waitingLeft": "Yer açılması için {{hours}} sa {{minutes}} dk"
+  },
+  "filters": {
+    "title": "Filtreler",
+    "subtitle": "Tur yalnızca bu filtrelere uyan ve seninle karşılıklı uyuşan kişileri gösterir.",
+    "error": "Filtreler yüklenemedi.",
+    "age": "Yaş aralığı",
+    "ageMin": "En az",
+    "ageMax": "En çok",
+    "ageHelp": "Aralık en az {{span}} yıl olmalı.",
+    "increase": "{{label}} değerini artırır",
+    "decrease": "{{label}} değerini azaltır",
+    "distance": "Mesafe",
+    "km": "{{km}} km",
+    "wholeCity": "Tüm şehir",
+    "intents": "Niyet",
+    "intentRequired": "En az bir niyet seç.",
+    "voiceOnly": "Yalnızca ses kartı olanlar",
+    "more": "Olmazsa olmazlarım ve kimi görmek istediğim",
+    "estimate": "Bu filtrelerle yaklaşık {{count}} kişi var.",
+    "smallPool": "Havuz küçük; Turların 9 kişiyi doldurmayabilir. Filtreleri biraz genişletmeyi düşün.",
+    "save": "Kaydet",
+    "saved": "Kaydedildi. Bir sonraki Tur bu filtrelerle hazırlanır."
+  },
+  "saved": {
+    "title": "Sakladıklarım",
+    "subtitle": "{{count}} / {{max}} kişi. Karşı taraf bilmez.",
+    "error": "Liste yüklenemedi.",
+    "empty": "Sakladığın kimse yok. Tur’da “Sonraya sakla” ile buraya ekleyebilirsin.",
+    "left": "{{days}} gün {{hours}} sa kaldı",
+    "showProfile": "Profili gör",
+    "hideProfile": "Profili gizle"
   }
 }

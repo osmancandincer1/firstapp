@@ -4,6 +4,65 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ---
 
+## Faz 3 — Tur ve Cevap · 2026-10-11
+
+**Ortam:** önceki fazlarla aynı makine; Docker hâlâ çalışmıyor (BIOS sanallaştırma kapalı).
+
+### Özet
+
+| Katman                              | Komut                                                               | Sonuç                                                             |
+| ----------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 532 = EN 532 anahtar                              |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **146/146** · satır kapsamı **%100**                              |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                         |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **151/151** · satır kapsamı %88,6 (eşik %80)                      |
+| Edge Functions                      | `npm run functions:check` (17 fonksiyon) + `npm run functions:test` | **0 tip hatası · 99/99**                                          |
+| Veritabanı (pgTAP), PGlite          | göçler + içerik + yerel tohum + 4 test dosyası                      | **176/176** (Faz 0: 13, Faz 1: 57, Faz 2: 55, Faz 3: 51)          |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db`                                              | **ÇALIŞTIRILAMADI** (Docker; CI'daki `database` işi çalıştıracak) |
+| Mobil paketleme                     | `expo export --platform android`                                    | **başarılı** (7,4 MB)                                             |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                                  |
+
+### Faz 3 kabul kriterleri (APP.md §21)
+
+| Kriter                         | Durum     | Kanıt                                                                                                                                                                                     |
+| ------------------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tur günde tam bir kez üretilir | **Geçti** | `03_tur.test.sql` TUR-01: aynı gün ikinci çağrı aynı Tur'u döndürüyor, tek kayıt var; `(profil, tarih, tür)` benzersiz ve eşzamanlı ikinci çalıştırma `on conflict` ile aynı kaydı alıyor |
+| Filtre dışı profil gelmez      | **Geçti** | TUR-03: 40 kişilik rastgele nüfusta (sabit tohum) hiçbir kart karşılıklı filtreyi bozmuyor ve test boş geçmiyor (kart üretildiği de denetleniyor); TUR-06: küçük havuz doldurulmuyor      |
+| Cevap sınırları çalışır        | **Geçti** | MAS-01 (`tur.test.ts`, `tur_test.ts`, mobil), MAS-02 günlük 15 ve bekleyen 15 (`03_tur.test.sql`), MAS-03 3'te uyarı 4'te engel (`tur.test.ts`, `tur_test.ts`, mobil)                     |
+
+### Test kataloğu eşlemesi (§16.3)
+
+| Test                                                              | Durum      | Nerede                                                                                                                                                                                     |
+| ----------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| TUR-01 Günde tam bir kez                                          | Geçti      | `03_tur.test.sql`                                                                                                                                                                          |
+| TUR-02 Saat dilimi / yaz saati                                    | Kısmen     | 21:00 sınırı SQL'de (`03_tur.test.sql` 1–3) ve TypeScript'te (`tur.test.ts`, gün dönümü dahil) test edildi. Türkiye'de yaz saati yok (D-056); başka saat dilimi desteklenmiyor             |
+| TUR-03 Karşılıklı filtreler (özellik tabanlı)                     | Geçti      | `03_tur.test.sql` (rastgele nüfus + 12 adaylı elle kurulu senaryo + olmazsa olmazlar)                                                                                                      |
+| TUR-04 Engelli, askıda, banlı, doğrulanmamış Tur'a girmez         | Kısmen     | Engelleme (iki yönlü), doğrulanmamış, aktif olmayan, yeniden doğrulama bekleyen: geçti. Şikâyet edilen, rehberde gizlenen, molada: **Faz 5 / Faz 4'te** (veri henüz yok)                   |
+| TUR-05 Geç 60 gün, işlemsiz 14 gün                                | Geçti      | `03_tur.test.sql`                                                                                                                                                                          |
+| TUR-06 Küçük havuz doldurulmaz                                    | Geçti      | `03_tur.test.sql`, mobil (dürüst "bugün N kişi" mesajı)                                                                                                                                    |
+| TUR-07 Abonelik puan girdisi değil                                | Geçti      | `03_tur.test.sql` (fonksiyon gövdesi abonelik/ödeme/cihaz okumuyor). Plus Faz 8'de; o zaman "aynı girdi, aynı puan" testi de eklenecek                                                     |
+| TUR-08 Asgari gösterim tabanı                                     | Kısmen     | Az gösterilen kişinin öne çıktığı test edildi (adil görünürlük puanı). Haftalık 30 gösterimin her koşulda **garanti** edildiği gösterilmedi; büyük nüfusla simülasyon gerekir              |
+| TUR-09 Filtre sonraki Tur'da geçerli; tahmin ±%10                 | Geçti      | Tahmin ve Tur aynı `eligible_pool` fonksiyonunu kullanıyor; tahmin gerçek havuza eşit ve filtre değişikliğini izliyor (`03_tur.test.sql`), filtre ekranı (`tur.test.tsx`)                  |
+| TUR-10 Plus filtresi karşı tarafı aşamaz                          | Uygulanmaz | Plus gelişmiş filtreleri Faz 8'de                                                                                                                                                          |
+| TUR-11 Sakla 9 kart / 7 gün; "daha az göster" ağırlığı değiştirir | Geçti      | `03_tur.test.sql`, `tur_test.ts`, `tur.test.tsx`                                                                                                                                           |
+| MAS-01 Kısa ya da yalnız emoji cevap reddedilir                   | Geçti      | `tur.test.ts`, `tur_test.ts`, `tur.test.tsx`                                                                                                                                               |
+| MAS-02 15 günlük / 15 bekleyen sınırı                             | Geçti      | `03_tur.test.sql`, `tur_test.ts` (hata eşlemesi), `tur.test.tsx` (mesaj)                                                                                                                   |
+| MAS-03 Kopya cevap: 3 uyarı, 4 engel                              | Geçti      | `tur.test.ts`, `tur_test.ts`, `tur.test.tsx`                                                                                                                                               |
+| MAS-04 Aynı anda karşılık → tek masa                              | Kısmen     | Sıralı iki karşılıkla tek masa açıldığı test edildi; kod danışma kilidi + benzersiz dizinle korunuyor. **Gerçek eşzamanlı** test (iki bağlantı) PGlite'ta yapılamıyor — Docker/CI bekliyor |
+| MAS-05 4. masa açılmaz; "Masa bekliyor" 72 saatte düşer           | Geçti      | `03_tur.test.sql` (bekleyen masa, 72 saatlik süre, saatlik işle düşme), mobil (bekleme kuyruğu)                                                                                            |
+| MAS-06…10                                                         | Faz 4      | Zamanlayıcılar, Nazik Veda, engelleme, Plus bitişi, yanıt güvenilirliği                                                                                                                    |
+
+### ÇALIŞTIRILAMAYAN / EKSİK
+
+- **pgTAP, gerçek Supabase'de: ÇALIŞTIRILAMADI.** Docker yok. PGlite'ta `auth`, `storage` ve roller taklit edildi; pg_cron PGlite'ta olmadığından zamanlama satırları atlandı (göç, pg_cron yoksa zamanlamayı kurmuyor). **Nasıl çalıştırılır:** CI'daki `database` işi ya da `npx supabase start` + `npx supabase test db`.
+- **pg_cron zamanlaması (20:30 İstanbul): ÇALIŞTIRILAMADI.** Gerçek Supabase'de `select * from cron.job` ile iki işin (`tur-generate`, `daily-expiry`) kurulduğu görülmeli.
+- **MAS-04 gerçek eşzamanlılık: ÇALIŞTIRILAMADI** (yukarıda).
+- **Ses cevabının gerçek kaydı ve yüklemesi: ÇALIŞTIRILAMADI.** Mikrofon ve Supabase Storage testlerde sahtelendi; gerçek cihazda elle denenmeli (§16.5).
+- **"Neden bu kişi?" çevirme animasyonu gerçek cihazda: ÇALIŞTIRILAMADI.** Hareket azaltma açıkken kısa geçişe düştüğü kodda; görsel kontrol elle yapılmalı.
+- **Entegrasyon testi (fonksiyon ↔ veritabanı ↔ depolama): YAZILMADI.** Docker bekliyor.
+
+---
+
 ## Faz 2 — Profil · 2026-10-12
 
 **Ortam:** önceki fazlarla aynı makine; Docker hâlâ çalışmıyor.

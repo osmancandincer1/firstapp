@@ -78,3 +78,26 @@ Ses kartı                     ->  profile-voice             -> M4A süresi (moo
 - **Herkese açık profil** tek yerden üretilir: `srv_public_profile()`. Önizleme de aynısını gösterir; "başkası nasıl görüyor?" ekranı bu yüzden yanılmaz.
 - **Kayıt tamamlanınca** (`srv_try_complete_onboarding`) hesap `active` olur; ana fotoğraf sonradan değişirse `reverify_required` açılır ve kapı kullanıcıyı canlılığa gönderir.
 - **İçerik** (sorular, ilgi alanları, iller) `supabase/content/*.json` dosyalarından `scripts/build-content-sql.mjs` ile göçe dönüştürülür.
+
+## Tur, cevap ve masa (Faz 3)
+
+```
+pg_cron 20:30 İstanbul  -> srv_generate_all_turs -> srv_generate_tur (kullanıcı başına, günde bir kez)
+                                                  eligible_pool (karşılıklı filtreler) − recently_seen
+                                                  → puan (§5 ağırlıkları, bayraklardan) → çeşitlilik → 9 kart
+pg_cron saat başı       -> srv_expire_daily      -> 14 günlük cevaplar, 7 günlük saklananlar, 72 saatlik bekleyen masalar
+
+Uygulama                          Edge Function             SQL
+Tur sekmesi                   ->  tur  view|saved|pass|save|unsave|less -> srv_current_tur, srv_tur_action, ...
+Cevap yaz (metin / ses)       ->  answer send           -> denetimler (TS) → srv_answer_create (sınırlar, Tur'da mı?)
+Cevaplar kutusu               ->  answer inbox          -> srv_inbox (imzalı foto/ses URL'leri)
+Karşılık ver / Geç            ->  answer reciprocate|pass -> srv_answer_respond (kilit, masa ya da "Masa bekliyor")
+Masalar                       ->  tables list           -> srv_my_tables
+Filtreler                     ->  profile-update preferences ; my_preferences(), my_pool_estimate() (RLS ile doğrudan)
+Uygulama açılınca             ->  touch_activity()  ("son 7 günde aktif")
+```
+
+- **Kural nerede?** Kimin kime görüneceği, sınırlar ve masa açılışı SQL'de (`srv_*`, yalnızca servis rolü). Metin biçimi, moderasyon ve kopya tespiti TypeScript'te (`packages/shared/src/tur.ts`), hem uygulamada hem Edge Function'da aynı kodla.
+- **Medya:** kartlar, cevaplar ve masalardaki profiller `services/sign.ts` ile 10 dakikalık imzalı URL'lere çevrilir; ham depolama yolları ve iç profil kimlikleri yanıtta yoktur.
+- **"Neden bu kişi?"** `tur_reasons()` en güçlü iki neden ve bir dürüst fark üretir; yalnızca karşı tarafın görünür alanlarını kullanır, fotoğraf/yüz/özel nitelikli veri kullanmaz. Uygulama anahtarları çevirir.
+- **Mobil:** alt sekmeler `src/app/(tabs)` (Tur · Cevaplar · Masalar · Ben); ekranlar `features/tur`, `features/answers`, `features/tables`.

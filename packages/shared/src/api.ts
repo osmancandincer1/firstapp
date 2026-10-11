@@ -17,6 +17,7 @@ import {
   PHOTOS_MAX,
   visibilitySchema,
 } from './profile.ts';
+import { LESS_LIKE_THIS_KEYS, preferencesSchema, RECIPROCATION_MAX } from './tur.ts';
 
 /** Install-scoped device identifier sent by the app; the server stores only its HMAC. */
 const deviceId = z.string().trim().min(8).max(200);
@@ -85,7 +86,52 @@ export const profileUpdateSchema = z.discriminatedUnion('section', [
     visibility: visibilitySchema.optional(),
   }),
   z.object({ section: z.literal('location'), data: locationSchema }),
+  z.object({ section: z.literal('preferences'), data: preferencesSchema }),
 ]);
+
+/** tur: read the current Round and act on its cards (§4.1). */
+export const turActionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('view') }),
+  z.object({ action: z.literal('saved') }),
+  z.object({ action: z.literal('pass'), cardId: z.uuid() }),
+  z.object({ action: z.literal('save'), cardId: z.uuid() }),
+  z.object({ action: z.literal('unsave'), cardId: z.uuid() }),
+  z.object({
+    action: z.literal('less'),
+    reasonKey: z.enum(LESS_LIKE_THIS_KEYS as [string, ...string[]]),
+  }),
+]);
+
+/** answer: send, read the inbox, reciprocate or pass (§4.2). */
+export const answerActionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('inbox') }),
+  z.object({ action: z.literal('voice_upload_url') }),
+  z
+    .object({
+      action: z.literal('send'),
+      candidateId: z.uuid(),
+      text: z.string().max(400).optional(),
+      voiceId: z.uuid().optional(),
+    })
+    .refine((v) => Boolean(v.text) !== Boolean(v.voiceId), { message: 'text or voice' }),
+  z.object({
+    action: z.literal('reciprocate'),
+    answerId: z.uuid(),
+    message: z.string().trim().min(1).max(RECIPROCATION_MAX),
+  }),
+  z.object({ action: z.literal('pass'), answerId: z.uuid() }),
+]);
+
+export const tablesActionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('list') }),
+]);
+
+export type AnswerSendResponse = { ok: true; answerId: string; warning?: 'similar' };
+export type ReciprocateResponse = {
+  ok: true;
+  tableId: string;
+  tableStatus: 'active' | 'waiting_slot';
+};
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 export type ProfileSection = ProfileUpdate['section'];
 
@@ -157,6 +203,11 @@ export const API_ERROR_CODES = [
   'change_limited',
   'photo_limit',
   'not_found',
+  'not_in_tur',
+  'saved_limit',
+  'answer_invalid',
+  'answer_duplicate',
+  'answer_limit',
   'service_unavailable',
   'internal',
 ] as const;

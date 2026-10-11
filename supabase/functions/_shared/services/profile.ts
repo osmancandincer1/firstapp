@@ -53,7 +53,12 @@ export async function updateProfile(
   const state = await deps.db.profileState(user.id);
   if (!state || !['onboarding', 'active', 'paused'].includes(state.status))
     return fail(409, 'wrong_step');
-  const ready = req.section === 'basics' ? state.consentsComplete : state.livenessVerified;
+  const ready =
+    req.section === 'basics'
+      ? state.consentsComplete
+      : req.section === 'preferences'
+        ? state.status === 'active' || state.status === 'paused'
+        : state.livenessVerified;
   if (!ready) return fail(409, 'wrong_step');
 
   const done = async (pending = false): Promise<Result<ProfileUpdateResponse>> => {
@@ -137,6 +142,12 @@ export async function updateProfile(
       }
       await deps.profile.updateDetails(user.id, data, req.visibility ?? {});
       return done(Object.keys(held).length > 0);
+    }
+
+    case 'preferences': {
+      // Takes effect from the next Round (§6.6, TUR-09).
+      await deps.profile.updatePreferences(user.id, req.data);
+      return ok({ ok: true });
     }
 
     case 'location': {

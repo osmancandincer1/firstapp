@@ -47,8 +47,8 @@ export const useInterests = () =>
   useQuery({ queryKey: ['interests'], queryFn: fetchInterests, staleTime: DAY });
 export const useVoicePrompts = () =>
   useQuery({ queryKey: ['voice-prompts'], queryFn: fetchVoicePrompts, staleTime: DAY });
-export const useCities = () =>
-  useQuery({ queryKey: ['cities'], queryFn: fetchCities, staleTime: DAY });
+export const useCities = (enabled = true) =>
+  useQuery({ queryKey: ['cities'], queryFn: fetchCities, staleTime: DAY, enabled });
 export const useDistricts = () =>
   useQuery({ queryKey: ['districts'], queryFn: fetchDistricts, staleTime: DAY });
 

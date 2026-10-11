@@ -1,0 +1,50 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+
+import { useSession } from '@/features/auth/session';
+import type { ApiResult } from '@/lib/api';
+import { fetchInbox, fetchPreferences, listSaved, listTables, viewTur } from './api';
+
+export const TUR_KEY = ['tur'] as const;
+export const SAVED_KEY = ['tur-saved'] as const;
+export const INBOX_KEY = ['inbox'] as const;
+export const TABLES_KEY = ['tables'] as const;
+export const PREFERENCES_KEY = ['preferences'] as const;
+
+/** API errors travel as Error(code) so screens can tell "offline" from other failures. */
+export class ApiError extends Error {}
+async function unwrap<T>(p: Promise<ApiResult<T>>): Promise<T> {
+  const r = await p;
+  if (!r.ok) throw new ApiError(r.error);
+  return r.data;
+}
+
+/** Signed media URLs live 10 minutes; refetch well before that. */
+const MEDIA_STALE = 5 * 60_000;
+
+function useUserQuery<T>(key: readonly string[], fn: () => Promise<T>, staleTime = MEDIA_STALE) {
+  const userId = useSession((s) => s.userId);
+  return useQuery({ queryKey: [...key, userId], queryFn: fn, enabled: Boolean(userId), staleTime });
+}
+
+export const useTur = () => useUserQuery(TUR_KEY, async () => (await unwrap(viewTur())).tur);
+export const useSaved = () =>
+  useUserQuery(SAVED_KEY, async () => (await unwrap(listSaved())).saved);
+export const useInbox = () => useUserQuery(INBOX_KEY, () => unwrap(fetchInbox()));
+export const useTables = () =>
+  useUserQuery(TABLES_KEY, async () => (await unwrap(listTables())).tables);
+export const useDiscoveryPreferences = () =>
+  useUserQuery(PREFERENCES_KEY, fetchPreferences, 60_000);
+
+/** True when the query failed because the device is offline (§8.2). */
+export const isOffline = (error: unknown) =>
+  error instanceof ApiError && error.message === 'network';
+
+export function useInvalidate() {
+  const qc = useQueryClient();
+  return useCallback(
+    (...keys: (readonly string[])[]) =>
+      Promise.all(keys.map((queryKey) => qc.invalidateQueries({ queryKey }))),
+    [qc],
+  );
+}
