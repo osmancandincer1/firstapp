@@ -120,7 +120,9 @@
     "month": "Ay",
     "year": "Yıl",
     "invalid": "Geçerli bir tarih gir.",
-    "locked": "18 yaşından küçükler kayıt olamaz. {{time}} sonra yeniden deneyebilirsin."
+    "locked": "18 yaşından küçükler kayıt olamaz. {{time}} sonra yeniden deneyebilirsin.",
+    "monthNames": "Ocak,Şubat,Mart,Nisan,Mayıs,Haziran,Temmuz,Ağustos,Eylül,Ekim,Kasım,Aralık",
+    "summary": "{{date}} · {{age}} yaşındasın"
   },
   "consents": {
     "title": "Onayların",

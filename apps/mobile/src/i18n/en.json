@@ -120,7 +120,9 @@
     "month": "Month",
     "year": "Year",
     "invalid": "Enter a valid date.",
-    "locked": "People under 18 cannot sign up. You can try again in {{time}}."
+    "locked": "People under 18 cannot sign up. You can try again in {{time}}.",
+    "monthNames": "January,February,March,April,May,June,July,August,September,October,November,December",
+    "summary": "{{date}} · you are {{age}}"
   },
   "consents": {
     "title": "Your consents",

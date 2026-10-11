@@ -1,11 +1,11 @@
 import { CONSENT_TYPES } from '@nokuzo/shared';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { router, resetRouter } from '@/test/router';
 import { renderWithProviders } from '@/test/render';
 import * as api from './api';
-import { AGE_LOCK_KEY, BirthDateScreen, toIsoDate } from './BirthDateScreen';
+import { AGE_LOCK_KEY, BirthDateScreen, daysInMonth, toIsoDate } from './BirthDateScreen';
 import { ConsentsScreen } from './ConsentsScreen';
 import { LivenessScreen } from './LivenessScreen';
 import { PhoneScreen } from './PhoneScreen';
@@ -50,32 +50,79 @@ describe('PhoneScreen', () => {
 });
 
 describe('BirthDateScreen (AUTH-01)', () => {
+  const MONTHS = [
+    'Ocak',
+    'Şubat',
+    'Mart',
+    'Nisan',
+    'Mayıs',
+    'Haziran',
+    'Temmuz',
+    'Ağustos',
+    'Eylül',
+    'Ekim',
+    'Kasım',
+    'Aralık',
+  ];
+  const choose = (wheel: string, label: string) =>
+    fireEvent.press(
+      within(screen.getByTestId(`wheel-${wheel}`)).getByText(label, {
+        includeHiddenElements: true,
+      }),
+    );
   const fill = async (d: string, m: string, y: string) => {
-    await fireEvent.changeText(screen.getByLabelText('Gün'), d);
-    await fireEvent.changeText(screen.getByLabelText('Ay'), m);
-    await fireEvent.changeText(screen.getByLabelText('Yıl'), y);
+    await choose('day', d);
+    await choose('month', MONTHS[Number(m) - 1]!);
+    await choose('year', y);
   };
 
-  it('builds ISO dates', () => {
+  it('builds ISO dates and knows month lengths', () => {
     expect(toIsoDate('7', '5', '1990')).toBe('1990-05-07');
     expect(toIsoDate('', '5', '1990')).toBeNull();
     expect(toIsoDate('7', '5', '90')).toBeNull();
+    expect(daysInMonth(2, 1990)).toBe(28);
+    expect(daysInMonth(2, 2000)).toBe(29);
+    expect(daysInMonth(2, null)).toBe(29);
+    expect(daysInMonth(4, 1990)).toBe(30);
+  });
+
+  it('starts with nothing chosen, so no default date can be sent by accident', async () => {
+    await renderWithProviders(<BirthDateScreen />);
+    expect(screen.getByLabelText('Gün')).toHaveAccessibilityValue({ text: '—' });
+    expect(screen.getByRole('button', { name: 'Devam' })).toBeDisabled();
   });
 
   it('submits an adult date and returns to the gate', async () => {
     mocked.submitBirthDate.mockResolvedValue({ ok: true, data: { ok: true } });
     await renderWithProviders(<BirthDateScreen />);
     await fill('7', '5', '1990');
+    expect(screen.getByTestId('birth-date-summary')).toHaveTextContent(
+      /^7 Mayıs 1990 · \d+ yaşındasın$/,
+    );
     await fireEvent.press(screen.getByRole('button', { name: 'Devam' }));
     expect(mocked.submitBirthDate).toHaveBeenCalledWith('1990-05-07');
     await waitFor(() => expect(router.replace).toHaveBeenCalledWith('/'));
   });
 
-  it('warns about impossible dates and keeps the button off', async () => {
+  it('keeps the day valid when the month or year changes (no 31 February)', async () => {
     await renderWithProviders(<BirthDateScreen />);
-    await fill('31', '2', '1990');
-    expect(screen.getByText('Geçerli bir tarih gir.')).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Devam' })).toBeDisabled();
+    await choose('day', '31');
+    await choose('month', 'Şubat');
+    expect(screen.getByLabelText('Gün')).toHaveAccessibilityValue({ text: '29' });
+    await choose('year', '1990');
+    expect(screen.getByLabelText('Gün')).toHaveAccessibilityValue({ text: '28' });
+    expect(screen.queryByText('Geçerli bir tarih gir.')).toBeNull();
+  });
+
+  it('can be used with a screen reader (adjustable wheels)', async () => {
+    await renderWithProviders(<BirthDateScreen />);
+    const day = screen.getByLabelText('Gün');
+    expect(day).toHaveProp('accessibilityRole', 'adjustable');
+    await fireEvent(day, 'accessibilityAction', { nativeEvent: { actionName: 'increment' } });
+    await fireEvent(day, 'accessibilityAction', { nativeEvent: { actionName: 'increment' } });
+    expect(day).toHaveAccessibilityValue({ text: '2' });
+    await fireEvent(day, 'accessibilityAction', { nativeEvent: { actionName: 'decrement' } });
+    expect(day).toHaveAccessibilityValue({ text: '1' });
   });
 
   it('sends an under-age date to the server, then locks this device for 24 hours', async () => {
