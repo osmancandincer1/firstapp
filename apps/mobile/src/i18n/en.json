@@ -218,6 +218,319 @@
     "service_unavailable": "This feature is not available right now. Please try again later.",
     "internal": "Something went wrong. Try again.",
     "network": "No internet connection. Try again once you are online.",
-    "not_configured": "No server connected."
+    "not_configured": "No server connected.",
+    "text_blocked": "This text was not accepted.",
+    "change_limited": "You changed this recently; you can try again later.",
+    "photo_limit": "You can add up to 6 photos.",
+    "not_found": "Not found. Refresh and try again."
+  },
+  "profile": {
+    "saved": "Saved",
+    "pendingReview": "Your change is being reviewed; the previous version stays visible until it is approved.",
+    "textBlocked": {
+      "contact_info": "Contact details, social media handles or numbers are not allowed.",
+      "link": "Links are not allowed.",
+      "profanity": "This wording goes against the community guidelines."
+    },
+    "basics": {
+      "title": "Let us get to know you",
+      "subtitle": "Your name and who you want to see.",
+      "name": "Your name",
+      "nameHelp": "Shown on your profile. You can change it once every 30 days.",
+      "gender": "Gender",
+      "genders": {
+        "woman": "Woman",
+        "man": "Man",
+        "nonbinary": "Non-binary",
+        "self_described": "Self-described"
+      },
+      "genderCustom": "Your own description",
+      "showGender": "Show my gender on my profile",
+      "seeking": "Who do you want to see?",
+      "seekingOptions": {
+        "women": "Women",
+        "men": "Men",
+        "nonbinary": "Non-binary people"
+      },
+      "everyone": "Everyone"
+    },
+    "photos": {
+      "title": "Your photos",
+      "subtitle": "At least 3, at most 6 photos. The first must clearly show your own face.",
+      "add": "Add a photo",
+      "main": "Main photo",
+      "makeMain": "Make main",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "delete": "Delete",
+      "caption": "Caption (optional)",
+      "uploading": "Uploading…",
+      "limit": "You can add up to 6 photos.",
+      "needMore": "You need at least 3 approved photos to continue.",
+      "tooSmall": "This photo is too small; the short side must be at least 800 pixels.",
+      "slot": "Photo {{index}}",
+      "status": {
+        "pending": "Uploading",
+        "approved": "Live",
+        "review": "In review",
+        "rejected": "Rejected"
+      },
+      "reasons": {
+        "no_face": "Your face is not clearly visible in the main photo.",
+        "not_you": "The person in the photo did not match your liveness check.",
+        "explicit": "Explicit content is not allowed.",
+        "violence": "Photos with violence or weapons are not allowed.",
+        "drugs": "Photos with drugs are not allowed.",
+        "hate": "Hate symbols are not allowed.",
+        "text_contact": "The photo contains contact details or a social media handle.",
+        "too_small": "The photo is too small; the short side must be at least 800 pixels.",
+        "too_large": "The photo is larger than 15 MB.",
+        "unsupported_type": "This file type is not supported.",
+        "corrupt": "The file could not be read.",
+        "possible_minor": "A person needs to review this.",
+        "text": "In review because of the text in the photo.",
+        "under_review": "Our moderation team will review it."
+      }
+    },
+    "intent": {
+      "title": "What are you looking for?",
+      "subtitle": "Your intent card is shown on your profile.",
+      "intentLabel": "Looking for",
+      "intents": {
+        "long_term": "A long-term relationship",
+        "serious_unhurried": "Serious, but no rush",
+        "unsure": "Not sure yet",
+        "friendship": "Friendship"
+      },
+      "tempoLabel": "Pace",
+      "tempos": {
+        "meet_soon": "Let us meet soon",
+        "chat_first": "Chat a little first",
+        "slow": "I like to take it slow"
+      },
+      "dealbreakers": "My must-haves (optional)",
+      "dealbreakersHelp": "Pick up to 3 fields and tick the options you accept. The Round will not show people who do not fit.",
+      "limit": "You can pick up to 3 fields."
+    },
+    "door": {
+      "title": "Your Door Question",
+      "subtitle": "People who want to reach you will answer this question. You can change it once a week.",
+      "presets": "Ready-made questions",
+      "custom": "Write your own",
+      "customLabel": "Your question",
+      "customHelp": "8–90 characters. Reviewed by moderation.",
+      "categories": {
+        "food": "Food and drink",
+        "fun": "Fun",
+        "travel": "Travel",
+        "music_film": "Music and film",
+        "everyday": "Everyday",
+        "values": "Values",
+        "imagination": "Imagination",
+        "together": "Together"
+      }
+    },
+    "interests": {
+      "title": "Your interests",
+      "subtitle": "Pick between 5 and 10.",
+      "count": "{{count}} / 10 selected",
+      "more": "Add more details (optional)",
+      "categories": {
+        "outdoors": "Outdoors",
+        "sports": "Sports",
+        "creative": "Creative",
+        "music": "Music",
+        "screen": "Film and TV",
+        "reading": "Reading and writing",
+        "food": "Food and drink",
+        "travel": "Travel",
+        "games": "Games",
+        "learning": "Learning",
+        "social": "Social",
+        "wellbeing": "Wellbeing"
+      }
+    },
+    "location": {
+      "title": "Where are you?",
+      "subtitle": "Others only see your district (or city); distance is never shown as a number.",
+      "city": "City",
+      "search": "Search for a city",
+      "district": "District",
+      "useLocation": "Use my approximate location",
+      "locationHelp": "Optional. Your location is rounded to about 1 km; the exact location is never stored.",
+      "locationOn": "Approximate location added.",
+      "permissionDenied": "Location permission was not given. You can turn it on in settings; choosing a city is enough."
+    },
+    "details": {
+      "title": "More about you",
+      "subtitle": "All optional. For each one you choose whether it is shown on your profile.",
+      "show": "Show on profile",
+      "favoritesHelp": "Separate with commas, up to 3.",
+      "clear": "Clear",
+      "fields": {
+        "height": "Height (cm)",
+        "education": "Education",
+        "school": "School",
+        "occupation": "Job",
+        "workplace": "Workplace",
+        "smoking": "Smoking",
+        "alcohol": "Drinking",
+        "children": "Children",
+        "wants_children": "Wants children",
+        "pets": "Pets",
+        "sports": "Exercise",
+        "diet": "Diet",
+        "sleep": "Sleep schedule",
+        "languages": "Languages",
+        "hometown_city_id": "Hometown",
+        "zodiac": "Star sign",
+        "first_date": "First date idea",
+        "music": "Music",
+        "films": "Films",
+        "books": "Books",
+        "about": "About me"
+      },
+      "options": {
+        "education": {
+          "high_school": "High school",
+          "associate": "Associate degree",
+          "bachelor": "Bachelor’s",
+          "master": "Master’s",
+          "doctorate": "Doctorate",
+          "prefer_not": "Prefer not to say"
+        },
+        "smoking": {
+          "never": "Never",
+          "social": "Socially",
+          "regularly": "Regularly",
+          "trying_to_quit": "Trying to quit"
+        },
+        "alcohol": {
+          "never": "Never",
+          "rarely": "Rarely",
+          "socially": "Socially",
+          "often": "Often"
+        },
+        "children": {
+          "has": "Have children",
+          "has_not": "No children"
+        },
+        "wants_children": {
+          "want": "Want children",
+          "dont_want": "Do not want",
+          "not_sure": "Not sure",
+          "maybe": "Maybe"
+        },
+        "pets": {
+          "cat": "Cat",
+          "dog": "Dog",
+          "other": "Other",
+          "none_but_love": "None, but I love them",
+          "allergic": "Allergic"
+        },
+        "sports": {
+          "never": "Never",
+          "sometimes": "Sometimes",
+          "regularly": "Regularly"
+        },
+        "diet": {
+          "everything": "Everything",
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "other": "Other"
+        },
+        "sleep": {
+          "morning": "Morning person",
+          "night_owl": "Night owl",
+          "varies": "It varies"
+        },
+        "zodiac": {
+          "aries": "Aries",
+          "taurus": "Taurus",
+          "gemini": "Gemini",
+          "cancer": "Cancer",
+          "leo": "Leo",
+          "virgo": "Virgo",
+          "libra": "Libra",
+          "scorpio": "Scorpio",
+          "sagittarius": "Sagittarius",
+          "capricorn": "Capricorn",
+          "aquarius": "Aquarius",
+          "pisces": "Pisces"
+        },
+        "first_date": {
+          "coffee": "Coffee",
+          "walk": "A walk",
+          "dinner": "Dinner",
+          "art_music": "Exhibition or concert",
+          "any": "Anything"
+        }
+      }
+    },
+    "languages": {
+      "tr": "Turkish",
+      "en": "English",
+      "de": "German",
+      "fr": "French",
+      "es": "Spanish",
+      "it": "Italian",
+      "ru": "Russian",
+      "ar": "Arabic",
+      "ku": "Kurdish",
+      "fa": "Persian",
+      "az": "Azerbaijani",
+      "el": "Greek",
+      "nl": "Dutch",
+      "pt": "Portuguese",
+      "ja": "Japanese",
+      "zh": "Chinese"
+    },
+    "voice": {
+      "title": "Voice card",
+      "subtitle": "A short 5–20 second recording. Optional.",
+      "prompt": "Pick a prompt",
+      "record": "Start recording",
+      "stop": "Stop",
+      "recording": "Recording: {{seconds}} s",
+      "tooShort": "The recording must be at least 5 seconds.",
+      "play": "Listen",
+      "upload": "Save",
+      "remove": "Delete voice card",
+      "permission": "Microphone permission is needed to record.",
+      "reasons": {
+        "duration": "The recording must be 5–20 seconds.",
+        "too_large": "The recording is too large.",
+        "unsupported_type": "The recording could not be read."
+      }
+    },
+    "preview": {
+      "title": "How others see you",
+      "verified": "Verified",
+      "ageCity": "{{age}} · {{place}}",
+      "door": "Door Question",
+      "interests": "Interests",
+      "about": "About me",
+      "empty": "Nothing visible yet."
+    },
+    "home": {
+      "title": "Your profile",
+      "active": "Your profile is ready. The Rounds open in phase 3.",
+      "preview": "How others see you",
+      "sections": {
+        "basics": "Name and gender",
+        "photos": "Photos",
+        "intent": "Intent card",
+        "door": "Door Question",
+        "interests": "Interests",
+        "location": "Location",
+        "details": "More about you",
+        "voice": "Voice card"
+      },
+      "pending": "{{count}} change(s) in review"
+    },
+    "reverify": {
+      "title": "Your main photo changed",
+      "body": "We need to check again that the person in your photos is you."
+    }
   }
 }

@@ -49,6 +49,9 @@ export class FakeDb implements Db {
     consentsComplete: false,
     livenessVerified: false,
     idRequired: false,
+    basicsComplete: false,
+    photosComplete: false,
+    reverifyRequired: false,
   };
   versions: Partial<Record<ConsentType, string>> = {};
   flags = new Map<string, unknown>();

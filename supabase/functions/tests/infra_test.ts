@@ -328,3 +328,36 @@ Deno.test(
     assertEquals([fine.status, await fine.json()], [200, {}]);
   },
 );
+
+Deno.test(
+  'AWS image moderation: maps labels, OCR lines and face ages; mock and null follow the liveness switch',
+  async () => {
+    const { AwsImageModeration, imageModeration, MockImageModeration } =
+      await import('../_shared/providers/imageModeration.ts');
+    const replies: Record<string, unknown> = {
+      DetectModerationLabelsCommand: {
+        ModerationLabels: [{ Name: 'Weapons', ParentName: 'Violence', Confidence: 91.5 }],
+      },
+      DetectTextCommand: {
+        TextDetections: [
+          { Type: 'LINE', DetectedText: 'insta: ece' },
+          { Type: 'WORD', DetectedText: 'insta:' },
+        ],
+      },
+      DetectFacesCommand: { FaceDetails: [{ AgeRange: { Low: 24, High: 31 } }, {}] },
+    };
+    const client = {
+      send: (c: unknown) => Promise.resolve(replies[(c as object).constructor.name]),
+    };
+    assertEquals(await new AwsImageModeration(client).analyze(new Uint8Array([1])), {
+      labels: [{ name: 'Weapons', parent: 'Violence', confidence: 91.5 }],
+      texts: ['insta: ece'],
+      faces: [{ ageLow: 24, ageHigh: 31 }],
+    });
+    assertEquals(imageModeration(parseServerEnv(base)), null);
+    assert(
+      imageModeration(parseServerEnv({ ...base, LIVENESS_PROVIDER: 'mock' })) instanceof
+        MockImageModeration,
+    );
+  },
+);

@@ -1,0 +1,357 @@
+{
+  "_note": "Door Question presets (APP.md §4.2: at least 80, TR/EN). Edited later from the admin panel (§14).",
+  "questions": [
+    [
+      "food",
+      "Pazar kahvaltısı: serpme mi, simit-çay mı?",
+      "Sunday breakfast: a big spread or simit and tea?"
+    ],
+    [
+      "food",
+      "Bir şehre gidince ilk neyi yemeye koşarsın?",
+      "What is the first thing you rush to eat in a new city?"
+    ],
+    [
+      "food",
+      "Hayatında yediğin en iyi yemek neydi ve nerede?",
+      "What was the best meal of your life, and where?"
+    ],
+    [
+      "food",
+      "Mutfakta en iddialı olduğun tarif hangisi?",
+      "Which recipe are you proudest of in the kitchen?"
+    ],
+    ["food", "Gece yarısı acıkınca ne yersin?", "What do you eat when you get hungry at midnight?"],
+    [
+      "food",
+      "Kahveni nasıl içersin, hikâyesi var mı?",
+      "How do you take your coffee, and is there a story behind it?"
+    ],
+    [
+      "food",
+      "Asla tatmayacağım dediğin bir yemek var mı?",
+      "Is there a dish you swear you will never try?"
+    ],
+    ["food", "Seni en iyi anlatan meze hangisi olurdu?", "Which meze would best describe you?"],
+    ["food", "Çay mı kahve mi, ve neden?", "Tea or coffee, and why?"],
+    [
+      "food",
+      "Annenden/babandan kalan en sevdiğin tarif ne?",
+      "What is your favourite recipe from your family?"
+    ],
+    [
+      "fun",
+      "En son neye kahkahayla güldün?",
+      "What was the last thing that made you laugh out loud?"
+    ],
+    [
+      "fun",
+      "Karaoke'de mikrofonu kaptığında hangi şarkıyı söylersin?",
+      "When you grab the karaoke mic, what do you sing?"
+    ],
+    [
+      "fun",
+      "Kimsenin bilmediği tuhaf bir yeteneğin var mı?",
+      "Do you have a strange talent nobody knows about?"
+    ],
+    [
+      "fun",
+      "Bir oyun gecesinde hangi oyunda rakipsizsin?",
+      "Which game are you unbeatable at on a game night?"
+    ],
+    [
+      "fun",
+      "Seni en çok güldüren dizi ya da film hangisi?",
+      "Which series or film makes you laugh the most?"
+    ],
+    [
+      "fun",
+      "Bir gün boyunca bir hayvan olsan hangisi olurdun?",
+      "If you were an animal for a day, which would you be?"
+    ],
+    [
+      "fun",
+      "En utanç verici ama tatlı anını anlatır mısın?",
+      "Will you tell me your most embarrassing but sweet moment?"
+    ],
+    [
+      "fun",
+      "Bir süper gücün olsa ama çok gereksiz olsa, ne olurdu?",
+      "If you had a completely useless superpower, what would it be?"
+    ],
+    ["fun", "Telefonunda en çok kullandığın emoji hangisi?", "Which emoji do you use the most?"],
+    [
+      "fun",
+      "Bir yarışma programına katılsan hangisinde şansın olurdu?",
+      "Which quiz or game show would you actually have a chance in?"
+    ],
+    [
+      "travel",
+      "Bir hafta sonu için bavulunu toplasan nereye gidersin?",
+      "If you packed a bag for one weekend, where would you go?"
+    ],
+    [
+      "travel",
+      "Türkiye'de herkese önerdiğin gizli bir köşe var mı?",
+      "Is there a hidden spot in Türkiye you recommend to everyone?"
+    ],
+    [
+      "travel",
+      "Deniz mi dağ mı, ve hangi sahil ya da zirve?",
+      "Sea or mountains, and which beach or peak?"
+    ],
+    ["travel", "En unutamadığın yolculuk hangisiydi?", "Which trip will you never forget?"],
+    [
+      "travel",
+      "Bir yıl başka bir şehirde yaşasan neresi olurdu?",
+      "If you lived in another city for a year, which would it be?"
+    ],
+    ["travel", "Kamp mı butik otel mi?", "Camping or a boutique hotel?"],
+    [
+      "travel",
+      "Gittiğin bir yerden getirdiğin en tuhaf hatıra ne?",
+      "What is the strangest souvenir you have brought home?"
+    ],
+    [
+      "travel",
+      "Bir sonraki tatilini kim planlıyor: sen mi, şans mı?",
+      "Who plans your next holiday: you or chance?"
+    ],
+    [
+      "travel",
+      "Uçak, tren, araba: yolculuğun en güzel hâli hangisi?",
+      "Plane, train or car: what is the best way to travel?"
+    ],
+    [
+      "travel",
+      "Bir ülkenin dilini bir gecede öğrenebilsen hangisi olurdu?",
+      "If you could learn a language overnight, which would it be?"
+    ],
+    ["music_film", "Beni hangi konsere götürürdün?", "Which concert would you take me to?"],
+    [
+      "music_film",
+      "Tekrar tekrar izlediğin film hangisi?",
+      "Which film do you watch again and again?"
+    ],
+    [
+      "music_film",
+      "Arabada sesi sonuna kadar açtığın şarkı ne?",
+      "Which song do you turn all the way up in the car?"
+    ],
+    [
+      "music_film",
+      "Hayatının film müziği olsa hangi şarkıyla başlardı?",
+      "If your life had a soundtrack, which song would open it?"
+    ],
+    [
+      "music_film",
+      "Son okuduğun ve elinden bırakamadığın kitap ne?",
+      "What is the last book you could not put down?"
+    ],
+    [
+      "music_film",
+      "Bir diziyi bir haftada bitirdiysen hangisiydi?",
+      "Which series did you finish in a single week?"
+    ],
+    [
+      "music_film",
+      "Herkesin sevdiği ama senin hiç sevmediğin bir film?",
+      "A film everybody loves but you never did?"
+    ],
+    [
+      "music_film",
+      "Hangi şarkının sözlerini ezbere bilirsin?",
+      "Which song do you know all the words to?"
+    ],
+    [
+      "music_film",
+      "Canlı izlemek istediğin ama kaçırdığın sanatçı kim?",
+      "Which artist do you wish you had seen live?"
+    ],
+    [
+      "music_film",
+      "Bir film karakteri olsan hangisi olurdun?",
+      "If you were a film character, who would you be?"
+    ],
+    ["everyday", "Mükemmel bir pazar gününü anlat.", "Describe a perfect Sunday."],
+    [
+      "everyday",
+      "Sabah insanı mısın, gece kuşu mu? Kanıtla.",
+      "Morning person or night owl? Prove it."
+    ],
+    [
+      "everyday",
+      "Bu ay kendine verdiğin küçük bir söz ne?",
+      "What small promise have you made to yourself this month?"
+    ],
+    [
+      "everyday",
+      "Şehirde en sevdiğin yürüyüş rotası hangisi?",
+      "What is your favourite walking route in the city?"
+    ],
+    ["everyday", "Kendini nasıl ödüllendirirsin?", "How do you treat yourself?"],
+    ["everyday", "Evinde mutlaka bulunan üç şey ne?", "What three things are always in your home?"],
+    [
+      "everyday",
+      "Son zamanlarda öğrendiğin en ilginç şey ne?",
+      "What is the most interesting thing you learned recently?"
+    ],
+    [
+      "everyday",
+      "Bir gününü güzelleştiren en küçük şey ne?",
+      "What is the smallest thing that makes your day better?"
+    ],
+    [
+      "everyday",
+      "Bir hobiye başlamak için hiç geç değil; seninki ne olurdu?",
+      "It is never too late for a new hobby; what would yours be?"
+    ],
+    [
+      "everyday",
+      "Hafta içi akşamlarını nasıl geçirirsin?",
+      "How do you spend your weekday evenings?"
+    ],
+    [
+      "values",
+      "Arkadaşların seni üç kelimeyle nasıl anlatır?",
+      "How would your friends describe you in three words?"
+    ],
+    ["values", "Seni en çok ne heyecanlandırır?", "What excites you the most?"],
+    [
+      "values",
+      "Fikrini değiştiren son tartışma neydi?",
+      "What was the last conversation that changed your mind?"
+    ],
+    [
+      "values",
+      "Gurur duyduğun ama pek anlatmadığın bir şey ne?",
+      "What are you proud of but rarely talk about?"
+    ],
+    [
+      "values",
+      "İyi bir dinleyici misin, iyi bir anlatıcı mı?",
+      "Are you a better listener or storyteller?"
+    ],
+    [
+      "values",
+      "Gönüllü olarak zaman ayırdığın bir şey var mı?",
+      "Is there something you volunteer your time for?"
+    ],
+    [
+      "values",
+      "Senin için iyi bir arkadaşlığın tek kuralı ne?",
+      "What is the one rule of a good friendship for you?"
+    ],
+    ["values", "Hangi konuda saatlerce konuşabilirsin?", "What could you talk about for hours?"],
+    ["values", "Hayatında en çok öğrendiğin hata neydi?", "Which mistake taught you the most?"],
+    [
+      "values",
+      "Bir yıl sonra kendine ne söylemek isterdin?",
+      "What would you like to tell yourself a year from now?"
+    ],
+    [
+      "imagination",
+      "Bir zaman makinen olsa hangi yıla giderdin?",
+      "If you had a time machine, which year would you visit?"
+    ],
+    [
+      "imagination",
+      "Piyangoyu kazansan ilk yapacağın şey ne?",
+      "What is the first thing you would do if you won the lottery?"
+    ],
+    [
+      "imagination",
+      "Bir ıssız adaya üç şey götürsen neler olurdu?",
+      "Which three things would you take to a desert island?"
+    ],
+    [
+      "imagination",
+      "Hayalindeki küçük işletme ne olurdu?",
+      "What would your dream small business be?"
+    ],
+    [
+      "imagination",
+      "Tarihten biriyle yemek yesen kim olurdu?",
+      "Who from history would you have dinner with?"
+    ],
+    [
+      "imagination",
+      "Bir gün boyunca görünmez olsan ne yapardın?",
+      "What would you do if you were invisible for a day?"
+    ],
+    [
+      "imagination",
+      "Kendi festivalini düzenlesen adı ne olurdu?",
+      "If you organised your own festival, what would it be called?"
+    ],
+    [
+      "imagination",
+      "Hayatını bir romana çevirsek ilk cümle ne olurdu?",
+      "If your life were a novel, what would the first sentence be?"
+    ],
+    [
+      "imagination",
+      "Bir dili ya da enstrümanı anında bilsen hangisi olurdu?",
+      "Which language or instrument would you love to master instantly?"
+    ],
+    [
+      "imagination",
+      "Ünlü olsan neyle ünlü olmak isterdin?",
+      "If you were famous, what would you like to be famous for?"
+    ],
+    [
+      "together",
+      "İlk buluşma için en iyi plan nedir sence?",
+      "What is your idea of a great first date?"
+    ],
+    [
+      "together",
+      "Birlikte yapılabilecek en güzel hafta sonu aktivitesi ne?",
+      "What is the best weekend activity to do together?"
+    ],
+    [
+      "together",
+      "Seni hemen etkileyen küçük bir jest ne?",
+      "What small gesture wins you over right away?"
+    ],
+    ["together", "Bir sohbeti harika yapan şey ne?", "What makes a conversation great?"],
+    [
+      "together",
+      "Birlikte bir şey öğrenecek olsak ne olsun?",
+      "If we learned something together, what should it be?"
+    ],
+    [
+      "together",
+      "Bana şehrinde hangi yeri göstermek isterdin?",
+      "Which place in your city would you show me first?"
+    ],
+    ["together", "Yağmurlu bir akşam için önerin ne?", "What is your plan for a rainy evening?"],
+    ["together", "Beraber hangi diziye başlamalıyız?", "Which series should we start together?"],
+    ["together", "Bir piknik sepetine ne koyarsın?", "What goes into your picnic basket?"],
+    [
+      "together",
+      "Sence iyi bir mesajlaşma temposu nasıl olur?",
+      "What does a good texting rhythm look like to you?"
+    ],
+    [
+      "everyday",
+      "Telefonundaki en son fotoğraf neyin fotoğrafı?",
+      "What is the most recent photo on your phone of?"
+    ],
+    [
+      "fun",
+      "Hangi konuda sonsuza kadar tartışabilirsin: ananas pizza mı?",
+      "What could you argue about forever: pineapple on pizza?"
+    ],
+    [
+      "music_film",
+      "Seni ağlatan son film ya da şarkı hangisiydi?",
+      "What was the last film or song that made you cry?"
+    ],
+    [
+      "travel",
+      "Bir şehri tanımak için ilk ne yaparsın?",
+      "What do you do first to get to know a new city?"
+    ]
+  ]
+}

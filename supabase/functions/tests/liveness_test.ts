@@ -9,7 +9,13 @@ import { ctx, env, FakeAuth, FakeDb, FakeLiveness, SECRET } from './fakes.ts';
 
 function deps() {
   const db = new FakeDb();
-  db.state = { ...db.state!, phoneVerified: true, birthDate: '1990-01-01', consentsComplete: true };
+  db.state = {
+    ...db.state!,
+    phoneVerified: true,
+    birthDate: '1990-01-01',
+    consentsComplete: true,
+    basicsComplete: true,
+  };
   const auth = new FakeAuth();
   auth.addUser('tok', 'user-1');
   const provider = new FakeLiveness();
@@ -147,3 +153,16 @@ Deno.test('liveness complete: unknown sessions and bad input are refused', async
     409,
   );
 });
+
+Deno.test(
+  'liveness start: needs the basics step first, and allows a repeat check (VER-07)',
+  async () => {
+    const { d, db } = deps();
+    db.state = { ...db.state!, basicsComplete: false };
+    assertEquals((await startLiveness(d, 'tok', ctx)).status, 409);
+    db.state = { ...db.state!, status: 'active', livenessVerified: true, reverifyRequired: true };
+    assert((await startLiveness(d, 'tok', ctx)).ok);
+    db.state = { ...db.state!, reverifyRequired: false };
+    assertEquals((await startLiveness(d, 'tok', ctx)).status, 409);
+  },
+);

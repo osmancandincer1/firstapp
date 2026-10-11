@@ -41,14 +41,17 @@ async function eligibleUser(deps: LivenessDeps, token: string | null): Promise<E
   const user = token ? await deps.auth.userFromToken(token) : null;
   if (!user) return { kind: 'error', error: fail(401, 'not_authenticated') };
   const state = await deps.db.profileState(user.id);
-  // Biometric consent is part of the consents step, which must be complete (§6.1, §17).
-  if (
-    !state ||
-    state.status !== 'onboarding' ||
-    !state.consentsComplete ||
-    state.livenessVerified ||
-    state.idRequired
-  ) {
+  // First check: after consents (biometric consent, §17) and basics (§6.1 step 7 → 8).
+  const firstCheck =
+    state?.status === 'onboarding' &&
+    state.consentsComplete &&
+    state.basicsComplete &&
+    !state.livenessVerified &&
+    !state.idRequired;
+  // Repeat check after the main photo changed (VER-07).
+  const recheck =
+    Boolean(state?.reverifyRequired) && ['onboarding', 'active', 'paused'].includes(state!.status);
+  if (!firstCheck && !recheck) {
     return { kind: 'error', error: fail(409, 'wrong_step') };
   }
   return { kind: 'ok', user };

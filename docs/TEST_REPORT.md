@@ -4,6 +4,59 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ---
 
+## Faz 2 — Profil · 2026-10-12
+
+**Ortam:** önceki fazlarla aynı makine; Docker hâlâ çalışmıyor.
+
+### Özet
+
+| Katman                              | Komut                                                               | Sonuç                                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 394 = EN 394 anahtar                                                   |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **128/128** · satır kapsamı **%100**                                                   |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                                              |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **109/109** · satır kapsamı %88 (eşik %80)                                             |
+| Edge Functions                      | `npm run functions:check` (18 fonksiyon) + `npm run functions:test` | **0 tip hatası · 86/86** · servis satır kapsamı: media %95, profile %91+, liveness %99 |
+| Veritabanı (pgTAP), PGlite          | göçler + içerik + yerel tohum + 3 test dosyası                      | **125/125** (Faz 0: 13, Faz 1: 57, Faz 2: 55)                                          |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db`                                              | **ÇALIŞTIRILAMADI** (Docker; CI'daki `database` işi çalıştıracak)                      |
+| Mobil paketleme                     | `expo export --platform android --platform web`                     | **başarılı** (Android 7,2 MB, web 4,3 MB)                                              |
+| Expo yapılandırması                 | `expo-doctor`                                                       | **21/21**                                                                              |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                                                       |
+
+### Faz 2 kabul kriterleri (APP.md §21)
+
+| Kriter                                                         | Durum     | Kanıt                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Moderasyondan geçmemiş görsel başka kullanıcıya servis edilmez | **Geçti** | `02_profile.test.sql`: kovalar özel; karantinadaki nesne sahibine bile listelenmiyor; herkese açık profilde yalnızca onaylı fotoğraflar var. `profile_test.ts`: incelemedeki ve reddedilen fotoğraf `public-photos`'a hiç yazılmıyor; moderasyon sağlayıcısı yokken hiçbir şey kendiliğinden yayına girmiyor |
+| Ret gerekçesi görünür                                          | **Geçti** | `02_profile.test.sql` (gerekçe saklanıyor), `profile.test.tsx` (ekranda "Ana fotoğrafta yüzün net görünmüyor." vb.), metin retlerinde alan ve gerekçe (`text_blocked`)                                                                                                                                       |
+
+### Test kataloğu eşlemesi (§16.3)
+
+| Test                                                                                    | Durum                            | Nerede                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRO-01 Karantinadaki görsel hiçbir yoldan servis edilmez                                | Geçti                            | `02_profile.test.sql`, `profile_test.ts`                                                                                                                                           |
+| PRO-02 EXIF/GPS kalmaz                                                                  | Geçti                            | `media_test.ts` (JPEG: EXIF, GPS, XMP, IPTC, yorum; PNG: tEXt, eXIf), `profile_test.ts` (yayınlanan ve incelemedeki kopya)                                                         |
+| PRO-03 Desteklenmeyen tür, aşırı boyut, bozuk dosya                                     | Geçti                            | `media_test.ts`, `profile_test.ts`                                                                                                                                                 |
+| PRO-04 Müstehcen etiketli görsel reddedilir, gerekçe gösterilir                         | Geçti                            | `moderation.test.ts`, `profile_test.ts`, `profile.test.tsx`                                                                                                                        |
+| PRO-05 İmzalı URL süresi dolunca çalışmaz                                               | Kısmen                           | URL'lerin 10 dakikalık süreyle istendiği test edildi (`profile_test.ts`). Sürenin dolunca gerçekten reddedildiği Supabase Storage'ın davranışı; gerçek ortamda **ÇALIŞTIRILAMADI** |
+| PRO-06 "Profilde gösterme" alanı hiçbir yanıtta dönmez                                  | Geçti                            | `02_profile.test.sql` (gizli boy, gizli cinsiyet)                                                                                                                                  |
+| PRO-07 Doğum tarihi, e-posta, telefon, koordinat, risk puanı herkese açık görünümde yok | Geçti                            | `02_profile.test.sql`                                                                                                                                                              |
+| PRO-08 Düzenleme onaylanana kadar eski sürüm yayında                                    | Geçti                            | `02_profile.test.sql`, `profile_test.ts`, `profile.test.tsx`                                                                                                                       |
+| PRO-09 Alan sınırları (ad, hakkımda, Kapı Sorusu, 3–6 fotoğraf, 5–10 ilgi)              | Geçti                            | `profile.test.ts`, `02_profile.test.sql`, `profile.test.tsx`                                                                                                                       |
+| VER-02 Fotoğraf canlılık yüzüyle eşleşmezse yayınlanmaz                                 | Geçti (ana fotoğraf için, D-036) | `moderation.test.ts`, `profile_test.ts`                                                                                                                                            |
+| VER-07 Ana fotoğraf değişince yeniden doğrulama                                         | Geçti                            | `02_profile.test.sql`, `rules.test.ts`, `liveness_test.ts`                                                                                                                         |
+
+### ÇALIŞTIRILAMAYAN / EKSİK
+
+- **pgTAP, gerçek Supabase'de: ÇALIŞTIRILAMADI.** Docker yok. PGlite'ta `storage` şeması taklit edildi; gerçek Supabase Storage'ın kendi tetikleyicileri ve politikaları farklı olabilir. **Nasıl çalıştırılır:** CI'daki `database` işi ya da `npx supabase start` + `npx supabase test db`.
+- **Gerçek yükleme ve indirme: ÇALIŞTIRILAMADI.** İmzalı URL ile yükleme ve süresi dolmuş URL'nin reddedilmesi yalnızca gerçek Supabase Storage'da denenebilir.
+- **AWS görüntü moderasyonu, gerçek hesapla: ÇALIŞTIRILAMADI** (NEEDS_SETUP). Bağdaştırıcı sahte istemciyle test edildi.
+- **CSAM karma eşleştirmesi: YOK** (D-047, yayın engelleyici).
+- **Kamera, mikrofon, konum izinleri gerçek cihazda: ÇALIŞTIRILAMADI.** Testlerde sahtelendi; elle denenmeli (§16.5).
+- **Entegrasyon testi (fonksiyon ↔ veritabanı ↔ depolama): YAZILMADI.** Faz 1'deki gibi Docker bekliyor.
+
+---
+
 ## Faz 1 — Kimlik ve doğrulama · 2026-10-11
 
 **Ortam:** Faz 0 ile aynı makine. Docker daemon hâlâ çalışmıyor (BIOS'ta sanallaştırma kapalı). Deno 2.9.6 projeye npm paketi olarak eklendi.

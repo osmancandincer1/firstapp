@@ -76,6 +76,7 @@ export function handler(
             : json(result.status, {
                 error: result.error,
                 ...(result.retryAt ? { retryAt: result.retryAt } : {}),
+                ...(result.details ?? {}),
               });
         } catch (err) {
           report(`unhandled error: ${(err as Error).name}: ${(err as Error).message}`);

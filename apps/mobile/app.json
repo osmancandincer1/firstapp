@@ -31,7 +31,27 @@
       "expo-status-bar",
       "expo-localization",
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Profil fotoğraflarını seçmen için fotoğraf arşivine erişiyoruz. Yalnızca seçtiğin fotoğraflar yüklenir.",
+          "cameraPermission": "Profil fotoğrafı çekmen için kamerayı kullanıyoruz."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Ses kartını kaydetmen için mikrofonu kullanıyoruz. Kayıt yalnızca sen başlattığında yapılır."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Sana yakın kişileri göstermek için yaklaşık konumunu kullanıyoruz. Konumun yaklaşık 1 km'ye yuvarlanır ve kimseye gösterilmez."
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true

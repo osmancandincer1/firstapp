@@ -72,6 +72,13 @@ npx supabase test db      # pgTAP testleri (Docker gerekir)
 | Moderasyon API'si                     | NEEDS_SETUP                 | `MODERATION_API_KEY`                                                                                                          | Faz 5                                                | Sağlayıcı seçimi                                                                                                                                                                                                    |
 | Vercel                                | NEEDS_SETUP                 | —                                                                                                                             | Site yayını                                          | —                                                                                                                                                                                                                   |
 
+### Faz 2 notları
+
+- Görüntü moderasyonu canlılıkla aynı AWS hesabını kullanır (`LIVENESS_PROVIDER=aws`); ek anahtar yok. Hesap yokken fotoğraflar "inceleniyor"da bekler (D-038).
+- **CSAM karma eşleştirmesi** için sağlayıcı başvurusu gerekiyor (ör. Microsoft PhotoDNA). TODO(owner) — yayın engelleyici (D-047).
+- Açılış şehri belli olunca o şehrin resmî ilçe listesi `districts` tablosuna eklenecek (D-040).
+- İçeriği değiştirdikten sonra: `node scripts/build-content-sql.mjs` (göç dosyası yeniden üretilir).
+
 ### Supabase Auth kancası (uzak proje)
 
 Dashboard → Authentication → Hooks → **Before User Created** → HTTP → `https://<proje>.supabase.co/functions/v1/auth-hook-before-user-created`. Üretilen `v1,whsec_…` sırrını `AUTH_HOOK_SECRET` olarak fonksiyon sırlarına ekle (`npx supabase secrets set AUTH_HOOK_SECRET=…`). Kanca banlı ya da tek kullanımlık e-postayla yeni hesap açılmasını engeller.

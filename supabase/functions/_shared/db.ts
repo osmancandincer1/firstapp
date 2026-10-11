@@ -129,7 +129,7 @@ export class SupabaseDb implements Db {
   }
 
   async profileState(userId: string): Promise<ProfileState | null> {
-    const s = await rpc<Record<string, unknown> | null>(this.c, 'srv_onboarding_state', {
+    const s = await rpc<Record<string, unknown> | null>(this.c, 'srv_onboarding_state_v2', {
       p_user_id: userId,
     });
     if (!s) return null;
@@ -140,6 +140,9 @@ export class SupabaseDb implements Db {
       consentsComplete: Boolean(s.consentsComplete),
       livenessVerified: Boolean(s.livenessVerified),
       idRequired: Boolean(s.idRequired),
+      basicsComplete: Boolean(s.basicsComplete),
+      photosComplete: Boolean(s.photosComplete),
+      reverifyRequired: Boolean(s.reverifyRequired),
     };
   }
 

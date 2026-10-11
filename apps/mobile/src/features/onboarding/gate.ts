@@ -9,6 +9,7 @@ export const ONBOARDING_QUERY_KEY = ['onboarding-state'] as const;
 export interface ServerOnboardingState extends OnboardingState {
   phoneLast2: string | null;
   ageGateLockedUntil: string | null;
+  photosInReview?: boolean;
 }
 
 /** Reads where the signed-in user is in sign-up (server function my_onboarding_state). */
@@ -56,7 +57,14 @@ export const STEP_ROUTES: Record<OnboardingStep, string> = {
   phone: '/onboarding/phone',
   birth_date: '/onboarding/birth-date',
   consents: '/onboarding/consents',
+  basics: '/onboarding/basics',
   liveness: '/onboarding/liveness',
   needs_id: '/onboarding/needs-id',
-  done: '/onboarding/done',
+  photos: '/onboarding/photos',
+  intent: '/onboarding/intent',
+  door_question: '/onboarding/door-question',
+  interests: '/onboarding/interests',
+  location: '/onboarding/location',
+  reverify: '/onboarding/reverify',
+  done: '/profile',
 };

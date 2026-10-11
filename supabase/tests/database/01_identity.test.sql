@@ -174,10 +174,10 @@ reset role;
 update public.feature_flags set value = 'true' where key = 'legal.allow_draft_documents';
 set local role authenticated;
 set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "role": "authenticated"}';
-select is(public.my_onboarding_state() - 'birthDate' - 'ageGateLockedUntil',
+select ok(public.my_onboarding_state() @>
   '{"status": "onboarding", "phoneVerified": true, "phoneLast2": "67", "consentsComplete": true,
     "livenessVerified": false, "idRequired": false}'::jsonb,
-  'the onboarding state reflects what the server knows');
+  'the onboarding state reflects what the server knows (later phases add keys)');
 reset role;
 
 -- Liveness outcomes (VER-01/03, BAN-03/10) --------------------------------------------------

@@ -30,12 +30,25 @@ APP.md §7, §13.7 ve §16.6 hedefleri tanımlar. Bu belge her tehdidi bir teste
 | T-17 | Günlüklerde kişisel veri                                                                     | Beklenmeyen hatalarda yalnızca hata adı ve mesajı yazılır, istek gövdesi yazılmaz; sağlayıcı hata mesajları yanıt gövdesini içermez                                                                                | `infra_test.ts` (http, Resend)                                                                                          |
 | T-18 | Supabase'in yerleşik e-posta OTP'siyle korumaların dışından giriş                            | E-posta kaydı kapalı; Supabase Auth'a SMTP tanımlanmaz (D-020)                                                                                                                                                     | `supabase/config.toml`, `docs/SETUP.md`                                                                                 |
 
+## Faz 2'de eklenen önlemler
+
+| #    | Tehdit                                                 | Önlem                                                                                                                                                                                                   | Kanıt (test / dosya)                              |
+| ---- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| T-19 | Denetlenmemiş görselin başkasına gösterilmesi          | Yüklemeler yalnızca `quarantine` kovasına, tek kullanımlık imzalı URL ile; kovaların hepsi özel, istemci için hiçbir depolama politikası yok; herkese açık profil yalnızca onaylı fotoğrafları içeriyor | `02_profile.test.sql` (PRO-01), `profile_test.ts` |
+| T-20 | Fotoğraftan konum/cihaz bilgisi sızması                | Uygulama JPEG'e yeniden kodluyor; sunucu EXIF/GPS/XMP/IPTC/yorum bölümlerini siliyor (incelemedeki kopya dahil)                                                                                         | `media_test.ts` (PRO-02), `profile_test.ts`       |
+| T-21 | Zararlı / sahte türde dosya                            | Tür dosya imzasından okunuyor (uzantıya güvenilmiyor); yalnızca JPEG/PNG; bozuk yapı reddediliyor; 15 MB sınırı hem kovada hem kodda                                                                    | `media_test.ts` (PRO-03)                          |
+| T-22 | Gizli alanların ya da hassas verinin başkasına gitmesi | Başkalarının göreceği her şey tek bir SQL fonksiyonundan (`srv_public_profile`) çıkıyor; doğum tarihi, iletişim, koordinat, risk puanı ve gizli alanlar orada yok                                       | `02_profile.test.sql` (PRO-06, PRO-07)            |
+| T-23 | Profil metniyle platform dışına çekme                  | Ad, Kapı Sorusu, açıklamalar ve serbest metin alanlarında iletişim bilgisi/bağlantı engelleniyor (boşluklu ve harf-rakam karışık yazımlar dahil)                                                        | `moderation.test.ts`, `profile_test.ts`           |
+| T-24 | Başkasının fotoğrafıyla profil                         | Ana fotoğraf canlılık yüzüyle eşleşmeli; ana fotoğraf değişince yeniden canlılık (VER-07)                                                                                                               | `02_profile.test.sql`, `moderation.test.ts`       |
+| T-25 | Kesin konumun ortaya çıkması                           | Koordinat cihazda ve sunucuda ~1 km ızgaraya yuvarlanıyor; başkalarına yalnızca ilçe/şehir adı gidiyor                                                                                                  | `profile.test.ts` (mobil), `profile_test.ts`      |
+
 ## Bilinen açıklar ve sonraki fazlar
 
 - `npm audit` geliştirme bağımlılıklarında orta/yüksek bulgular gösterebilir (Expo/React Native araç zinciri). Gönderilen pakette kritik bulgu yok; ayrıntı `docs/TEST_REPORT.md`.
 - Hız sınırı ve OTP tablolarının periyodik temizliği (pg_cron) henüz yok; satırlar yalnızca sonraki istekte siliniyor.
 - IP başına hız sınırı, CGNAT nedeniyle gerçek kullanıcıları da durdurabilir (D-022).
 - Cihaz bütünlüğü (App Attest / Play Integrity, §7.3) ve VPN/veri merkezi IP sinyalleri henüz yok (Faz 5 risk puanıyla gelecek).
+- Bilinen CSAM karma eşleştirmesi yok (D-047) — yayın engelleyici.
 - Gerçek kamera canlılık modülü yok (D-028); deepfake/enjeksiyon koruması sağlayıcıya ait ve henüz denenmedi.
 - Yükleme hattı ve imzalı URL'ler: Faz 2. Moderasyon ve risk puanı: Faz 5.
 - Yayın öncesi bağımsız sızma testi: TODO(owner).

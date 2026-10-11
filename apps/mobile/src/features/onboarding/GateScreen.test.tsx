@@ -21,6 +21,7 @@ const base = {
   birthDate: '1990-01-01',
   ageGateLockedUntil: null,
   consentsComplete: true,
+  basicsComplete: true,
   livenessVerified: false,
   idRequired: false,
 } as const;

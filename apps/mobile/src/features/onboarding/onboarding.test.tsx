@@ -9,7 +9,7 @@ import { AGE_LOCK_KEY, BirthDateScreen, toIsoDate } from './BirthDateScreen';
 import { ConsentsScreen } from './ConsentsScreen';
 import { LivenessScreen } from './LivenessScreen';
 import { PhoneScreen } from './PhoneScreen';
-import { BlockedScreen, DoneScreen, NeedsIdScreen } from './StatusScreens';
+import { BlockedScreen, NeedsIdScreen } from './StatusScreens';
 
 jest.mock('expo-router', () => require('@/test/router').routerMock);
 jest.mock('./api');
@@ -25,7 +25,7 @@ describe('PhoneScreen', () => {
   it('normalizes the number and moves to the code screen', async () => {
     mocked.requestPhoneCode.mockResolvedValue({ ok: true, data: { ok: true } });
     await renderWithProviders(<PhoneScreen />);
-    expect(screen.getByRole('progressbar', { name: 'Adım 1 / 4' })).toBeOnTheScreen();
+    expect(screen.getByRole('progressbar', { name: 'Adım 1 / 10' })).toBeOnTheScreen();
     const send = screen.getByRole('button', { name: 'Kod gönder' });
     await fireEvent.changeText(screen.getByLabelText('Cep telefonu'), '0532');
     expect(send).toBeDisabled();
@@ -240,13 +240,6 @@ describe('LivenessScreen (§6.2)', () => {
 });
 
 describe('status screens', () => {
-  it('done: links the design system outside production', async () => {
-    await renderWithProviders(<DoneScreen />);
-    expect(screen.getByText('Doğrulandın')).toBeOnTheScreen();
-    await fireEvent.press(screen.getByRole('button', { name: 'Tasarım sistemi (geliştirme)' }));
-    expect(router.push).toHaveBeenCalledWith('/dev/foundation');
-  });
-
   it('blocked and needs-id never name the reason, and point to support', async () => {
     await renderWithProviders(<BlockedScreen />);
     expect(

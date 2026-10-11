@@ -61,3 +61,20 @@ Apple/Google     ->  session-register           ->  cihaz + OAuth kimliği ban d
 - **Atomik kurallar** SQL'de (`public.srv_*`): OTP kilidi, hız sınırı, tanımlayıcı bağlama, yaş kapısı, ban atlatma.
 - **Edge Function katmanları:** `index.ts` → `_shared/http.ts` (yöntem, JSON, IP, en kısa yanıt süresi) → `_shared/services/*` (iş akışı; bağımlılıkları dışarıdan alır, sahtelerle test edilir) → `_shared/db.ts` ve `_shared/providers/*` (Supabase, Resend, Twilio, AWS).
 - **Sağlayıcı yoksa özellik kapalı:** anahtarı girilmemiş servis `null` olur ve ilgili adım `service_unavailable` döner (§0.9).
+
+## Profil ve medya (Faz 2)
+
+```
+Uygulama                          Edge Function               Depolama / SQL
+Fotoğraf seç → JPEG ≤2048 px  ->  profile-photo upload_url -> srv_photo_create, imzalı yükleme URL'si (quarantine)
+Doğrudan yükleme              ->  (Supabase Storage)        -> quarantine/<profil>/photos/<id>.jpg
+                                  profile-photo process     -> tür/boyut denetimi, meta veri silme, AWS sinyalleri,
+                                                               decidePhoto → public-photos | ret | inceleme
+Profil alanları               ->  profile-update            -> moderateText → srv_update_* | profile_edits (inceleme)
+Önizleme / kendi medyası      ->  profile-view              -> srv_my_public_profile + 10 dk'lık imzalı URL'ler
+Ses kartı                     ->  profile-voice             -> M4A süresi (moov/mvhd), public-voice
+```
+
+- **Herkese açık profil** tek yerden üretilir: `srv_public_profile()`. Önizleme de aynısını gösterir; "başkası nasıl görüyor?" ekranı bu yüzden yanılmaz.
+- **Kayıt tamamlanınca** (`srv_try_complete_onboarding`) hesap `active` olur; ana fotoğraf sonradan değişirse `reverify_required` açılır ve kapı kullanıcıyı canlılığa gönderir.
+- **İçerik** (sorular, ilgi alanları, iller) `supabase/content/*.json` dosyalarından `scripts/build-content-sql.mjs` ile göçe dönüştürülür.

@@ -23,7 +23,7 @@ type Phase =
  * is not built yet (NEEDS_SETUP: AWS account). Until then only the local mock
  * provider can complete this step, clearly marked as development.
  */
-export function LivenessScreen() {
+export function LivenessScreen({ reverify = false }: { reverify?: boolean }) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const advance = useAdvance();
@@ -63,9 +63,11 @@ export function LivenessScreen() {
 
   return (
     <OnboardingScreen
-      step="liveness"
-      title={t('liveness.title')}
-      subtitle={t('liveness.body')}
+      step={reverify ? 'reverify' : 'liveness'}
+      title={reverify ? t('profile.reverify.title') : t('liveness.title')}
+      subtitle={
+        reverify ? `${t('profile.reverify.body')} ${t('liveness.body')}` : t('liveness.body')
+      }
       testID="liveness"
       footer={
         phase.kind === 'mock' ? (

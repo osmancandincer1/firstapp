@@ -184,21 +184,49 @@ describe('onboarding order (AUTH-06)', () => {
     idRequired: false,
   };
 
-  it('walks phone → birth date → consents → liveness → done', () => {
-    expect(nextOnboardingStep(fresh)).toEqual({ kind: 'step', step: 'phone' });
-    const s1 = { ...fresh, phoneVerified: true };
-    expect(nextOnboardingStep(s1)).toEqual({ kind: 'step', step: 'birth_date' });
-    const s2 = { ...s1, birthDate: '2000-01-01' };
-    expect(nextOnboardingStep(s2)).toEqual({ kind: 'step', step: 'consents' });
-    const s3 = { ...s2, consentsComplete: true };
-    expect(nextOnboardingStep(s3)).toEqual({ kind: 'step', step: 'liveness' });
-    expect(nextOnboardingStep({ ...s3, idRequired: true })).toEqual({
+  it('walks every sign-up step in the §6.1 order', () => {
+    const order: [Partial<OnboardingState>, string][] = [
+      [{}, 'phone'],
+      [{ phoneVerified: true }, 'birth_date'],
+      [{ birthDate: '2000-01-01' }, 'consents'],
+      [{ consentsComplete: true }, 'basics'],
+      [{ basicsComplete: true }, 'liveness'],
+      [{ livenessVerified: true }, 'photos'],
+      [{ photosComplete: true }, 'intent'],
+      [{ intentComplete: true }, 'door_question'],
+      [{ doorQuestionComplete: true }, 'interests'],
+      [{ interestsComplete: true }, 'location'],
+      [{ locationComplete: true }, 'done'],
+    ];
+    let state: OnboardingState = fresh;
+    for (const [change, step] of order) {
+      state = { ...state, ...change };
+      expect(nextOnboardingStep(state)).toEqual({ kind: 'step', step });
+    }
+  });
+
+  it('asks for an ID before anything after liveness', () => {
+    const s = {
+      ...fresh,
+      phoneVerified: true,
+      birthDate: '2000-01-01',
+      consentsComplete: true,
+      basicsComplete: true,
+    };
+    expect(nextOnboardingStep({ ...s, idRequired: true })).toEqual({
       kind: 'step',
       step: 'needs_id',
     });
-    expect(nextOnboardingStep({ ...s3, livenessVerified: true })).toEqual({
+  });
+
+  it('sends active accounts home, unless the main photo changed (VER-07)', () => {
+    expect(nextOnboardingStep({ ...fresh, status: 'active' })).toEqual({
       kind: 'step',
       step: 'done',
+    });
+    expect(nextOnboardingStep({ ...fresh, status: 'active', reverifyRequired: true })).toEqual({
+      kind: 'step',
+      step: 'reverify',
     });
   });
 
@@ -207,8 +235,10 @@ describe('onboarding order (AUTH-06)', () => {
   });
 
   it('reports progress', () => {
-    expect(onboardingProgress('phone')).toEqual({ index: 1, total: 4 });
-    expect(onboardingProgress('needs_id')).toEqual({ index: 4, total: 4 });
-    expect(onboardingProgress('done')).toEqual({ index: 4, total: 4 });
+    expect(onboardingProgress('phone')).toEqual({ index: 1, total: 10 });
+    expect(onboardingProgress('needs_id')).toEqual({ index: 5, total: 10 });
+    expect(onboardingProgress('reverify')).toEqual({ index: 5, total: 10 });
+    expect(onboardingProgress('location')).toEqual({ index: 10, total: 10 });
+    expect(onboardingProgress('done')).toEqual({ index: 10, total: 10 });
   });
 });

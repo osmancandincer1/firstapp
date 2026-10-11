@@ -6,3 +6,5 @@ export * from './identity.ts';
 export * from './liveness.ts';
 export * from './onboarding.ts';
 export * from './otp.ts';
+export * from './moderation.ts';
+export * from './profile.ts';

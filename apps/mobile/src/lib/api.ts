@@ -7,7 +7,8 @@ import { supabase } from './supabase';
 export type ClientErrorCode = ApiErrorCode | 'network' | 'not_configured';
 
 export type ApiResult<T> =
-  { ok: true; data: T } | { ok: false; error: ClientErrorCode; retryAt?: string };
+  | { ok: true; data: T }
+  | { ok: false; error: ClientErrorCode; retryAt?: string; field?: string; reason?: string };
 
 export interface CallOptions {
   /** Send the signed-in user's token (default true). */
@@ -55,7 +56,13 @@ export async function callFunction<T>(
     // fall through with null
   }
   if (res.ok) return { ok: true, data: json as T };
-  const err = (json ?? {}) as { error?: string; retryAt?: string };
+  const err = (json ?? {}) as { error?: string; retryAt?: string; field?: string; reason?: string };
   const code = err.error && KNOWN.has(err.error) ? (err.error as ApiErrorCode) : 'internal';
-  return { ok: false, error: code, ...(err.retryAt ? { retryAt: err.retryAt } : {}) };
+  return {
+    ok: false,
+    error: code,
+    ...(err.retryAt ? { retryAt: err.retryAt } : {}),
+    ...(err.field ? { field: err.field } : {}),
+    ...(err.reason ? { reason: err.reason } : {}),
+  };
 }

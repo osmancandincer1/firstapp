@@ -17,3 +17,5 @@ Kaynak: APP.md §23. Bir madde ancak kanıtıyla birlikte (test raporu, ekran ka
 - [ ] Mağaza ekran görüntüleri gerçek uygulamayı gösteriyor; üretimde demo verisi yok.
 - [ ] Kapalı beta geri bildirimleri değerlendirildi; güvenlik sorunları kapatıldı.
 - [ ] Uygulama kimliği (`com.nokuzo.app`) kesinleşti (D-008) — mağazaya yüklendikten sonra değiştirilemez.
+- [ ] Bilinen CSAM karma eşleştirmesi bağlandı ve denendi (D-047).
+- [ ] Açılış şehrinin resmî ilçe listesi eklendi (D-040).

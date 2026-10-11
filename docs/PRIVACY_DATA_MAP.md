@@ -18,6 +18,20 @@
 | Tercihler (tema, dil, hareket) | Cihaz belleği                                               | —                                                                                                      | Görünüm                      | Oturum                                                                    |
 | 18 yaş altı kilidi             | Cihazın güvenli deposu                                      | Bitiş zamanı                                                                                           | §6.1 cihaz kilidi            | 24 saat                                                                   |
 
+## Faz 2 itibarıyla eklenen veriler
+
+| Veri                                                      | Nerede                                                                 | Kim görür                                                                                    | Saklama                                        |
+| --------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Ad, cinsiyet (gösterme anahtarıyla), kimi görmek istediği | `profiles`                                                             | Ad: herkes; cinsiyet: anahtar açıksa; "kimi görmek istiyor": hiç kimse (yalnızca eşleştirme) | Hesap süresince                                |
+| Niyet, tempo, olmazsa olmazlar                            | `profiles`                                                             | Niyet ve tempo: herkes; olmazsa olmazlar: hiç kimse                                          | Hesap süresince                                |
+| İsteğe bağlı alanlar (boy, eğitim, sigara…)               | `profile_details`                                                      | Yalnızca "profilde göster" açıksa                                                            | Hesap süresince                                |
+| Fotoğraflar                                               | Depolama: `quarantine` (bekleyen/incelemede), `public-photos` (onaylı) | Onaylılar: profiline erişebilenler (Faz 3); bekleyenler: yalnızca sahibi                     | Silinene kadar; reddedilen dosya hemen silinir |
+| Ses kartı                                                 | `public-voice`                                                         | Profiline erişebilenler                                                                      | Silinene kadar                                 |
+| Konum                                                     | `profiles.city_id`, `district_id`, `geo_lat/lng` (0,01° ızgara)        | Başkaları yalnızca ilçe/şehir adını görür                                                    | Hesap süresince                                |
+| İnceleme bekleyen düzenlemeler                            | `profile_edits`                                                        | Sahibi ve moderatörler                                                                       | Karar verilene kadar                           |
+
+**AWS Rekognition'a giden ek veri:** her yüklenen fotoğraf (moderasyon etiketleri, yazı tanıma, yüz yaşı ve yüz araması için). Sonuç dışında bir şey saklanmaz.
+
 **Üçüncü taraflara giden veri (yalnızca anahtarlar girildiğinde):** Resend (e-posta adresi + kod), Twilio (telefon numarası + kod; numara türü sorgusu), AWS Rekognition (canlılık videosu ve referans karesi; yüz vektörü). Hepsi yurt dışına aktarımdır; açık rıza ekranında ayrıca soruluyor. Veri işleme sözleşmeleri: TODO(owner).
 
 ## Planlanan veri (APP.md'den; her faz eklendikçe bu tablo gerçek uygulamayla güncellenecek)

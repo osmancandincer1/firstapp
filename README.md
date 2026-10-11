@@ -15,4 +15,4 @@ Ayrıntılar: [docs/SETUP.md](docs/SETUP.md) · Mimari: [docs/ARCHITECTURE.md](d
 
 ## Durum
 
-Faz 1 (Kimlik ve doğrulama): kod ve testler tamam; hesap gerektiren parçalar `NEEDS_SETUP` (bkz. [docs/SETUP.md](docs/SETUP.md)). Sonraki faz yalnızca sahibin onayıyla başlar.
+Faz 2 (Profil): kod ve testler tamam; hesap gerektiren parçalar `NEEDS_SETUP` (bkz. [docs/SETUP.md](docs/SETUP.md)). Sonraki faz yalnızca sahibin onayıyla başlar.

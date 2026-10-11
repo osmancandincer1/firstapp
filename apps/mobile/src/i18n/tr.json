@@ -218,6 +218,319 @@
     "service_unavailable": "Bu özellik şu an kullanılamıyor. Biraz sonra yeniden dene.",
     "internal": "Bir şeyler ters gitti. Yeniden dene.",
     "network": "İnternet bağlantısı yok. Bağlanınca yeniden dene.",
-    "not_configured": "Sunucu bağlı değil."
+    "not_configured": "Sunucu bağlı değil.",
+    "text_blocked": "Bu metin kabul edilmedi.",
+    "change_limited": "Bunu kısa süre önce değiştirdin; daha sonra yeniden deneyebilirsin.",
+    "photo_limit": "En fazla 6 fotoğraf ekleyebilirsin.",
+    "not_found": "Bulunamadı. Sayfayı yenileyip yeniden dene."
+  },
+  "profile": {
+    "saved": "Kaydedildi",
+    "pendingReview": "Değişikliğin inceleniyor; onaylanana kadar eski hâli görünür.",
+    "textBlocked": {
+      "contact_info": "İletişim bilgisi, sosyal medya adı ya da numara yazamazsın.",
+      "link": "Bağlantı paylaşamazsın.",
+      "profanity": "Bu ifade topluluk kurallarına uygun değil."
+    },
+    "basics": {
+      "title": "Seni tanıyalım",
+      "subtitle": "Adın ve kimi görmek istediğin.",
+      "name": "Adın",
+      "nameHelp": "Profilinde görünür. 30 günde bir değiştirilebilir.",
+      "gender": "Cinsiyet",
+      "genders": {
+        "woman": "Kadın",
+        "man": "Erkek",
+        "nonbinary": "Non-binary",
+        "self_described": "Kendi tanımım"
+      },
+      "genderCustom": "Kendi tanımın",
+      "showGender": "Cinsiyetimi profilde göster",
+      "seeking": "Kimi görmek istiyorsun?",
+      "seekingOptions": {
+        "women": "Kadınlar",
+        "men": "Erkekler",
+        "nonbinary": "Non-binary kişiler"
+      },
+      "everyone": "Herkes"
+    },
+    "photos": {
+      "title": "Fotoğrafların",
+      "subtitle": "En az 3, en fazla 6 fotoğraf. İlki yüzünün net göründüğü, sana ait bir fotoğraf olmalı.",
+      "add": "Fotoğraf ekle",
+      "main": "Ana fotoğraf",
+      "makeMain": "Ana yap",
+      "moveUp": "Öne al",
+      "moveDown": "Arkaya al",
+      "delete": "Sil",
+      "caption": "Açıklama (isteğe bağlı)",
+      "uploading": "Yükleniyor…",
+      "limit": "En fazla 6 fotoğraf ekleyebilirsin.",
+      "needMore": "Devam etmek için en az 3 onaylı fotoğraf gerekiyor.",
+      "tooSmall": "Bu fotoğraf çok küçük; kısa kenarı en az 800 piksel olmalı.",
+      "slot": "Fotoğraf {{index}}",
+      "status": {
+        "pending": "Yükleniyor",
+        "approved": "Yayında",
+        "review": "İnceleniyor",
+        "rejected": "Reddedildi"
+      },
+      "reasons": {
+        "no_face": "Ana fotoğrafta yüzün net görünmüyor.",
+        "not_you": "Fotoğraftaki kişi canlılık doğrulamandaki kişiyle eşleşmedi.",
+        "explicit": "Müstehcen içerik kabul edilmiyor.",
+        "violence": "Şiddet ya da silah içeren fotoğraflar kabul edilmiyor.",
+        "drugs": "Uyuşturucu içeren fotoğraflar kabul edilmiyor.",
+        "hate": "Nefret sembolleri kabul edilmiyor.",
+        "text_contact": "Fotoğrafta iletişim bilgisi ya da sosyal medya adı var.",
+        "too_small": "Fotoğraf çok küçük; kısa kenarı en az 800 piksel olmalı.",
+        "too_large": "Fotoğraf 15 MB'tan büyük.",
+        "unsupported_type": "Bu dosya türü desteklenmiyor.",
+        "corrupt": "Dosya okunamadı.",
+        "possible_minor": "Bir kişinin incelemesi gerekiyor.",
+        "text": "Fotoğraftaki yazı nedeniyle inceleniyor.",
+        "under_review": "Moderasyon ekibi inceleyecek."
+      }
+    },
+    "intent": {
+      "title": "Ne arıyorsun?",
+      "subtitle": "Niyet kartın profilinde görünür.",
+      "intentLabel": "Ne arıyorum",
+      "intents": {
+        "long_term": "Uzun ilişki",
+        "serious_unhurried": "Ciddi ama acelesiz",
+        "unsure": "Henüz bilmiyorum",
+        "friendship": "Arkadaşlık"
+      },
+      "tempoLabel": "Tempo",
+      "tempos": {
+        "meet_soon": "Hemen buluşalım",
+        "chat_first": "Önce biraz yazışalım",
+        "slow": "Yavaş ilerlemeyi severim"
+      },
+      "dealbreakers": "Olmazsa olmazlarım (isteğe bağlı)",
+      "dealbreakersHelp": "En fazla 3 alan seç ve kabul ettiğin seçenekleri işaretle. Tur bunlara uymayan kişileri göstermez.",
+      "limit": "En fazla 3 alan seçebilirsin."
+    },
+    "door": {
+      "title": "Kapı Sorun",
+      "subtitle": "Sana ulaşmak isteyenler bu soruyu cevaplayacak. 7 günde bir değiştirebilirsin.",
+      "presets": "Hazır sorular",
+      "custom": "Kendin yaz",
+      "customLabel": "Sorun",
+      "customHelp": "8–90 karakter. Moderasyondan geçer.",
+      "categories": {
+        "food": "Yeme içme",
+        "fun": "Eğlence",
+        "travel": "Seyahat",
+        "music_film": "Müzik ve film",
+        "everyday": "Gündelik",
+        "values": "Değerler",
+        "imagination": "Hayal gücü",
+        "together": "Birlikte"
+      }
+    },
+    "interests": {
+      "title": "İlgi alanların",
+      "subtitle": "5 ile 10 arasında seç.",
+      "count": "{{count}} / 10 seçildi",
+      "more": "Diğer bilgileri ekle (isteğe bağlı)",
+      "categories": {
+        "outdoors": "Doğa ve açık hava",
+        "sports": "Spor",
+        "creative": "Yaratıcılık",
+        "music": "Müzik",
+        "screen": "Film ve dizi",
+        "reading": "Okuma ve yazma",
+        "food": "Yeme içme",
+        "travel": "Seyahat",
+        "games": "Oyun",
+        "learning": "Öğrenme",
+        "social": "Sosyal",
+        "wellbeing": "İyi yaşam"
+      }
+    },
+    "location": {
+      "title": "Neredesin?",
+      "subtitle": "Başkalarına yalnızca ilçen (ya da şehrin) görünür; mesafe sayı olarak gösterilmez.",
+      "city": "Şehir",
+      "search": "Şehir ara",
+      "district": "İlçe",
+      "useLocation": "Yaklaşık konumumu kullan",
+      "locationHelp": "İsteğe bağlı. Konumun yaklaşık 1 km'ye yuvarlanır; ham konum saklanmaz.",
+      "locationOn": "Yaklaşık konum eklendi.",
+      "permissionDenied": "Konum izni verilmedi. İstersen ayarlardan açabilirsin; şehir seçmen yeterli."
+    },
+    "details": {
+      "title": "Diğer bilgiler",
+      "subtitle": "Hepsi isteğe bağlı. Her biri için profilde gösterip göstermeyeceğini seçebilirsin.",
+      "show": "Profilde göster",
+      "favoritesHelp": "Virgülle ayır, en fazla 3.",
+      "clear": "Temizle",
+      "fields": {
+        "height": "Boy (cm)",
+        "education": "Eğitim",
+        "school": "Okul",
+        "occupation": "Meslek",
+        "workplace": "İş yeri",
+        "smoking": "Sigara",
+        "alcohol": "Alkol",
+        "children": "Çocuk",
+        "wants_children": "Çocuk isteği",
+        "pets": "Evcil hayvan",
+        "sports": "Spor",
+        "diet": "Beslenme",
+        "sleep": "Uyku düzeni",
+        "languages": "Diller",
+        "hometown_city_id": "Memleket",
+        "zodiac": "Burç",
+        "first_date": "İlk buluşma tercihi",
+        "music": "Müzik",
+        "films": "Film",
+        "books": "Kitap",
+        "about": "Hakkımda"
+      },
+      "options": {
+        "education": {
+          "high_school": "Lise",
+          "associate": "Ön lisans",
+          "bachelor": "Lisans",
+          "master": "Yüksek lisans",
+          "doctorate": "Doktora",
+          "prefer_not": "Söylemek istemiyorum"
+        },
+        "smoking": {
+          "never": "İçmem",
+          "social": "Sosyal içici",
+          "regularly": "İçerim",
+          "trying_to_quit": "Bırakmaya çalışıyorum"
+        },
+        "alcohol": {
+          "never": "İçmem",
+          "rarely": "Nadiren",
+          "socially": "Sosyal ortamda",
+          "often": "Sık"
+        },
+        "children": {
+          "has": "Var",
+          "has_not": "Yok"
+        },
+        "wants_children": {
+          "want": "İstiyorum",
+          "dont_want": "İstemiyorum",
+          "not_sure": "Emin değilim",
+          "maybe": "Olabilir"
+        },
+        "pets": {
+          "cat": "Kedi",
+          "dog": "Köpek",
+          "other": "Diğer",
+          "none_but_love": "Yok ama severim",
+          "allergic": "Alerjim var"
+        },
+        "sports": {
+          "never": "Hiç",
+          "sometimes": "Ara sıra",
+          "regularly": "Düzenli"
+        },
+        "diet": {
+          "everything": "Her şey",
+          "vegetarian": "Vejetaryen",
+          "vegan": "Vegan",
+          "other": "Diğer"
+        },
+        "sleep": {
+          "morning": "Sabah insanı",
+          "night_owl": "Gece kuşu",
+          "varies": "Değişir"
+        },
+        "zodiac": {
+          "aries": "Koç",
+          "taurus": "Boğa",
+          "gemini": "İkizler",
+          "cancer": "Yengeç",
+          "leo": "Aslan",
+          "virgo": "Başak",
+          "libra": "Terazi",
+          "scorpio": "Akrep",
+          "sagittarius": "Yay",
+          "capricorn": "Oğlak",
+          "aquarius": "Kova",
+          "pisces": "Balık"
+        },
+        "first_date": {
+          "coffee": "Kahve",
+          "walk": "Yürüyüş",
+          "dinner": "Yemek",
+          "art_music": "Sergi-konser",
+          "any": "Fark etmez"
+        }
+      }
+    },
+    "languages": {
+      "tr": "Türkçe",
+      "en": "İngilizce",
+      "de": "Almanca",
+      "fr": "Fransızca",
+      "es": "İspanyolca",
+      "it": "İtalyanca",
+      "ru": "Rusça",
+      "ar": "Arapça",
+      "ku": "Kürtçe",
+      "fa": "Farsça",
+      "az": "Azerbaycanca",
+      "el": "Yunanca",
+      "nl": "Felemenkçe",
+      "pt": "Portekizce",
+      "ja": "Japonca",
+      "zh": "Çince"
+    },
+    "voice": {
+      "title": "Ses kartı",
+      "subtitle": "5–20 saniyelik kısa bir ses kaydı. İsteğe bağlı.",
+      "prompt": "Bir yönlendirme seç",
+      "record": "Kaydı başlat",
+      "stop": "Durdur",
+      "recording": "Kaydediliyor: {{seconds}} sn",
+      "tooShort": "Kayıt en az 5 saniye olmalı.",
+      "play": "Dinle",
+      "upload": "Kaydet",
+      "remove": "Ses kartını sil",
+      "permission": "Kayıt için mikrofon izni gerekiyor.",
+      "reasons": {
+        "duration": "Kayıt 5–20 saniye olmalı.",
+        "too_large": "Kayıt çok büyük.",
+        "unsupported_type": "Kayıt okunamadı."
+      }
+    },
+    "preview": {
+      "title": "Başkası nasıl görüyor?",
+      "verified": "Doğrulandı",
+      "ageCity": "{{age}} · {{place}}",
+      "door": "Kapı Sorusu",
+      "interests": "İlgi alanları",
+      "about": "Hakkımda",
+      "empty": "Henüz görünür bir şey yok."
+    },
+    "home": {
+      "title": "Profilin",
+      "active": "Profilin hazır. Turlar 3. fazda açılacak.",
+      "preview": "Başkası nasıl görüyor?",
+      "sections": {
+        "basics": "Ad ve cinsiyet",
+        "photos": "Fotoğraflar",
+        "intent": "Niyet kartı",
+        "door": "Kapı Sorusu",
+        "interests": "İlgi alanları",
+        "location": "Konum",
+        "details": "Diğer bilgiler",
+        "voice": "Ses kartı"
+      },
+      "pending": "{{count}} değişiklik inceleniyor"
+    },
+    "reverify": {
+      "title": "Ana fotoğrafın değişti",
+      "body": "Fotoğraflarındaki kişinin sen olduğunu yeniden doğrulamamız gerekiyor."
+    }
   }
 }

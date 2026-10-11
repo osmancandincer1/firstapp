@@ -10,3 +10,4 @@ export * from './Icon';
 export * from './Checkbox';
 export * from './Screen';
 export * from './StepProgress';
+export * from './Chips';

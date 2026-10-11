@@ -403,6 +403,14 @@ import_map = "./functions/deno.json"
 import_map = "./functions/deno.json"
 [functions.session-register]
 import_map = "./functions/deno.json"
+[functions.profile-update]
+import_map = "./functions/deno.json"
+[functions.profile-photo]
+import_map = "./functions/deno.json"
+[functions.profile-voice]
+import_map = "./functions/deno.json"
+[functions.profile-view]
+import_map = "./functions/deno.json"
 # Called by Supabase Auth, signed with AUTH_HOOK_SECRET instead of a user JWT.
 [functions.auth-hook-before-user-created]
 import_map = "./functions/deno.json"
