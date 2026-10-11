@@ -370,18 +370,16 @@ async function seedPeople() {
         'photo upload',
       );
       await must(
-        db
-          .from('profile_photos')
-          .insert({
-            id: photoId,
-            profile_id: id,
-            position: k,
-            status: 'approved',
-            public_path: path,
-            face_matched: k === 0,
-            width: 864,
-            height: 1080,
-          }),
+        db.from('profile_photos').insert({
+          id: photoId,
+          profile_id: id,
+          position: k,
+          status: 'approved',
+          public_path: path,
+          face_matched: k === 0,
+          width: 864,
+          height: 1080,
+        }),
         'photo row',
       );
     }
