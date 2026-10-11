@@ -1,6 +1,6 @@
 -- Phase 3 database tests: the Round, answers and tables.
 begin;
-select plan(51);
+select plan(52);
 
 create function pg_temp.uid(n int) returns uuid language sql as $$
   select ('00000000-0000-4000-8000-' || lpad(n::text, 12, '0'))::uuid $$;
@@ -155,6 +155,16 @@ select id, pg_temp.pid(31), 0, 0, 'fair' from public.tur_batches where profile_i
 create temp table b6 as select public.srv_generate_tur(pg_temp.pid(2), pg_temp.today(), 'welcome') as id;
 select is((select candidate_id from public.tur_cards where batch_id = (select id from b6) and position = 0), pg_temp.pid(32),
   'TUR-08: the rarely shown person ranks first (fair exposure)');
+
+-- Diversity never leaves a slot empty (§4.1, D-061) ----------------------------------------------------------------
+-- Seven near-identical people are all chosen for the same reason; the cap of 4 must not drop the other three.
+do $$ declare i int; begin
+  perform pg_temp.mk(200, 'man', array['women'], 33, 'unsure', 9::smallint);
+  for i in 201..207 loop perform pg_temp.mk(i, 'woman', array['men'], 33, 'unsure', 9::smallint); end loop;
+end $$;
+create temp table b8 as select public.srv_generate_tur(pg_temp.pid(200), pg_temp.today(), 'welcome') as id;
+select is((select count(*)::int from public.tur_cards where batch_id = (select id from b8)), 7,
+  'diversity is applied first, but people held back by it still fill the Round');
 
 -- Pool estimate (TUR-09) ----------------------------------------------------------------------------------------
 set local role authenticated;

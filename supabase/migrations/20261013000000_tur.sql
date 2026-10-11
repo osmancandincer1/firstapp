@@ -423,6 +423,8 @@ declare
   v_floor numeric := greatest(1, private.flag_num('tur.min_weekly_impressions', 30));
   v_div int := private.flag_num('tur.diversity_max', 4)::int;
   r record;
+  held jsonb := '[]';
+  h jsonb;
   pos int := 0;
   per_factor jsonb := '{}';
   v_pool int;
@@ -494,10 +496,22 @@ begin
   loop
     exit when pos >= 9;
     -- Diversity: at most N people chosen mainly for the same factor (§5 step 3).
-    continue when coalesce((per_factor ->> r.dominant)::int, 0) >= v_div;
+    if coalesce((per_factor ->> r.dominant)::int, 0) >= v_div then
+      held := held || jsonb_build_object('id', r.id, 'reasons', r.reasons, 'score', r.score, 'dominant', r.dominant);
+      continue;
+    end if;
     insert into public.tur_cards (batch_id, candidate_id, position, reasons, score, dominant)
     values (v_batch, r.id, pos, r.reasons - 'all', r.score, r.dominant);
     per_factor := per_factor || jsonb_build_object(r.dominant, coalesce((per_factor ->> r.dominant)::int, 0) + 1);
+    pos := pos + 1;
+  end loop;
+
+  -- Diversity never leaves a slot empty: if the pool has nobody else, the
+  -- people held back by it fill the Round in score order (§4.1, D-061).
+  for h in select value from jsonb_array_elements(held) loop
+    exit when pos >= 9;
+    insert into public.tur_cards (batch_id, candidate_id, position, reasons, score, dominant)
+    values (v_batch, (h ->> 'id')::uuid, pos, (h -> 'reasons') - 'all', (h ->> 'score')::numeric, h ->> 'dominant');
     pos := pos + 1;
   end loop;
 

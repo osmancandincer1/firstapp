@@ -15,7 +15,10 @@ select is(
   (select count(*)::int from pg_tables where schemaname in ('public', 'private') and not rowsecurity),
   0, 'every public and private table has RLS enabled');
 
-select is((select count(*)::int from public.profiles), 2, 'a profile is created for each new auth user');
+-- Counts only this test's users, so the test also passes on a database with local data.
+select is((select count(*)::int from public.profiles
+           where user_id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222')),
+          2, 'a profile is created for each new auth user');
 select is((select status::text from public.profiles where user_id = '11111111-1111-1111-1111-111111111111'),
   'onboarding', 'new profiles start in onboarding');
 

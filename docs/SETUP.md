@@ -51,6 +51,19 @@ npx supabase test db      # pgTAP testleri (Docker gerekir)
    ```
 4. `npm run mobile` → Expo Go ile aç. Kodlar Edge Runtime günlüğünde `[DEV EMAIL]` / `[DEV SMS]` satırlarında görünür: `docker logs -f supabase_edge_runtime_nokuzo`.
 
+### Demo kişiler (yalnızca yerel)
+
+Tur, cevap ve masa akışını denemek için yerel Supabase'e sahte ama doğrulanmış kişiler ekler. Uzak bir adrese bağlıysa çalışmayı reddeder.
+
+```bash
+node scripts/demo-people.mjs seed --for <senin test e-postan>   # ~30 kişi; çoğu seninle eşleşir, bir kısmı bilerek filtre dışında; 4'ü sana cevap gönderir
+node scripts/demo-people.mjs tur --for <e-posta>                # bugünkü Tur'u şimdi yeniden üretir
+node scripts/demo-people.mjs reply                              # cevap gönderdiğin demo kişiler karşılık verir → masa açılır
+node scripts/demo-people.mjs clean                              # demo kişileri siler
+```
+
+`npx supabase db reset` yerel veritabanındaki **her şeyi** (test hesapları dahil) siler; testler için gerekmez, `npx supabase test db` yeterli.
+
 ## 3. Servis durumu
 
 | Servis                                | Durum               | Ortam değişkenleri                                                                                                            | Ne zaman gerekir                                     | Sahibin yapacağı                                                                                                                                                                                                    |
