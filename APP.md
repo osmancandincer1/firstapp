@@ -162,7 +162,7 @@ Fiyat referansı (ABD, aylık; kaynaklar arasında fark var ve uygulamalar dinam
 
 ## 2. Konumlandırma
 
-**Tek cümle:** Dokuz, sonsuz kaydırma yerine her akşam 21:00'de 9 doğrulanmış kişi sunan, beğeni yerine cevap isteyen ve aynı anda en fazla 3 sohbete izin vererek insanları buluşmaya götüren flört uygulamasıdır.
+**Tek cümle:** Dokuz, sonsuz kaydırma yerine her gün 12:00 ve 21:00'de 9'ar doğrulanmış kişi sunan, beğeni yerine cevap isteyen ve aynı anda en fazla 3 sohbete izin vererek insanları buluşmaya götüren flört uygulamasıdır.
 
 **Neden farklı (App Store incelemesine de bu yazılacak):**
 
@@ -185,7 +185,7 @@ Fiyat referansı (ABD, aylık; kaynaklar arasında fark var ve uygulamalar dinam
 
 | Terim | Anlamı |
 |---|---|
-| Tur | Her gün 21:00'de açılan 9 profillik seçki |
+| Tur | Her gün 12:00 ve 21:00'de açılan 9 profillik seçki (sahibin kararı, D-062) |
 | Kapı Sorusu | Kullanıcının profilinde seçtiği/yazdığı, kendisine ulaşmak isteyenlerin cevaplaması gereken soru |
 | Cevap | Bir Kapı Sorusuna verilen yanıt (klasik "beğeni"nin karşılığı) |
 | Cevaplar kutusu | Sana gelen cevapların listesi (ücretsiz) |
@@ -202,7 +202,7 @@ Fiyat referansı (ABD, aylık; kaynaklar arasında fark var ve uygulamalar dinam
 
 ### 4.1 Tur
 
-- Her kullanıcının yerel saatiyle **21:00**'de yeni Tur açılır; bir sonraki 21:00'e kadar erişilebilir.
+- Günde iki Tur: **12:00** ve **21:00** (İstanbul saati). Her Tur bir sonrakine kadar erişilebilir. *(Sahibin kararı, 2026-10-12, D-062; önceki hâli: günde bir, 21:00.)*
 - **9 kart.** Kartlar arasında serbestçe ileri-geri gezilir; karar geri alınamaz bir hareketle verilmez.
 - Her kartta iki eylem: **Cevapla** (Kapı Sorusunu yanıtla) ve **Geç**.
   - Geç → bu kişi 60 gün gösterilmez.
@@ -269,7 +269,7 @@ Profil sekmesinde, ücretsiz:
 
 ## 5. Tur algoritması
 
-Her gece kullanıcı başına bir kez, 20:30'da toplu iş olarak çalışır (şehir saat dilimine göre).
+Her Tur için kullanıcı başına bir kez, açılıştan yarım saat önce (11:30 ve 20:30, İstanbul) toplu iş olarak çalışır.
 
 **Adım 1 — Aday filtresi (tamamı zorunlu, iki yönlü):**
 - İkisi de doğrulanmış, aktif (son 7 günde giriş), Mola'da değil, askıda/banlı değil.
@@ -317,7 +317,7 @@ Her gece kullanıcı başına bir kez, 20:30'da toplu iş olarak çalışır (ş
 12. **İlgi alanları** (5–10) ve isteğe bağlı alanlar.
 13. **Konum izni** — yalnızca "uygulamayı kullanırken", yaklaşık konum yeterli. Reddederse şehir/ilçe elle seçilir.
 14. **Bildirim izni** — nedenini anlatan ön ekranla ("Turun açıldığında ve cevap geldiğinde haber verelim").
-15. **Bitti** — "İlk Tur'un bu akşam 21:00'de" + geri sayım. Kayıt 21:00'den sonra yapıldıysa hoş geldin Tur'u hemen açılır.
+15. **Bitti** — Hoş geldin Tur'u hemen açılır; sıradaki Tur onu yeniler (D-053, D-062).
 
 Her adımda ilerleme çubuğu; uygulama kapanırsa kaldığı adımdan devam eder. Hedef süre: 4 dakikanın altı.
 
@@ -734,7 +734,7 @@ Tek kullanımlık ek satın alma (boost, ek cevap, süper beğeni vb.): **yok**.
 
 | Tetikleyici | Metin örneği (TR) | Not |
 |---|---|---|
-| Tur açıldı (21:00) | "Dokuz oldu. Turun hazır." | Günde 1 |
+| Tur açıldı (12:00, 21:00) | "Turun hazır: 9 yeni kişi." | Günde 2 |
 | Yeni cevap | "Ece sorunu cevapladı." | 3'ten fazlaysa gruplanır |
 | Karşılık / masa açıldı | "Mert karşılık verdi. Masanız hazır." | |
 | Yeni mesaj | Ad + önizleme (önizleme kapatılabilir) | |

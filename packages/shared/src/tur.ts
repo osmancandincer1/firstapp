@@ -7,10 +7,10 @@ import { foldText } from './moderation.ts';
 import { INTENTS } from './profile.ts';
 
 export const TUR_SIZE = 9;
-export const TUR_OPEN_HOUR = 21;
-/** The nightly job runs half an hour before opening (§5). */
-export const TUR_GENERATE_HOUR = 20;
-export const TUR_GENERATE_MINUTE = 30;
+/** Two Rounds a day, 12:00 and 21:00 Istanbul (D-062); each stays open until the next. */
+export const TUR_OPEN_HOURS = [12, 21] as const;
+/** The jobs run half an hour before each opening (§5). */
+export const TUR_GENERATE_MINUTES_BEFORE = 30;
 export const TUR_TIME_ZONE = 'Europe/Istanbul';
 export const PASS_HIDE_DAYS = 60;
 export const SHOWN_HIDE_DAYS = 14;
@@ -58,20 +58,20 @@ function offsetMinutes(at: Date): number {
   return Math.round((asUtc - Math.floor(at.getTime() / 60_000) * 60_000) / 60_000);
 }
 
-/** The next 21:00 in Istanbul strictly after `now`. */
+/** The next opening (12:00 or 21:00 Istanbul) strictly after `now`. */
 export function nextTurOpening(now: Date): Date {
   const p = istanbulParts(now);
   const offset = offsetMinutes(now);
-  let opening = Date.UTC(p.y, p.m - 1, p.d, TUR_OPEN_HOUR, 0) - offset * 60_000;
-  if (opening <= now.getTime()) opening += 24 * 3_600_000;
-  return new Date(opening);
+  const today = (hour: number) => Date.UTC(p.y, p.m - 1, p.d, hour, 0) - offset * 60_000;
+  const next = TUR_OPEN_HOURS.map(today).find((t) => t > now.getTime());
+  return new Date(next ?? today(TUR_OPEN_HOURS[0]) + 24 * 3_600_000);
 }
 
-/** The Round date in effect at `now`: today after 21:00, otherwise yesterday (YYYY-MM-DD). */
+/** The Round date in effect at `now`: today from 12:00, otherwise yesterday (YYYY-MM-DD). */
 export function currentTurDate(now: Date): string {
   const p = istanbulParts(now);
   const day = new Date(Date.UTC(p.y, p.m - 1, p.d));
-  if (p.h < TUR_OPEN_HOUR) day.setUTCDate(day.getUTCDate() - 1);
+  if (p.h < TUR_OPEN_HOURS[0]) day.setUTCDate(day.getUTCDate() - 1);
   return day.toISOString().slice(0, 10);
 }
 

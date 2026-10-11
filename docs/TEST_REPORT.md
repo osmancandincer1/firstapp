@@ -55,7 +55,7 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 ### ÇALIŞTIRILAMAYAN / EKSİK
 
 - **pgTAP, gerçek Supabase'de: sonradan çalıştırıldı, 176/176 geçti.** Docker kurulduktan sonra bu makinede (`npx supabase test db`, Supabase CLI 2.120.0) ve GitHub Actions'taki `database` işinde. Faz 0–2'deki "ÇALIŞTIRILAMADI" notları da bununla kapanıyor.
-- **pg_cron zamanlaması: kuruldu.** Yerel Supabase'de `cron.job` iki işi gösteriyor: `tur-generate` (`30 17 * * *` = 20:30 İstanbul) ve `daily-expiry` (`15 * * * *`). İşin gerçekten zamanında çalıştığı henüz gözlenmedi.
+- **pg_cron zamanlaması: kuruldu.** Yerel Supabase'de `cron.job` üç işi gösteriyor: `tur-generate-noon` (`30 8 * * *` = 11:30 İstanbul), `tur-generate` (`30 17 * * *` = 20:30) ve `daily-expiry` (`15 * * * *`) — D-062 sonrası. İşin gerçekten zamanında çalıştığı henüz gözlenmedi.
 - **MAS-04 gerçek eşzamanlılık: ÇALIŞTIRILAMADI** (yukarıda).
 - **Ses cevabının gerçek kaydı ve yüklemesi: ÇALIŞTIRILAMADI.** Mikrofon ve Supabase Storage testlerde sahtelendi; gerçek cihazda elle denenmeli (§16.5).
 - **"Neden bu kişi?" çevirme animasyonu gerçek cihazda: ÇALIŞTIRILAMADI.** Hareket azaltma açıkken kısa geçişe düştüğü kodda; görsel kontrol elle yapılmalı.

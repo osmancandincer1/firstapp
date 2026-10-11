@@ -33,6 +33,15 @@ export function firstOpenIndex(cards: TurCard[]): number {
   return i === -1 ? 0 : i;
 }
 
+/** Opening time as HH:mm in Istanbul (all Rounds follow Istanbul time, D-056). */
+export const openingTime = (at: Date) =>
+  new Intl.DateTimeFormat('tr-TR', {
+    timeZone: 'Europe/Istanbul',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(at);
+
 export function useCountdownText() {
   const { t } = useTranslation();
   return useCallback((now: Date, target: Date) => t('tur.countdown', countdown(now, target)), [t]);

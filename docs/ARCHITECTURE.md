@@ -82,7 +82,7 @@ Ses kartı                     ->  profile-voice             -> M4A süresi (moo
 ## Tur, cevap ve masa (Faz 3)
 
 ```
-pg_cron 20:30 İstanbul  -> srv_generate_all_turs -> srv_generate_tur (kullanıcı başına, günde bir kez)
+pg_cron 11:30 / 20:30   -> srv_generate_all_turs(noon|evening) -> srv_generate_tur (kullanıcı başına, Tur başına bir kez; D-062)
                                                   eligible_pool (karşılıklı filtreler) − recently_seen
                                                   → puan (§5 ağırlıkları, bayraklardan) → çeşitlilik → 9 kart
 pg_cron saat başı       -> srv_expire_daily      -> 14 günlük cevaplar, 7 günlük saklananlar, 72 saatlik bekleyen masalar

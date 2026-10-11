@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title: 'Nokuzo',
-  description: 'Her akşam dokuzda, dokuz kişi.',
+  description: 'Öğlen ve akşam, dokuzar kişi.',
   // Not launched yet: keep the placeholder site out of search engines.
   robots: { index: false, follow: false },
 };

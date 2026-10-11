@@ -12,7 +12,7 @@ export default function Home() {
         ))}
       </div>
       <h1>Nokuzo</h1>
-      <p>Her akşam dokuzda, dokuz kişi.</p>
+      <p>Öğlen ve akşam, dokuzar kişi.</p>
       <p>Yapım aşamasında.</p>
     </main>
   );

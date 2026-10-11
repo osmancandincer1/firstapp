@@ -49,7 +49,7 @@ export interface TurCard {
 export interface Tur {
   batchId: string;
   turDate: string;
-  kind: 'evening' | 'welcome';
+  kind: 'noon' | 'evening' | 'welcome';
   opensAt: string;
   poolSize: number | null;
   hint: { widerAge?: number; widerDistance?: number | null } | null;

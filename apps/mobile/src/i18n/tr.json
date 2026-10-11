@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Nokuzo",
-    "tagline": "Her akşam dokuzda, dokuz kişi."
+    "tagline": "Öğlen ve akşam, dokuzar kişi."
   },
   "foundation": {
     "title": "Temel",
@@ -68,7 +68,7 @@
     "cards": [
       {
         "title": "Tur",
-        "body": "Her akşam 21:00'de doğrulanmış 9 kişi. Sonsuz kaydırma yok."
+        "body": "Her gün 12:00 ve 21:00'de doğrulanmış 9'ar kişi. Sonsuz kaydırma yok."
       },
       {
         "title": "Kapı Sorusu",
@@ -566,19 +566,17 @@
     "me": "Ben"
   },
   "tur": {
-    "title": "Bu akşamın Tur’u",
-    "welcomeTitle": "Hoş geldin Tur’u",
     "error": "Tur yüklenemedi.",
     "filters": "Filtreler",
     "saved": "Sakladıklarım",
     "openFilters": "Filtreleri aç",
-    "notOpenTitle": "Tur saat 21:00’de açılıyor",
-    "notOpenBody": "Her akşam 21:00’de 9 kişi seni bekliyor. O saate kadar profilini güzelleştirebilirsin.",
+    "notOpenTitle": "Sıradaki Tur saat {{time}}’de açılıyor",
+    "notOpenBody": "Her gün 12:00 ve 21:00’de 9’ar kişi seni bekliyor. Arada profilini güzelleştirebilirsin.",
     "countdown": "{{hours}} sa {{minutes}} dk kaldı",
     "emptyTitle": "Bugün kriterlerine uyan kimse yok",
     "emptyBody": "Filtrelerinin dışında birini asla göstermeyiz. Filtreleri biraz genişletmek isteyebilirsin.",
     "finishedTitle": "Tur bitti",
-    "finishedBody": "Bugünkü herkese baktın. Yeni Tur yarın 21:00’de.",
+    "finishedBody": "Bu Tur’daki herkese baktın. Sıradaki Tur {{time}}’de.",
     "completeProfile": "Profilini tamamla",
     "browseAgain": "Kartlara yeniden bak",
     "answer": "Cevapla",
@@ -619,7 +617,13 @@
     "small": "Bugün kriterlerine uyan {{count}} kişi var.",
     "widerDistance": "Mesafeyi 10 km artırırsan {{count}} kişi daha çıkıyor.",
     "widerAge": "Yaş aralığını iki yönde 3 yıl genişletirsen {{count}} kişi daha çıkıyor.",
-    "playVoice": "Ses kartını dinle"
+    "playVoice": "Ses kartını dinle",
+    "titles": {
+      "noon": "Öğlen Tur’u",
+      "evening": "Akşam Tur’u",
+      "welcome": "Hoş geldin Tur’u"
+    },
+    "heading": "Tur"
   },
   "answer": {
     "title": "Cevabın",

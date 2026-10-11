@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Nokuzo",
-    "tagline": "Every evening at nine, nine people."
+    "tagline": "Noon and evening, nine people each."
   },
   "foundation": {
     "title": "Foundation",
@@ -68,7 +68,7 @@
     "cards": [
       {
         "title": "The Round",
-        "body": "Nine verified people every evening at 9 pm. No endless swiping."
+        "body": "Nine verified people at 12:00 and again at 21:00 every day. No endless swiping."
       },
       {
         "title": "The Door Question",
@@ -566,19 +566,17 @@
     "me": "Me"
   },
   "tur": {
-    "title": "Tonight’s Round",
-    "welcomeTitle": "Welcome Round",
     "error": "The Round could not be loaded.",
     "filters": "Filters",
     "saved": "Saved",
     "openFilters": "Open filters",
-    "notOpenTitle": "The Round opens at 21:00",
-    "notOpenBody": "Every evening at 21:00, 9 people are waiting for you. Until then you can polish your profile.",
+    "notOpenTitle": "The next Round opens at {{time}}",
+    "notOpenBody": "Every day at 12:00 and 21:00, 9 people are waiting for you. In between you can polish your profile.",
     "countdown": "{{hours}} h {{minutes}} min left",
     "emptyTitle": "Nobody matches your criteria today",
     "emptyBody": "We never show anyone outside your filters. You may want to widen them a little.",
     "finishedTitle": "Round finished",
-    "finishedBody": "You have seen everyone for today. The next Round opens tomorrow at 21:00.",
+    "finishedBody": "You have seen everyone in this Round. The next one opens at {{time}}.",
     "completeProfile": "Complete your profile",
     "browseAgain": "Look at the cards again",
     "answer": "Answer",
@@ -619,7 +617,13 @@
     "small": "{{count}} people match your criteria today.",
     "widerDistance": "Adding 10 km to the distance would bring {{count}} more.",
     "widerAge": "Widening the age range by 3 years each way would bring {{count}} more.",
-    "playVoice": "Play voice card"
+    "playVoice": "Play voice card",
+    "titles": {
+      "noon": "Noon Round",
+      "evening": "Evening Round",
+      "welcome": "Welcome Round"
+    },
+    "heading": "Round"
   },
   "answer": {
     "title": "Your answer",

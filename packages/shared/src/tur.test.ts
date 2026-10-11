@@ -12,21 +12,18 @@ import {
 } from './tur.ts';
 
 describe('Round timing (§4.1, TUR-02)', () => {
-  it('opens at 21:00 Istanbul time (18:00 UTC)', () => {
-    expect(nextTurOpening(new Date('2026-10-12T10:00:00Z')).toISOString()).toBe(
-      '2026-10-12T18:00:00.000Z',
-    );
-    expect(nextTurOpening(new Date('2026-10-12T18:00:00Z')).toISOString()).toBe(
-      '2026-10-13T18:00:00.000Z',
-    );
-    expect(nextTurOpening(new Date('2026-12-31T21:30:00Z')).toISOString()).toBe(
-      '2027-01-01T18:00:00.000Z',
-    );
+  it('opens twice a day: 12:00 and 21:00 Istanbul (09:00 and 18:00 UTC, D-062)', () => {
+    const next = (iso: string) => nextTurOpening(new Date(iso)).toISOString();
+    expect(next('2026-10-12T05:00:00Z')).toBe('2026-10-12T09:00:00.000Z'); // 08:00 → noon
+    expect(next('2026-10-12T09:00:00Z')).toBe('2026-10-12T18:00:00.000Z'); // at noon → evening
+    expect(next('2026-10-12T10:00:00Z')).toBe('2026-10-12T18:00:00.000Z');
+    expect(next('2026-10-12T18:00:00Z')).toBe('2026-10-13T09:00:00.000Z'); // at 21:00 → tomorrow noon
+    expect(next('2026-12-31T21:30:00Z')).toBe('2027-01-01T09:00:00.000Z'); // after midnight in Istanbul
   });
 
   it('uses the day of the last opening as the Round date', () => {
-    expect(currentTurDate(new Date('2026-10-12T17:59:00Z'))).toBe('2026-10-11');
-    expect(currentTurDate(new Date('2026-10-12T18:00:00Z'))).toBe('2026-10-12');
+    expect(currentTurDate(new Date('2026-10-12T08:59:00Z'))).toBe('2026-10-11');
+    expect(currentTurDate(new Date('2026-10-12T09:00:00Z'))).toBe('2026-10-12');
     expect(currentTurDate(new Date('2026-10-12T21:30:00Z'))).toBe('2026-10-12'); // 00:30 next day in Istanbul
     expect(currentTurDate(new Date('2027-01-01T00:30:00Z'))).toBe('2026-12-31');
   });

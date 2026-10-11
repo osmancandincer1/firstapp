@@ -98,10 +98,11 @@ beforeEach(() => {
 
 describe('turView', () => {
   const now = new Date('2026-10-11T19:00:00Z'); // 22:00 Istanbul
-  it('waits for the next 21:00 when there is no Round or it is not open yet', () => {
+  it('waits for the next opening when there is no Round or it is not open yet', () => {
+    // 22:00 Istanbul: the next Round is tomorrow's noon one (D-062).
     expect(turView(null, now)).toEqual({
       kind: 'waiting',
-      opensAt: new Date('2026-10-12T18:00:00Z'),
+      opensAt: new Date('2026-10-12T09:00:00Z'),
     });
     const later = tur([card(1)], { opensAt: '2026-10-11T20:00:00Z' });
     expect(turView(later, now)).toEqual({
@@ -148,7 +149,7 @@ describe('TurScreen (§8.1 #18)', () => {
   it('shows a countdown before the Round opens', async () => {
     m.viewTur.mockResolvedValue({ ok: true, data: { ok: true, tur: null } });
     await renderWithProviders(<TurScreen />);
-    expect(await screen.findByText('Tur saat 21:00’de açılıyor')).toBeTruthy();
+    expect(await screen.findByText(/^Sıradaki Tur saat (12|21):00’de açılıyor$/)).toBeTruthy();
     expect(screen.getByText(/sa \d+ dk kaldı/)).toBeTruthy();
   });
 

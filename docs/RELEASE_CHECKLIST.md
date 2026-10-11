@@ -18,5 +18,5 @@ Kaynak: APP.md §23. Bir madde ancak kanıtıyla birlikte (test raporu, ekran ka
 - [ ] Kapalı beta geri bildirimleri değerlendirildi; güvenlik sorunları kapatıldı.
 - [ ] Uygulama kimliği (`com.nokuzo.app`) kesinleşti (D-008) — mağazaya yüklendikten sonra değiştirilemez.
 - [ ] Bilinen CSAM karma eşleştirmesi bağlandı ve denendi (D-047).
-- [ ] pg_cron işleri (`tur-generate` 20:30 İstanbul, `daily-expiry` saat başı) üretimde kurulu ve son çalışmaları başarılı (`cron.job_run_details`).
+- [ ] pg_cron işleri (`tur-generate-noon` 11:30 ve `tur-generate` 20:30 İstanbul, `daily-expiry` saat başı) üretimde kurulu ve son çalışmaları başarılı (`cron.job_run_details`).
 - [ ] Tur, cevap ve masa kayıtlarının saklama süreleri avukatla kesinleşti (PRIVACY_DATA_MAP, Faz 3).

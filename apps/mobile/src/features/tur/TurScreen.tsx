@@ -13,7 +13,14 @@ import type { ClientErrorCode } from '@/lib/api';
 import { cardAction, lessLikeThis, type Tur, type TurCard } from './api';
 import { PublicProfileView } from './PublicProfileView';
 import { isOffline, SAVED_KEY, TUR_KEY, useInvalidate, useTur } from './queries';
-import { firstOpenIndex, isDecided, turView, useCountdownText, useReasonText } from './turState';
+import {
+  firstOpenIndex,
+  isDecided,
+  openingTime,
+  turView,
+  useCountdownText,
+  useReasonText,
+} from './turState';
 import { useNow } from './useNow';
 
 /** §8.1 #18 Tur: up to 9 cards, free back-and-forth, "Neden bu kişi?", Cevapla / Geç. */
@@ -34,7 +41,7 @@ export function TurScreen() {
 
   if (query.isPending) {
     return (
-      <Screen title={t('tur.title')} testID="tur-loading">
+      <Screen title={t('tur.heading')} testID="tur-loading">
         <View accessible accessibilityLabel={t('common.loading')} style={styles.gap}>
           <Skeleton height={8} width="40%" />
           <Skeleton height={320} />
@@ -46,7 +53,7 @@ export function TurScreen() {
   if (query.isError && query.data === undefined) {
     return (
       <Screen
-        title={t('tur.title')}
+        title={t('tur.heading')}
         subtitle={isOffline(query.error) ? t('common.offline') : t('tur.error')}
         testID="tur-error"
         footer={<Button label={t('common.retry')} onPress={() => void query.refetch()} />}
@@ -60,10 +67,12 @@ export function TurScreen() {
 
   if (view.kind === 'waiting') {
     return (
-      <Screen title={t('tur.title')} testID="tur-waiting" header={header}>
+      <Screen title={t('tur.heading')} testID="tur-waiting" header={header}>
         {offlineBanner}
         <Card>
-          <AppText variant="heading">{t('tur.notOpenTitle')}</AppText>
+          <AppText variant="heading">
+            {t('tur.notOpenTitle', { time: openingTime(view.opensAt) })}
+          </AppText>
           <AppText accessibilityLiveRegion="polite">{countdownText(now, view.opensAt)}</AppText>
           <AppText tone="secondary">{t('tur.notOpenBody')}</AppText>
         </Card>
@@ -73,7 +82,7 @@ export function TurScreen() {
 
   if (view.kind === 'empty') {
     return (
-      <Screen title={t('tur.title')} testID="tur-empty" header={header}>
+      <Screen title={t('tur.heading')} testID="tur-empty" header={header}>
         {offlineBanner}
         <Card>
           <AppText variant="heading">{t('tur.emptyTitle')}</AppText>
@@ -91,7 +100,9 @@ export function TurScreen() {
         {offlineBanner}
         <Card>
           <AppText accessibilityLiveRegion="polite">{countdownText(now, view.nextAt)}</AppText>
-          <AppText tone="secondary">{t('tur.finishedBody')}</AppText>
+          <AppText tone="secondary">
+            {t('tur.finishedBody', { time: openingTime(view.nextAt) })}
+          </AppText>
         </Card>
         <Button
           variant="secondary"
@@ -146,7 +157,7 @@ function TurCards({
 
   return (
     <Screen
-      title={tur.kind === 'welcome' ? t('tur.welcomeTitle') : t('tur.title')}
+      title={t(`tur.titles.${tur.kind}`)}
       testID="tur-cards"
       header={header}
       footer={

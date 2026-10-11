@@ -1,6 +1,6 @@
 -- Phase 3 database tests: the Round, answers and tables.
 begin;
-select plan(52);
+select plan(55);
 
 create function pg_temp.uid(n int) returns uuid language sql as $$
   select ('00000000-0000-4000-8000-' || lpad(n::text, 12, '0'))::uuid $$;
@@ -55,9 +55,10 @@ update public.profiles set reverify_required = true where id = pg_temp.pid(21);
 update public.profiles set last_active_at = now() - interval '10 days' where id = pg_temp.pid(22);
 
 -- Timing (TUR-02) --------------------------------------------------------------------------------
-select is(private.tur_date_at('2026-10-12 17:59:00+00'), '2026-10-11'::date, 'before 21:00 Istanbul the previous Round is current');
-select is(private.tur_date_at('2026-10-12 18:00:00+00'), '2026-10-12'::date, 'at 21:00 Istanbul the new Round starts');
-select is(private.tur_opens_at('2026-10-12'), '2026-10-12 18:00:00+00'::timestamptz, 'Rounds open at 21:00 Istanbul');
+select is(private.tur_date_at('2026-10-12 08:59:00+00'), '2026-10-11'::date, 'before 12:00 Istanbul last night''s Round is current');
+select is(private.tur_date_at('2026-10-12 09:00:00+00'), '2026-10-12'::date, 'from 12:00 Istanbul the day''s Rounds start');
+select is(private.tur_opens_at('2026-10-12'), '2026-10-12 18:00:00+00'::timestamptz, 'the evening Round opens at 21:00 Istanbul');
+select is(private.tur_opens_at('2026-10-12', 'noon'), '2026-10-12 09:00:00+00'::timestamptz, 'the noon Round opens at 12:00 Istanbul (D-062)');
 
 -- Filters (§5 step 1, TUR-03, TUR-04) --------------------------------------------------------------
 select is((select array_agg(candidate_id order by candidate_id) from private.eligible_pool(pg_temp.pid(1))),
@@ -155,6 +156,20 @@ select id, pg_temp.pid(31), 0, 0, 'fair' from public.tur_batches where profile_i
 create temp table b6 as select public.srv_generate_tur(pg_temp.pid(2), pg_temp.today(), 'welcome') as id;
 select is((select candidate_id from public.tur_cards where batch_id = (select id from b6) and position = 0), pg_temp.pid(32),
   'TUR-08: the rarely shown person ranks first (fair exposure)');
+
+-- Two Rounds a day (D-062) ---------------------------------------------------------------------------------------
+do $$ begin
+  perform pg_temp.mk(300, 'man', array['women'], 35, 'unsure', 10::smallint);
+  perform pg_temp.mk(301, 'woman', array['men'], 35, 'unsure', 10::smallint);
+  perform public.srv_generate_all_turs(pg_temp.today() - 5, 'noon');
+  perform public.srv_generate_all_turs(pg_temp.today() - 5, 'evening');
+  perform public.srv_generate_tur(pg_temp.pid(300), pg_temp.today(), 'welcome');
+end $$;
+select is((select array_agg(kind order by opens_at) from public.tur_batches
+           where profile_id = pg_temp.pid(300) and tur_date = pg_temp.today() - 5), array['noon', 'evening'],
+  'the same day has a noon and an evening Round');
+select is((select kind from public.tur_batches where id = private.current_batch(pg_temp.pid(300))), 'welcome',
+  'the latest opened Round is current (older ones close when the next opens)');
 
 -- Diversity never leaves a slot empty (§4.1, D-061) ----------------------------------------------------------------
 -- Seven near-identical people are all chosen for the same reason; the cap of 4 must not drop the other three.

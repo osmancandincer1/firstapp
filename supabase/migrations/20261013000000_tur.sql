@@ -246,15 +246,16 @@ returns boolean language sql immutable set search_path = '' as $$
   from jsonb_array_elements(coalesce(p_rules, '[]')) r;
 $$;
 
--- The Round date in effect at a moment: today after 21:00 Istanbul, otherwise yesterday (TUR-02).
+-- Two Rounds a day, 12:00 ('noon') and 21:00 ('evening') Istanbul (D-062).
+-- The Round date in effect at a moment: today from 12:00 Istanbul, otherwise yesterday (TUR-02).
 create or replace function private.tur_date_at(p_at timestamptz)
 returns date language sql immutable set search_path = '' as $$
-  select ((p_at at time zone 'Europe/Istanbul') - interval '21 hours')::date;
+  select ((p_at at time zone 'Europe/Istanbul') - interval '12 hours')::date;
 $$;
 
-create or replace function private.tur_opens_at(p_date date)
+create or replace function private.tur_opens_at(p_date date, p_kind text default 'evening')
 returns timestamptz language sql immutable set search_path = '' as $$
-  select (p_date + time '21:00') at time zone 'Europe/Istanbul';
+  select (p_date + case when p_kind = 'noon' then time '12:00' else time '21:00' end) at time zone 'Europe/Istanbul';
 $$;
 
 create or replace function private.ensure_preferences(p_profile_id uuid)
@@ -442,7 +443,7 @@ begin
 
   insert into public.tur_batches (profile_id, tur_date, kind, opens_at)
   values (p_profile_id, p_tur_date, p_kind,
-          case when p_kind = 'welcome' then now() else private.tur_opens_at(p_tur_date) end)
+          case when p_kind = 'welcome' then now() else private.tur_opens_at(p_tur_date, p_kind) end)
   on conflict (profile_id, tur_date, kind) do nothing
   returning id into v_batch;
   if v_batch is null then
@@ -537,8 +538,8 @@ begin
 end;
 $$;
 
--- Nightly job for every active account (§5: 20:30, Istanbul).
-create or replace function public.srv_generate_all_turs(p_date date)
+-- Job for every active account, half an hour before each opening (§5, D-062).
+create or replace function public.srv_generate_all_turs(p_date date, p_kind text default 'evening')
 returns integer language plpgsql security definer set search_path = '' as $$
 declare
   n int := 0;
@@ -548,7 +549,7 @@ begin
            where status = 'active' and verified_at is not null and not reverify_required
              and last_active_at > now() - interval '7 days'
   loop
-    if public.srv_generate_tur(p.id, p_date, 'evening') is not null then n := n + 1; end if;
+    if public.srv_generate_tur(p.id, p_date, p_kind) is not null then n := n + 1; end if;
   end loop;
   return n;
 end;
@@ -564,16 +565,17 @@ returns void language sql security definer set search_path = '' as $$
   where status = 'waiting_slot' and waiting_expires_at <= now();
 $$;
 
--- The current Round of a user: the latest batch already open for the current Round date.
+-- The current Round of a user: the most recently opened batch. A Round stays
+-- open until the next one opens (at most 15 hours with 12:00 and 21:00).
 create or replace function private.current_batch(p_profile_id uuid)
 returns uuid language sql stable security definer set search_path = '' as $$
   select id from public.tur_batches
-  where profile_id = p_profile_id and opens_at <= now() and tur_date >= private.tur_date_at(now())
+  where profile_id = p_profile_id and opens_at <= now() and opens_at > now() - interval '24 hours'
   order by opens_at desc, tur_date desc, created_at desc limit 1;
 $$;
 
 -- ---------------------------------------------------------------------------
--- Activation: preferences, and a Round right away when signing up in the evening (§6.1 step 15)
+-- Activation: preferences, and a Round right away (§6.1 step 15, D-053)
 -- ---------------------------------------------------------------------------
 create or replace function private.first_tur(p_profile_id uuid)
 returns void language plpgsql security definer set search_path = '' as $$
@@ -581,12 +583,14 @@ declare
   local_time time := (now() at time zone 'Europe/Istanbul')::time;
 begin
   perform private.ensure_preferences(p_profile_id);
-  if local_time >= time '21:00' or local_time < time '05:00' then
-    -- Signed up after this evening's opening: a welcome Round opens now (D-053).
-    perform public.srv_generate_tur(p_profile_id, private.tur_date_at(now()), 'welcome');
-  elsif local_time >= time '20:30' then
-    -- The nightly job already ran: generate tonight's Round now.
+  if local_time >= time '11:30' and local_time < time '12:00' then
+    -- The noon job already ran: generate today's noon Round (opens at 12:00).
+    perform public.srv_generate_tur(p_profile_id, (now() at time zone 'Europe/Istanbul')::date, 'noon');
+  elsif local_time >= time '20:30' and local_time < time '21:00' then
     perform public.srv_generate_tur(p_profile_id, (now() at time zone 'Europe/Istanbul')::date, 'evening');
+  else
+    -- Otherwise a welcome Round opens now; the next scheduled Round replaces it.
+    perform public.srv_generate_tur(p_profile_id, private.tur_date_at(now()), 'welcome');
   end if;
 end;
 $$;
@@ -904,9 +908,11 @@ do $$
 begin
   if exists (select 1 from pg_available_extensions where name = 'pg_cron') then
     execute 'create extension if not exists pg_cron';
-    -- 20:30 Istanbul = 17:30 UTC (Türkiye has no daylight saving time).
+    -- 11:30 and 20:30 Istanbul = 08:30 and 17:30 UTC (Türkiye has no daylight saving time).
+    execute $cron$select cron.schedule('tur-generate-noon', '30 8 * * *',
+      $job$select public.srv_generate_all_turs(((now() at time zone 'Europe/Istanbul'))::date, 'noon')$job$)$cron$;
     execute $cron$select cron.schedule('tur-generate', '30 17 * * *',
-      $job$select public.srv_generate_all_turs(((now() at time zone 'Europe/Istanbul'))::date)$job$)$cron$;
+      $job$select public.srv_generate_all_turs(((now() at time zone 'Europe/Istanbul'))::date, 'evening')$job$)$cron$;
     execute $cron$select cron.schedule('daily-expiry', '15 * * * *', $job$select public.srv_expire_daily()$job$)$cron$;
   end if;
 end $$;
