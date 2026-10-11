@@ -328,6 +328,18 @@ async function seedPeople() {
       }),
       'preferences',
     );
+    // People meant to match also meet the target's must-haves (§6.4), which are strict filters.
+    const mustHaves =
+      kind === 'match'
+        ? Object.fromEntries(
+            (t.dealbreakers ?? []).map((rule) => [
+              rule.field,
+              ['pets', 'languages'].includes(rule.field)
+                ? [pick(rule.accepted)]
+                : pick(rule.accepted),
+            ]),
+          )
+        : {};
     await must(
       db.from('profile_details').insert({
         profile_id: id,
@@ -340,6 +352,7 @@ async function seedPeople() {
           first_date: pick(['coffee', 'walk', 'dinner', 'art_music']),
           wants_children: pick(['want', 'not_sure', 'maybe', 'dont_want']),
           about: pick(ABOUT),
+          ...mustHaves,
         },
       }),
       'details',
