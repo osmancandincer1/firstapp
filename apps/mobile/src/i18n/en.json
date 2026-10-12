@@ -703,7 +703,8 @@
     "chatSoon": "Chat arrives with the next update.",
     "waitingTitle": "Tables waiting",
     "waitingBody": "They open in order when a table frees up.",
-    "waitingLeft": "{{hours}} h {{minutes}} min for a slot to open"
+    "waitingLeft": "{{hours}} h {{minutes}} min for a slot to open",
+    "emptySlot": "Free table"
   },
   "filters": {
     "title": "Filters",

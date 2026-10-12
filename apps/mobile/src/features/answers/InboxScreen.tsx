@@ -3,8 +3,19 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { AppText, Banner, Button, Card, Screen, SegmentedControl, Skeleton } from '@/components';
+import {
+  AppText,
+  Avatar,
+  Banner,
+  Button,
+  Card,
+  Screen,
+  SegmentedControl,
+  Skeleton,
+} from '@/components';
+import { useTheme } from '@/design/theme';
 import type { IncomingAnswer, OutgoingAnswer } from '@/features/tur/api';
 import { isOffline, useInbox } from '@/features/tur/queries';
 
@@ -56,14 +67,14 @@ export function InboxScreen() {
       />
       {tab === 'incoming' ? (
         incoming.length ? (
-          incoming.map((a) => <IncomingRow key={a.answerId} answer={a} />)
+          incoming.map((a, i) => <IncomingRow key={a.answerId} answer={a} index={i} />)
         ) : (
           <AppText tone="secondary" testID="inbox-empty">
             {t('inbox.emptyIncoming')}
           </AppText>
         )
       ) : outgoing.length ? (
-        outgoing.map((a) => <OutgoingRow key={a.answerId} answer={a} />)
+        outgoing.map((a, i) => <OutgoingRow key={a.answerId} answer={a} index={i} />)
       ) : (
         <AppText tone="secondary" testID="outbox-empty">
           {t('inbox.emptyOutgoing')}
@@ -84,52 +95,88 @@ function AnswerBody({ text, voiceMs }: { text: string | null; voiceMs: number | 
   );
 }
 
-function IncomingRow({ answer: a }: { answer: IncomingAnswer }) {
+function useRowEntering(index: number) {
+  const { reduceMotion } = useTheme();
+  return reduceMotion
+    ? undefined
+    : FadeInDown.delay(index * 70)
+        .springify()
+        .damping(18);
+}
+
+function IncomingRow({ answer: a, index }: { answer: IncomingAnswer; index: number }) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const lang = i18n.language === 'en' ? 'en' : 'tr';
+  const entering = useRowEntering(index);
   return (
-    <Card testID="incoming-row">
-      <AppText variant="heading">
-        {t('inbox.nameAge', { name: a.profile?.name ?? '', age: a.profile?.age ?? '' })}
-      </AppText>
-      {a.question ? (
-        <AppText variant="caption" tone="secondary">
-          {a.question[lang]}
-        </AppText>
-      ) : null}
-      <AnswerBody text={a.text} voiceMs={a.voiceMs} />
-      <Button
-        variant="secondary"
-        label={t('inbox.open')}
-        onPress={() => router.push({ pathname: '/inbox/[id]', params: { id: a.answerId } })}
-      />
-    </Card>
+    <Animated.View entering={entering}>
+      <Card testID="incoming-row" style={styles.row}>
+        <View style={styles.rowHead}>
+          <Avatar
+            uri={a.profile?.photos?.[0]?.url}
+            name={a.profile?.name}
+            size={54}
+            shape="portrait"
+          />
+          <View style={styles.flex}>
+            <AppText variant="heading">
+              {t('inbox.nameAge', { name: a.profile?.name ?? '', age: a.profile?.age ?? '' })}
+            </AppText>
+            {a.question ? (
+              <AppText variant="caption" tone="secondary" numberOfLines={2}>
+                {a.question[lang]}
+              </AppText>
+            ) : null}
+          </View>
+        </View>
+        <AnswerBody text={a.text} voiceMs={a.voiceMs} />
+        <Button
+          label={t('inbox.open')}
+          onPress={() => router.push({ pathname: '/inbox/[id]', params: { id: a.answerId } })}
+        />
+      </Card>
+    </Animated.View>
   );
 }
 
-function OutgoingRow({ answer: a }: { answer: OutgoingAnswer }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language === 'en' ? 'en' : 'tr';
+function OutgoingRow({ answer: a, index }: { answer: OutgoingAnswer; index: number }) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const entering = useRowEntering(index);
+  const status = {
+    waiting: { bg: 'rgba(255,255,255,0.08)', fg: colors.textSecondary },
+    reciprocated: { bg: 'rgba(107,211,154,0.16)', fg: colors.success },
+    dropped: { bg: 'rgba(255,255,255,0.04)', fg: colors.textSecondary },
+  }[a.status];
   return (
-    <Card testID="outgoing-row">
-      <View style={styles.between}>
-        <AppText variant="heading">{a.profile?.name ?? t('inbox.someone')}</AppText>
-        <AppText variant="label" tone={a.status === 'reciprocated' ? 'success' : 'secondary'}>
-          {t(`inbox.status.${a.status}`)}
-        </AppText>
-      </View>
-      {a.question ? (
-        <AppText variant="caption" tone="secondary">
-          {a.question[lang]}
-        </AppText>
-      ) : null}
-      <AnswerBody text={a.text} voiceMs={a.voiceMs} />
-    </Card>
+    <Animated.View entering={entering}>
+      <Card testID="outgoing-row" style={styles.outRow}>
+        <Avatar uri={a.profile?.photos?.[0]?.url} name={a.profile?.name} size={46} />
+        <View style={styles.flex}>
+          <AppText variant="label">{a.profile?.name ?? t('inbox.someone')}</AppText>
+          <AppText variant="caption" tone="secondary" numberOfLines={1}>
+            {a.text
+              ? `“${a.text}”`
+              : t('inbox.voiceAnswer', { seconds: Math.round((a.voiceMs ?? 0) / 1000) })}
+          </AppText>
+        </View>
+        <View style={[styles.status, { backgroundColor: status.bg }]}>
+          <AppText variant="caption" style={[styles.statusText, { color: status.fg }]}>
+            {t(`inbox.status.${a.status}`)}
+          </AppText>
+        </View>
+      </Card>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   gap: { gap: space(2) },
-  between: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  flex: { flex: 1, gap: 2 },
+  row: { gap: space(1.5) },
+  rowHead: { flexDirection: 'row', alignItems: 'center', gap: space(1.5) },
+  outRow: { flexDirection: 'row', alignItems: 'center', gap: space(1.5) },
+  status: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 14 },
+  statusText: { fontFamily: 'Manrope_600SemiBold' },
 });

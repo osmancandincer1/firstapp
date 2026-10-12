@@ -415,7 +415,7 @@ async function seedPeople() {
       db.rpc('srv_answer_create', {
         p_user_id: m.userId,
         p_candidate: t.id,
-        p_text: pick(ANSWERS),
+        p_text: ANSWERS[answered % ANSWERS.length],
         p_voice_path: null,
         p_voice_ms: null,
       }),

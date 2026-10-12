@@ -703,7 +703,8 @@
     "chatSoon": "Sohbet bir sonraki güncellemeyle açılacak.",
     "waitingTitle": "Masa bekliyor",
     "waitingBody": "Bir masa boşalınca sırayla açılır.",
-    "waitingLeft": "Yer açılması için {{hours}} sa {{minutes}} dk"
+    "waitingLeft": "Yer açılması için {{hours}} sa {{minutes}} dk",
+    "emptySlot": "Boş masa"
   },
   "filters": {
     "title": "Filtreler",

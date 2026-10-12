@@ -14,3 +14,4 @@ export * from './Chips';
 export * from './WheelPicker';
 export * from './Flame';
 export * from './TabBar';
+export * from './Avatar';
