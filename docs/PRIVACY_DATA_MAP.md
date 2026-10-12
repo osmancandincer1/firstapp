@@ -56,6 +56,19 @@
 | Bu haftaki mod                                             | `profiles.mood`, `mood_set_at`            | Profiline erişebilenler, yalnızca o hafta; aynı moddakiler Tur'da nedenini görür | Kişi değiştirene ya da temizleyene kadar (hafta bitince görünmez ama satırda kalır) |
 | "İki doğru, bir yalan" cümleleri ve yalanın hangisi olduğu | `profile_games` (doğrudan okuma yok, RLS) | Profiline erişebilenler; tahminler cihazda kalır, sunucuya gitmez                | Kaldırılana ya da hesap silinene kadar                                              |
 
+## Faz 4 itibarıyla eklenen veriler (D-067, D-068)
+
+| Veri                                                           | Nerede                                                                                              | Kim görür                                                                           | Saklama                                             |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Sohbet mesajları ve işaretleri (bağlantı, platform dışı, para) | `messages`                                                                                          | Yalnızca masanın iki tarafı (RLS); işaretler moderasyon için                        | TODO(owner): şu an süresiz; hesap silinince silinir |
+| Ses mesajları                                                  | Depolama: `quarantine` (kısa süre), `public-voice/u_<kullanıcı>/messages/`                          | Yalnızca masanın iki tarafı, 10 dakikalık imzalı bağlantıyla                        | Mesajla birlikte                                    |
+| Okundu zamanı                                                  | `messages.read_at`                                                                                  | Şimdilik yalnızca okunmamış sayısı için; karşı tarafa gösterilmiyor (SOH-09, Faz 7) | Mesajla birlikte                                    |
+| Mola dönemleri                                                 | `pauses`                                                                                            | Karşı taraf yalnızca bitiş tarihini görür                                           | TODO(owner)                                         |
+| Veda cümlesi ve notu                                           | `tables.farewell_key`, `farewell_text`                                                              | Yalnızca vedayı alan taraf                                                          | Masayla birlikte                                    |
+| Yanıt süresi medyanı                                           | `profiles.reply_median_minutes`                                                                     | Profilde rozet (en az 5 masa verisiyle); Tur sıralamasında kullanılır               | Her gece yeniden hesaplanır                         |
+| Masa oyunları                                                  | `table_games` (açık durum), `private.table_game_secrets` (gizli kelime ve henüz açılmamış cevaplar) | Açık durum: iki taraf; gizli kısım: hiç kimse (yalnızca sunucu)                     | Masayla birlikte                                    |
+| Giden mesaj kuyruğu                                            | Cihaz (AsyncStorage)                                                                                | Yalnızca cihaz                                                                      | Sunucu onaylayınca silinir                          |
+
 ## Planlanan veri (APP.md'den; her faz eklendikçe bu tablo gerçek uygulamayla güncellenecek)
 
 | Veri sınıfı                              | Örnek            | Özel nitelikli mi | Faz | Not                                               |

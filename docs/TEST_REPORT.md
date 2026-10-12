@@ -4,21 +4,21 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ---
 
-## Faz 4 — Masa ve sohbet (1. kısım: yuvalar, sohbet, zamanlayıcılar, Mola, Nazik Veda) · 2026-10-12
+## Faz 4 — Masa ve sohbet · 2026-10-12
 
-**Ortam:** bu makine; Docker ile yerel Supabase (Realtime dahil), Android emülatörü (Pixel, Expo Go). Kararlar: D-067. Bu bölüm Faz 4'ün ilk kısmıdır; ses mesajı ve masada mini oyunlar sonraki kısımda.
+**Ortam:** bu makine; Docker ile yerel Supabase (Realtime dahil), Android emülatörü (Pixel, Expo Go). Kararlar: D-067 (masa ve sohbet), D-068 (masada mini oyunlar).
 
 ### Özet
 
-| Katman                              | Komut                                                               | Sonuç                                                        |
-| ----------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata**                                                   |
-| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **153/153**                                                  |
-| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                    |
-| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **190/190**                                                  |
-| Edge Functions                      | `npm run functions:check` (18 fonksiyon) + `npm run functions:test` | **0 tip hatası · 106/106**                                   |
-| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db` (yerel Docker)                               | **240/240** (00: 13, 01: 57, 02: 55, 03: 62, 04: 13, 05: 40) |
-| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                             |
+| Katman                              | Komut                                                               | Sonuç                                                                |
+| ----------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata**                                                           |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **164/164**                                                          |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                            |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **202/202**                                                          |
+| Edge Functions                      | `npm run functions:check` (19 fonksiyon) + `npm run functions:test` | **0 tip hatası · 112/112**                                           |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db` (yerel Docker)                               | **256/256** (00: 13, 01: 57, 02: 55, 03: 62, 04: 13, 05: 42, 06: 14) |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                                     |
 
 ### Faz 4 kabul kriterleri (APP.md §21)
 
@@ -35,11 +35,17 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 - **Deno (4):** `chat` gönderme ve işaretler, hata eşlemeleri, veda notu denetimi, yeniden açma ve engelleme; `tables` Mola başlatma, sınır ve bitirme.
 - **mobil (14):** giden kutusu sırası, ağ hatasında devam, reddedilen mesajın gerekçesiyle kalması, canlı mesajların yinelenmeden birleşmesi; sohbet ekranı (gönderme, okundu, uyarı bandının yalnızca alıcıda çıkması, başarısız gönderim, Nazik Veda, engelleme, alınan veda, soğuk masayı açma, engellenen tarafın görünümü); Masalar (sohbete geçiş, son mesaj, okunmamış sayısı, arşiv, Mola).
 
+- **Ses mesajı (SOH-10):** pgTAP — kaydın yolunu yalnızca taraflar alır; Deno — 1–60 sn dışı ve bozuk dosya reddi, karantinadan taşınma, imzalı bağlantı yalnızca taraflara; mobil — kayıt, yükleme, gönderme, 1 sn altı uyarısı, dinleme.
+- **Masada mini oyunlar (D-068):** shared (11, %100 satır) — Türkçe harf kuralları, kelime listesi, renklendirme (tekrarlı harfler dahil), sıra, kazanma/kaybetme, gizli cevaplar ve puanlama; pgTAP `06_games` (14) — tek oyun kuralı, dışarıdakiler oyunu göremez ve başlatamaz, gizli kısım uygulamadan hiçbir yolla okunamaz, eski sürüme dayalı hamle reddi, masa kapanınca oyunun bitmesi; Deno (5) — başlatma, metin denetimi, hata eşlemeleri, sürümlü kaydetme; mobil (9) — üç tahta, harf klavyesi, oyun seçici.
+
 ### Emülatörde elle denenenler
 
 - Masalar: yuvalar, son mesaj önizlemesi, okunmamış rozeti; satıra dokununca sohbet açılıyor.
 - Gerçek zamanlı: `node scripts/demo-people.mjs chat --for asd@gmail.com` ile Derya yazdı; mesaj ekrana yenilemeden geldi, başlık "Sıra sende" oldu. Uygulamadan gönderilen mesaj veritabanına yazıldı ve başlık "Sıra onda" oldu.
 - Uçak modu: yukarıdaki mesaj kaybı denemesi.
+- Oyun: sohbet başlığındaki oyun düğmesinden Kelime Avı başlatıldı; sohbete "başladı" satırı düştü, gizli kelime yalnızca `private.table_game_secrets`'te; "kalem" tahmini doğru renklendi ve sıra karşıya geçti.
+- **Bulunan ve düzeltilen hata:** oyun paneli ve seçici aynı Realtime kanalına iki kez abone olmaya çalışıyordu ("cannot add postgres_changes callbacks after subscribe"); seçici artık abone olmuyor.
+- **Elle denenmeyen:** ses kaydı (emülatör mikrofonu) — otomatik testlerle kapsandı; gerçek cihazda denenmeli.
 
 ### Çalıştırılamayanlar ve not
 

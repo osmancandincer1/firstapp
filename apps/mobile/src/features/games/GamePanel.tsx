@@ -32,7 +32,7 @@ import {
   startTableGame,
   type TableGame,
 } from './api';
-import { useTableGame } from './useTableGame';
+import { useSetGame, useTableGame } from './useTableGame';
 
 type Failure = { error: ClientErrorCode; reason?: string } | null;
 
@@ -397,10 +397,10 @@ export function GamePicker({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
-  const game = useTableGame(tableId);
+  const setGame = useSetGame(tableId);
   const [kind, setKind] = useState<GameKind | null>(null);
   const [word, setWord] = useState('');
-  const { busy, failure, run } = useMove(game.set);
+  const { busy, failure, run } = useMove(setGame);
 
   const start = async () => {
     if (!kind) return;
