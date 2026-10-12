@@ -29,7 +29,14 @@ export function PlayVoice({ url, label }: { url: string; label: string }) {
  * The full public profile (§8.1 #19): what the server projected and signed,
  * nothing more. No blur and no paywall (§4.2).
  */
-export function PublicProfileView({ profile: p }: { profile: PublicProfile }) {
+export function PublicProfileView({
+  profile: p,
+  below = false,
+}: {
+  profile: PublicProfile;
+  /** Under a Round card that already shows photos, name and the door question. */
+  below?: boolean;
+}) {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const detailText = useDetailText(p.details?.hometown_city_id !== undefined);
@@ -38,7 +45,7 @@ export function PublicProfileView({ profile: p }: { profile: PublicProfile }) {
 
   return (
     <View style={styles.root}>
-      {photos.length ? (
+      {!below && photos.length ? (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -61,22 +68,24 @@ export function PublicProfileView({ profile: p }: { profile: PublicProfile }) {
           ))}
         </ScrollView>
       ) : null}
-      <View style={styles.head}>
-        <AppText variant="title">{p.name}</AppText>
-        <AppText tone="secondary">
-          {t('profile.preview.ageCity', { age: p.age, place: p.district ?? p.city ?? '' })}
-        </AppText>
-        {p.verified ? (
-          <View style={styles.verified}>
-            <Icon icon={CheckIcon} size={16} color={colors.success} />
-            <AppText variant="label" tone="success">
-              {t('profile.preview.verified')}
-            </AppText>
-          </View>
-        ) : null}
-        {p.intent ? <AppText>{t(`profile.intent.intents.${p.intent}`)}</AppText> : null}
-      </View>
-      {p.doorQuestion ? (
+      {below ? null : (
+        <View style={styles.head}>
+          <AppText variant="title">{p.name}</AppText>
+          <AppText tone="secondary">
+            {t('profile.preview.ageCity', { age: p.age, place: p.district ?? p.city ?? '' })}
+          </AppText>
+          {p.verified ? (
+            <View style={styles.verified}>
+              <Icon icon={CheckIcon} size={16} color={colors.success} />
+              <AppText variant="label" tone="success">
+                {t('profile.preview.verified')}
+              </AppText>
+            </View>
+          ) : null}
+          {p.intent ? <AppText>{t(`profile.intent.intents.${p.intent}`)}</AppText> : null}
+        </View>
+      )}
+      {!below && p.doorQuestion ? (
         <Card>
           <AppText variant="label" tone="secondary">
             {t('profile.preview.door')}

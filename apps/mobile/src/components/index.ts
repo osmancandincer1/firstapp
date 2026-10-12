@@ -13,3 +13,4 @@ export * from './StepProgress';
 export * from './Chips';
 export * from './WheelPicker';
 export * from './Flame';
+export * from './TabBar';

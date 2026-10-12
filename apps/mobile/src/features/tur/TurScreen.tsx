@@ -1,27 +1,61 @@
-import { motion, space } from '@nokuzo/design-tokens';
-import { LESS_LIKE_THIS_KEYS, TUR_SIZE } from '@nokuzo/shared';
+import { flame, motion, space } from '@nokuzo/design-tokens';
+import { TUR_SIZE } from '@nokuzo/shared';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FlipInEasyY } from 'react-native-reanimated';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, FadeOut, SlideOutLeft } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppText, Banner, Button, Card, Screen, Sheet, Skeleton } from '@/components';
+import {
+  AppText,
+  Banner,
+  Button,
+  Card,
+  FlameGradient,
+  GlowBackdrop,
+  Icon,
+  Screen,
+  Skeleton,
+} from '@/components';
+import { BookmarkSimpleIcon, SlidersHorizontalIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
+import { useMyProfile } from '@/features/profile/queries';
 import type { ClientErrorCode } from '@/lib/api';
-import { cardAction, lessLikeThis, nextTur, type Tur, type TurCard } from './api';
+import { cardAction, nextTur, type Tur, type TurCard } from './api';
 import { PublicProfileView } from './PublicProfileView';
 import { isOffline, SAVED_KEY, TUR_KEY, useInvalidate, useTurState } from './queries';
-import {
-  firstOpenIndex,
-  isDecided,
-  openingTime,
-  turView,
-  useCountdownText,
-  useReasonText,
-} from './turState';
+import { ActionPill, FlipCard } from './TurCard';
+import { firstOpenIndex, isDecided, openingTime, turView, useCountdownText } from './turState';
 import { useNow } from './useNow';
+
+/** Round buttons for the filters and the saved list. */
+function HeaderActions() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { colors } = useTheme();
+  return (
+    <View style={styles.headerActions}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('tur.saved')}
+        onPress={() => router.push('/saved')}
+        style={styles.roundButton}
+      >
+        <Icon icon={BookmarkSimpleIcon} size={20} color={colors.textPrimary} />
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('tur.filters')}
+        onPress={() => router.push('/filters')}
+        style={styles.roundButton}
+      >
+        <Icon icon={SlidersHorizontalIcon} size={20} color={colors.textPrimary} />
+      </Pressable>
+    </View>
+  );
+}
 
 /** §8.1 #18 Tur: up to 9 cards, free back-and-forth, "Neden bu kişi?", Cevapla / Geç. */
 export function TurScreen() {
@@ -32,21 +66,15 @@ export function TurScreen() {
   const countdownText = useCountdownText();
   const [browseAgain, setBrowseAgain] = useState(false);
   const next = useNextTur(() => setBrowseAgain(false));
-
-  const header = (
-    <View style={styles.headerRow}>
-      <Button variant="ghost" label={t('tur.filters')} onPress={() => router.push('/filters')} />
-      <Button variant="ghost" label={t('tur.saved')} onPress={() => router.push('/saved')} />
-    </View>
-  );
+  const header = <HeaderActions />;
 
   if (query.isPending) {
     return (
       <Screen title={t('tur.heading')} testID="tur-loading">
         <View accessible accessibilityLabel={t('common.loading')} style={styles.gap}>
           <Skeleton height={8} width="40%" />
-          <Skeleton height={320} />
-          <Skeleton height={48} />
+          <Skeleton height={420} radius={34} />
+          <Skeleton height={56} />
         </View>
       </Screen>
     );
@@ -140,7 +168,7 @@ export function TurScreen() {
     );
   }
 
-  return <TurCards tur={view.tur} header={header} offlineBanner={offlineBanner} />;
+  return <TurCards tur={view.tur} offlineBanner={offlineBanner} />;
 }
 
 /** "Sıradaki 9 kişi": asks for the next Round and shows it at once. */
@@ -164,28 +192,25 @@ function useNextTur(onOpened: () => void) {
   return { run, pending, error };
 }
 
-function TurCards({
-  tur,
-  header,
-  offlineBanner,
-}: {
-  tur: Tur;
-  header: React.ReactNode;
-  offlineBanner: React.ReactNode;
-}) {
+function TurCards({ tur, offlineBanner }: { tur: Tur; offlineBanner: React.ReactNode }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const { colors, reduceMotion } = useTheme();
   const invalidate = useInvalidate();
+  const me = useMyProfile();
+  const { height } = useWindowDimensions();
   const [index, setIndex] = useState(() => firstOpenIndex(tur.cards));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ClientErrorCode | null>(null);
   const card = tur.cards[Math.min(index, tur.cards.length - 1)]!;
   const last = tur.cards.length - 1;
+  const cardHeight = Math.max(420, Math.min(580, height * 0.62));
+  const myName = me.data?.name ?? '';
 
   // Moving to another card clears the last card's error.
   const go = (i: number) => {
     setError(null);
-    setIndex(i);
+    setIndex(Math.max(0, Math.min(last, i)));
   };
 
   const act = async (action: 'pass' | 'save' | 'unsave') => {
@@ -202,187 +227,129 @@ function TurCards({
     if (action !== 'unsave' && index < last) go(index + 1);
   };
 
-  return (
-    <Screen
-      title={t(`tur.titles.${tur.kind}`)}
-      testID="tur-cards"
-      header={header}
-      footer={
-        isDecided(card) ? (
-          <AppText tone="secondary" accessibilityLiveRegion="polite" testID="card-decided">
-            {t(`tur.decided.${card.action}`)}
-          </AppText>
-        ) : (
-          <>
-            <Button
-              label={t('tur.answer')}
-              onPress={() => router.push({ pathname: '/answer', params: { cardId: card.cardId } })}
-            />
-            <View style={styles.row}>
-              <View style={styles.flex}>
-                <Button
-                  variant="secondary"
-                  label={t('tur.pass')}
-                  onPress={() => void act('pass')}
-                  disabled={busy}
-                />
-              </View>
-              <View style={styles.flex}>
-                <Button
-                  variant="ghost"
-                  label={t('tur.save')}
-                  onPress={() => void act('save')}
-                  disabled={busy}
-                />
-              </View>
-            </View>
-          </>
-        )
-      }
-    >
-      {offlineBanner}
-      {tur.cards.length < TUR_SIZE ? <PoolHint tur={tur} /> : null}
-      <Dots count={tur.cards.length} index={index} cards={tur.cards} />
-      <CardFace card={card} key={card.cardId} />
-      {card.action === 'saved' ? (
-        <Button
-          variant="ghost"
-          label={t('tur.unsave')}
-          onPress={() => void act('unsave')}
-          disabled={busy}
-        />
-      ) : null}
-      <ErrorNotice error={error} />
-      <View style={styles.row}>
-        <View style={styles.flex}>
-          <Button
-            variant="secondary"
-            label={t('common.back')}
-            onPress={() => go(index - 1)}
-            disabled={index === 0}
-          />
-        </View>
-        <View style={styles.flex}>
-          <Button
-            variant="secondary"
-            label={t('common.next')}
-            onPress={() => go(index + 1)}
-            disabled={index >= last}
-          />
-        </View>
-      </View>
-    </Screen>
-  );
-}
-
-/** Position indicator (9 dots); decided cards are filled, the current one is larger. */
-function Dots({ count, index, cards }: { count: number; index: number; cards: TurCard[] }) {
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-  return (
-    <View
-      accessible
-      accessibilityRole="text"
-      accessibilityLabel={t('tur.position', { index: index + 1, total: count })}
-      style={styles.dots}
-      testID="tur-dots"
-    >
-      {cards.map((c, i) => (
-        <View
-          key={c.cardId}
-          style={[
-            styles.dot,
-            i === index && styles.dotCurrent,
-            { backgroundColor: isDecided(c) || i === index ? colors.accentPrimary : colors.border },
-          ]}
-        />
-      ))}
-    </View>
-  );
-}
-
-/** Front: the profile. Back: "Neden bu kişi?" (flips; reduce motion swaps instantly). */
-function CardFace({ card }: { card: TurCard }) {
-  const { t } = useTranslation();
-  const { reduceMotion } = useTheme();
-  const [back, setBack] = useState(false);
   const entering = reduceMotion
     ? FadeIn.duration(motion.reducedCrossfade)
-    : FlipInEasyY.duration(motion.durationSlow);
+    : FadeInDown.springify().damping(18).stiffness(160);
+  const exiting = reduceMotion
+    ? FadeOut.duration(motion.reducedCrossfade)
+    : SlideOutLeft.duration(320);
 
   return (
-    <View style={styles.gap}>
-      <Button
-        variant="ghost"
-        label={back ? t('tur.showProfile') : t('tur.why')}
-        onPress={() => setBack(!back)}
-        accessibilityHint={t('tur.whyHint')}
-      />
-      {back ? (
-        <Animated.View entering={entering} key="back">
-          <WhyThisPerson card={card} />
+    <SafeAreaView
+      edges={['top']}
+      style={[styles.flex, { backgroundColor: colors.bgBase }]}
+      testID="tur-cards"
+    >
+      <GlowBackdrop placement="center" />
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <View style={styles.avatar} accessibilityElementsHidden importantForAccessibility="no">
+            <FlameGradient style={StyleSheet.absoluteFill} />
+            <AppText variant="heading">{myName.slice(0, 1).toLocaleUpperCase('tr')}</AppText>
+          </View>
+          <View style={styles.flex}>
+            {myName ? (
+              <AppText variant="caption" tone="secondary">
+                {t('tur.hello', { name: myName })}
+              </AppText>
+            ) : null}
+            <AppText variant="label" accessibilityRole="header">
+              {t(`tur.titles.${tur.kind}`)} · {index + 1} / {tur.cards.length}
+            </AppText>
+          </View>
+          <HeaderActions />
+        </View>
+
+        <View
+          accessible
+          accessibilityRole="text"
+          accessibilityLabel={t('tur.position', { index: index + 1, total: tur.cards.length })}
+          style={styles.segments}
+          testID="tur-dots"
+        >
+          {tur.cards.map((c, i) => (
+            <Pressable
+              key={c.cardId}
+              onPress={() => go(i)}
+              accessibilityLabel={t('tur.goToCard', { index: i + 1 })}
+              hitSlop={{ top: 12, bottom: 12 }}
+              style={styles.segmentHit}
+            >
+              {isDecided(c) ? (
+                <FlameGradient angle="horizontal" style={styles.segment} />
+              ) : (
+                <View
+                  style={[
+                    styles.segment,
+                    {
+                      backgroundColor: i === index ? colors.textPrimary : 'rgba(255,255,255,0.16)',
+                    },
+                  ]}
+                />
+              )}
+            </Pressable>
+          ))}
+        </View>
+
+        {offlineBanner ? <View style={styles.pad}>{offlineBanner}</View> : null}
+        {tur.cards.length < TUR_SIZE ? (
+          <View style={styles.pad}>
+            <PoolHint tur={tur} />
+          </View>
+        ) : null}
+
+        <Animated.View key={card.cardId} entering={entering} exiting={exiting}>
+          <FlipCard card={card} height={cardHeight} />
         </Animated.View>
-      ) : (
-        <Animated.View entering={entering} key="front">
-          {card.profile ? (
-            <PublicProfileView profile={card.profile} />
-          ) : (
-            <AppText tone="secondary">{t('tur.unavailable')}</AppText>
-          )}
-        </Animated.View>
-      )}
-    </View>
-  );
-}
 
-function WhyThisPerson({ card }: { card: TurCard }) {
-  const { t } = useTranslation();
-  const { reason, difference } = useReasonText();
-  const [sheet, setSheet] = useState(false);
-  const [done, setDone] = useState(false);
-  const reasons = card.reasons.reasons ?? [];
-  const lessKeys = (card.reasons.all ?? []).filter((k) =>
-    (LESS_LIKE_THIS_KEYS as readonly string[]).includes(k),
-  );
-
-  const less = async (key: string) => {
-    setSheet(false);
-    const r = await lessLikeThis(key);
-    if (r.ok) setDone(true);
-  };
-
-  return (
-    <Card testID="why">
-      <AppText variant="heading">{t('tur.why')}</AppText>
-      {reasons.length ? (
-        reasons.map((r) => <AppText key={r.key}>{`• ${reason(r)}`}</AppText>)
-      ) : (
-        <AppText tone="secondary">{t('tur.noReasons')}</AppText>
-      )}
-      {card.reasons.difference ? (
-        <AppText tone="secondary">{difference(card.reasons.difference)}</AppText>
-      ) : null}
-      <AppText variant="caption" tone="secondary">
-        {t('tur.howItWorks')}
-      </AppText>
-      {done ? (
-        <AppText tone="success" accessibilityLiveRegion="polite">
-          {t('tur.lessDone')}
-        </AppText>
-      ) : lessKeys.length ? (
-        <Button variant="ghost" label={t('tur.lessLikeThis')} onPress={() => setSheet(true)} />
-      ) : null}
-      <Sheet visible={sheet} title={t('tur.lessQuestion')} onClose={() => setSheet(false)}>
-        {lessKeys.map((k) => (
-          <Button
-            key={k}
-            variant="secondary"
-            label={t(`tur.less.${k}`)}
-            onPress={() => void less(k)}
+        {isDecided(card) ? (
+          <View style={[styles.pad, styles.decided]}>
+            <AppText tone="secondary" accessibilityLiveRegion="polite" testID="card-decided">
+              {t(`tur.decided.${card.action}`)}
+            </AppText>
+            {card.action === 'saved' ? (
+              <Button
+                variant="ghost"
+                label={t('tur.unsave')}
+                onPress={() => void act('unsave')}
+                disabled={busy}
+              />
+            ) : null}
+          </View>
+        ) : (
+          <ActionPill
+            busy={busy}
+            saved={false}
+            onPass={() => void act('pass')}
+            onSave={() => void act('save')}
+            onAnswer={() => router.push({ pathname: '/answer', params: { cardId: card.cardId } })}
           />
-        ))}
-      </Sheet>
-    </Card>
+        )}
+
+        <View style={styles.pad}>
+          <ErrorNotice error={error} />
+          <View style={styles.navRow}>
+            <View style={styles.flex}>
+              <Button
+                variant="secondary"
+                label={t('common.back')}
+                onPress={() => go(index - 1)}
+                disabled={index === 0}
+              />
+            </View>
+            <View style={styles.flex}>
+              <Button
+                variant="secondary"
+                label={t('common.next')}
+                onPress={() => go(index + 1)}
+                disabled={index >= last}
+              />
+            </View>
+          </View>
+          {card.profile ? <PublicProfileView profile={card.profile} below /> : null}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -396,12 +363,42 @@ function PoolHint({ tur }: { tur: Tur }) {
   return <Banner message={lines.join(' ')} testID="pool-hint" />;
 }
 
+export type { TurCard };
+
 const styles = StyleSheet.create({
-  gap: { gap: space(2) },
   flex: { flex: 1 },
-  row: { flexDirection: 'row', gap: space(1.5) },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  dots: { flexDirection: 'row', gap: space(1), alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 8, height: 8, borderRadius: 6 },
-  dotCurrent: { width: 12, height: 12 },
+  gap: { gap: space(2) },
+  scroll: { paddingBottom: space(4), gap: space(1.75) },
+  pad: { paddingHorizontal: space(2.5), gap: space(2) },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space(1.5),
+    paddingHorizontal: space(2.5),
+    paddingTop: space(1.5),
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerActions: { flexDirection: 'row', gap: space(1) },
+  roundButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: flame.chip,
+    borderWidth: 1,
+    borderColor: flame.glassBorder,
+  },
+  segments: { flexDirection: 'row', gap: 5, paddingHorizontal: space(3) },
+  segmentHit: { flex: 1 },
+  segment: { height: 3, borderRadius: 2 },
+  decided: { alignItems: 'center', marginTop: space(1) },
+  navRow: { flexDirection: 'row', gap: space(1.5) },
 });

@@ -140,14 +140,14 @@ const chunk = (type, data) => {
 };
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const PALETTES = [
-  ['#E8843C', '#5B45B8'],
-  ['#2E8B87', '#F2C14E'],
-  ['#C2185B', '#1F3A93'],
-  ['#4E7D3A', '#E8C39E'],
-  ['#8E44AD', '#F39C12'],
-  ['#16A085', '#2C3E50'],
-  ['#D35400', '#F1C40F'],
-  ['#34495E', '#E74C3C'],
+  ['#FFB070', '#9C2A17'],
+  ['#FFC58A', '#B83A1E'],
+  ['#FF9E5E', '#7A1A10'],
+  ['#FF8A2A', '#3A140C'],
+  ['#FFD08A', '#C2401F'],
+  ['#F2662C', '#2A0F09'],
+  ['#FFB48A', '#8A1E12'],
+  ['#E8843C', '#4A170D'],
 ];
 /** 864×1080 (4:5, short side ≥ 800) gradient with a light silhouette. */
 function photoPng(palette) {

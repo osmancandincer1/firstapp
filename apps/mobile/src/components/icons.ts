@@ -26,3 +26,20 @@ export const ArrowLeftIcon: Icon =
   require('phosphor-react-native/src/icons/ArrowLeft').ArrowLeftIcon;
 export const ArrowRightIcon: Icon =
   require('phosphor-react-native/src/icons/ArrowRight').ArrowRightIcon;
+export const FireIcon: Icon = require('phosphor-react-native/src/icons/Fire').FireIcon;
+export const ChatCircleIcon: Icon =
+  require('phosphor-react-native/src/icons/ChatCircle').ChatCircleIcon;
+export const XIcon: Icon = require('phosphor-react-native/src/icons/X').XIcon;
+export const BookmarkSimpleIcon: Icon =
+  require('phosphor-react-native/src/icons/BookmarkSimple').BookmarkSimpleIcon;
+export const SparkleIcon: Icon = require('phosphor-react-native/src/icons/Sparkle').SparkleIcon;
+export const SlidersHorizontalIcon: Icon =
+  require('phosphor-react-native/src/icons/SlidersHorizontal').SlidersHorizontalIcon;
+export const PaperPlaneTiltIcon: Icon =
+  require('phosphor-react-native/src/icons/PaperPlaneTilt').PaperPlaneTiltIcon;
+export const SealCheckIcon: Icon =
+  require('phosphor-react-native/src/icons/SealCheck').SealCheckIcon;
+export const CaretLeftIcon: Icon =
+  require('phosphor-react-native/src/icons/CaretLeft').CaretLeftIcon;
+export const MicrophoneIcon: Icon =
+  require('phosphor-react-native/src/icons/Microphone').MicrophoneIcon;

@@ -630,7 +630,12 @@
     "finishedOnDemand": "Bu Tur’daki herkese baktın. Hazırsan sıradaki 9 kişi hemen geliyor.",
     "noneTitle": "Şu an sana uygun yeni kimse yok",
     "noneBody": "Filtrelerine uyan herkesi gördün. Yeni kişiler katıldıkça burada çıkacaklar; filtrelerini biraz genişletmek de işe yarar.",
-    "retry": "Yeniden bak"
+    "retry": "Yeniden bak",
+    "hello": "Merhaba, {{name}}",
+    "goToCard": "{{index}}. karta git",
+    "prevPhoto": "Önceki fotoğraf",
+    "nextPhoto": "Sonraki fotoğraf",
+    "doorOf": "{{name}} soruyor"
   },
   "answer": {
     "title": "Cevabın",
@@ -728,5 +733,15 @@
     "left": "{{days}} gün {{hours}} sa kaldı",
     "showProfile": "Profili gör",
     "hideProfile": "Profili gizle"
+  },
+  "mood": {
+    "this_week": "Bu hafta: {{mood}}",
+    "options": {
+      "coffee": "kahve",
+      "walk": "yürüyüş",
+      "game_night": "oyun gecesi",
+      "concert": "konser",
+      "quiet": "sakin bir akşam"
+    }
   }
 }

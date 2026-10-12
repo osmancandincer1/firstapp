@@ -630,7 +630,12 @@
     "finishedOnDemand": "You have seen everyone in this Round. When you are ready, the next 9 people are right here.",
     "noneTitle": "Nobody new matches you right now",
     "noneBody": "You have seen everyone who matches your filters. New people will show up here as they join; widening your filters a little also helps.",
-    "retry": "Check again"
+    "retry": "Check again",
+    "hello": "Hi, {{name}}",
+    "goToCard": "Go to card {{index}}",
+    "prevPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "doorOf": "{{name}} asks"
   },
   "answer": {
     "title": "Your answer",
@@ -728,5 +733,15 @@
     "left": "{{days}} d {{hours}} h left",
     "showProfile": "See profile",
     "hideProfile": "Hide profile"
+  },
+  "mood": {
+    "this_week": "This week: {{mood}}",
+    "options": {
+      "coffee": "coffee",
+      "walk": "a walk",
+      "game_night": "game night",
+      "concert": "a concert",
+      "quiet": "a quiet evening"
+    }
   }
 }

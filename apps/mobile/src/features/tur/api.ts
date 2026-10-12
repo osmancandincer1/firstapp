@@ -25,6 +25,8 @@ export interface PublicProfile {
   details?: Record<string, unknown>;
   photos?: { id: string; caption?: string; url: string }[];
   voice?: { url: string; durationMs?: number; promptTr?: string; promptEn?: string };
+  /** This week's mood tag (D-064). */
+  mood?: string;
 }
 
 export interface Reason {

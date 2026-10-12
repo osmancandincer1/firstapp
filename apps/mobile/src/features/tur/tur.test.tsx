@@ -165,12 +165,12 @@ describe('TurScreen (§8.1 #18)', () => {
 
   it('shows cards with a position indicator and moves back and forth', async () => {
     await renderWithProviders(<TurScreen />);
-    expect(await screen.findByText('Kişi 1')).toBeTruthy();
+    expect(await screen.findByText(/^Kişi 1,/)).toBeTruthy();
     expect(screen.getByLabelText('Kart 1 / 9')).toBeTruthy();
     await fireEvent.press(screen.getByText('İleri'));
-    expect(screen.getByText('Kişi 2')).toBeTruthy();
+    expect(screen.getByText(/^Kişi 2,/)).toBeTruthy();
     await fireEvent.press(screen.getByText('Geri'));
-    expect(screen.getByText('Kişi 1')).toBeTruthy();
+    expect(screen.getByText(/^Kişi 1,/)).toBeTruthy();
     expect(screen.queryByTestId('pool-hint')).toBeNull();
   });
 
@@ -180,14 +180,14 @@ describe('TurScreen (§8.1 #18)', () => {
       data: { ok: true, tur: tur([card(1, 'passed'), card(2)]) },
     });
     await renderWithProviders(<TurScreen />);
-    expect(await screen.findByText('Kişi 2')).toBeTruthy();
+    expect(await screen.findByText(/^Kişi 2,/)).toBeTruthy();
   });
 
   it('"Neden bu kişi?" explains in words and lets the user ask for fewer like this', async () => {
     await renderWithProviders(<TurScreen />);
     await fireEvent.press(await screen.findByText('Neden bu kişi?'));
-    expect(screen.getByText('• İkiniz de “Uzun ilişki” diyorsunuz')).toBeTruthy();
-    expect(screen.getByText('• Ortak ilgi: Yürüyüş')).toBeTruthy();
+    expect(screen.getByText('İkiniz de “Uzun ilişki” diyorsunuz')).toBeTruthy();
+    expect(screen.getByText('Ortak ilgi: Yürüyüş')).toBeTruthy();
     expect(screen.getByText('Bir fark: Sigara — o “Sosyal içici”, sen “İçmem”')).toBeTruthy();
     await fireEvent.press(screen.getByText('Bunun gibileri daha az göster'));
     // Only reasons the user can down-weight are offered (both_active is not).
@@ -198,22 +198,22 @@ describe('TurScreen (§8.1 #18)', () => {
       await screen.findByText('Tamam, sonraki Turlarda bunun ağırlığını düşüreceğiz.'),
     ).toBeTruthy();
     await fireEvent.press(screen.getByText('Profile dön'));
-    expect(screen.getByText('Kişi 1')).toBeTruthy();
+    expect(screen.getByText(/^Kişi 1,/)).toBeTruthy();
   });
 
   it('passes and saves, then moves to the next card', async () => {
     await renderWithProviders(<TurScreen />);
-    await fireEvent.press(await screen.findByText('Geç'));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Geç' }));
     await waitFor(() => expect(m.cardAction).toHaveBeenCalledWith(UUID(1), 'pass'));
-    expect(await screen.findByText('Kişi 2')).toBeTruthy();
-    await fireEvent.press(screen.getByText('Sonraya sakla'));
+    expect(await screen.findByText(/^Kişi 2,/)).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Sonraya sakla' }));
     await waitFor(() => expect(m.cardAction).toHaveBeenCalledWith(UUID(2), 'save'));
   });
 
   it('explains the saved limit (§4.1: 9 people)', async () => {
     m.cardAction.mockResolvedValue({ ok: false, error: 'saved_limit' });
     await renderWithProviders(<TurScreen />);
-    await fireEvent.press(await screen.findByText('Sonraya sakla'));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Sonraya sakla' }));
     expect(
       await screen.findByText('En fazla 9 kişi saklayabilirsin. Önce birini çıkar.'),
     ).toBeTruthy();
@@ -221,7 +221,7 @@ describe('TurScreen (§8.1 #18)', () => {
 
   it('opens the answer composer for the current card', async () => {
     await renderWithProviders(<TurScreen />);
-    await fireEvent.press(await screen.findByText('Cevapla'));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Cevapla' }));
     expect(router.push).toHaveBeenCalledWith({ pathname: '/answer', params: { cardId: UUID(1) } });
   });
 
@@ -268,7 +268,7 @@ describe('TurScreen (§8.1 #18)', () => {
     expect(screen.getByText(/sa \d+ dk kaldı/)).toBeTruthy();
     expect(screen.queryByText(/Plus|satın/i)).toBeNull();
     await fireEvent.press(screen.getByText('Kartlara yeniden bak'));
-    expect(screen.getByText('Kişi 1')).toBeTruthy();
+    expect(screen.getByText(/^Kişi 1,/)).toBeTruthy();
   });
 });
 
@@ -293,7 +293,7 @@ describe('TurScreen on demand, no clock (D-063)', () => {
     });
     await fireEvent.press(screen.getByText('Sıradaki 9 kişi'));
     expect(m.nextTur).toHaveBeenCalled();
-    expect(await screen.findByText('Kişi 1')).toBeTruthy();
+    expect(await screen.findByText(/^Kişi 1,/)).toBeTruthy();
   });
 
   it('explains a daily limit', async () => {
