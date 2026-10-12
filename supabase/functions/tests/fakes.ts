@@ -20,6 +20,7 @@ import type {
   LivenessResult,
   LivenessService,
   Platform,
+  TurDb,
   ProfileState,
   SmsSender,
 } from '../_shared/types.ts';
@@ -212,7 +213,7 @@ export class FakeLiveness implements LivenessService, FaceIndex {
   }
 }
 
-const UUID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+export const UUID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
 /** Records every ProfileDb call; results can be overridden per method. */
 export class FakeProfileDb implements ProfileDb {
@@ -349,6 +350,127 @@ export class FakeStore implements MediaStore {
     for (const path of paths) this.signed.push({ bucket: b, path, ttl });
     return Promise.resolve(
       Object.fromEntries(paths.map((path) => [path, `https://signed/${b}/${path}?ttl=${ttl}`])),
+    );
+  }
+}
+
+// --- Round, answers, tables, chat ---------------------------------------------
+
+export const profile = (name: string) => ({
+  id: UUID(99),
+  name,
+  age: 31,
+  photos: [{ id: UUID(50), path: 'p2/photos/a.jpg', caption: 'Kapadokya' }],
+  voice: { path: 'p2/voice/v.m4a', durationMs: 9000 },
+});
+
+export class FakeTurDb implements TurDb {
+  calls: { fn: string; args: unknown[] }[] = [];
+  results: Record<string, unknown> = {};
+  recent: string[] = [];
+  private r<T>(fn: string, fallback: T, ...args: unknown[]): Promise<T> {
+    this.calls.push({ fn, args });
+    return Promise.resolve((fn in this.results ? this.results[fn] : fallback) as T);
+  }
+  called(fn: string) {
+    return this.calls.filter((c) => c.fn === fn);
+  }
+  currentTur(...a: unknown[]) {
+    return this.r<Record<string, unknown> | null>(
+      'currentTur',
+      {
+        batchId: UUID(1),
+        cards: [{ cardId: UUID(2), candidateId: UUID(3), reasons: {}, profile: profile('Mert') }],
+      },
+      ...a,
+    );
+  }
+  nextTur(...a: unknown[]) {
+    return this.r('nextTur', { result: 'ok', batchId: UUID(1) }, ...a);
+  }
+  saved(...a: unknown[]) {
+    return this.r('saved', [{ candidateId: UUID(3), profile: profile('Mert') }], ...a);
+  }
+  turAction(...a: unknown[]) {
+    return this.r('turAction', 'ok' as const, ...a);
+  }
+  lessLikeThis(...a: unknown[]) {
+    return this.r('lessLikeThis', undefined, ...a);
+  }
+  recentAnswerTexts(...a: unknown[]) {
+    return this.r('recentAnswerTexts', this.recent, ...a);
+  }
+  answerCreate(...a: unknown[]) {
+    return this.r('answerCreate', { result: 'ok', answerId: UUID(7) }, ...a);
+  }
+  answerRespond(...a: unknown[]) {
+    return this.r(
+      'answerRespond',
+      { result: 'ok', tableId: UUID(8), tableStatus: 'active' as const },
+      ...a,
+    );
+  }
+  inbox(...a: unknown[]) {
+    return this.r(
+      'inbox',
+      {
+        incoming: [
+          {
+            answerId: UUID(4),
+            text: null,
+            voicePath: 'u_x/answers/1.m4a',
+            profile: profile('Ece'),
+          },
+        ],
+        outgoing: [{ answerId: UUID(5), status: 'waiting', profile: profile('Deniz') }],
+      },
+      ...a,
+    );
+  }
+  myTables(...a: unknown[]) {
+    return this.r(
+      'myTables',
+      [{ tableId: UUID(8), status: 'active', profile: profile('Ece') }],
+      ...a,
+    );
+  }
+  messageSend(...a: unknown[]) {
+    return this.r(
+      'messageSend',
+      { result: 'ok', message: { id: UUID(20), body: 'Selam' } } as {
+        result: string;
+        message?: Record<string, unknown>;
+      },
+      ...a,
+    );
+  }
+  messagesRead(...a: unknown[]) {
+    return this.r('messagesRead', 1, ...a);
+  }
+  tableFarewell(...a: unknown[]) {
+    return this.r<'ok' | 'not_found' | 'already_closed'>('tableFarewell', 'ok', ...a);
+  }
+  tableReopen(...a: unknown[]) {
+    return this.r('tableReopen', 'waiting_other', ...a);
+  }
+  blockFromTable(...a: unknown[]) {
+    return this.r<'ok' | 'not_found'>('blockFromTable', 'ok', ...a);
+  }
+  pauseStart(...a: unknown[]) {
+    return this.r<{ result: string; until?: string }>(
+      'pauseStart',
+      { result: 'ok', until: '2026-10-15T10:00:00Z' },
+      ...a,
+    );
+  }
+  pauseEnd(...a: unknown[]) {
+    return this.r('pauseEnd', 'ok', ...a);
+  }
+  myPause(...a: unknown[]) {
+    return this.r<Record<string, unknown> | null>(
+      'myPause',
+      { until: null, usedThisMonth: 0, perMonth: 2 },
+      ...a,
     );
   }
 }

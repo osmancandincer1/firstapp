@@ -1,4 +1,4 @@
-// POST { action: list } → open and waiting tables (APP.md §4.4; chat arrives in Phase 4).
+// POST { action: list | pause | pause_end } → tables and Mola (APP.md §4.4).
 import { appDeps } from '../_shared/app.ts';
 import { handler } from '../_shared/http.ts';
 import { tablesAction } from '../_shared/services/tur.ts';

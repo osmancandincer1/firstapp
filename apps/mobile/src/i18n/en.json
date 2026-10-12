@@ -238,7 +238,11 @@
     "answer_duplicate": "This answer is very similar to your recent ones. Write something just for this person.",
     "answer_limit": "You cannot send more answers right now.",
     "tur_not_finished": "Decide on the cards in this Round first.",
-    "tur_limit": "That is all for today. New people are waiting tomorrow."
+    "tur_limit": "That is all for today. New people are waiting tomorrow.",
+    "table_closed": "This table is no longer open; messages cannot be sent.",
+    "link_blocked": "New accounts cannot send links in their first 7 days.",
+    "reopen_too_late": "This table has been cold for more than 7 days and cannot be reopened.",
+    "pause_limit": "You have used both of this month’s breaks."
   },
   "profile": {
     "saved": "Saved",

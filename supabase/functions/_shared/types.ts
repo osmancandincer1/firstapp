@@ -165,6 +165,29 @@ export interface TurDb {
     userId: string,
   ): Promise<{ incoming: Record<string, unknown>[]; outgoing: Record<string, unknown>[] }>;
   myTables(userId: string): Promise<Record<string, unknown>[]>;
+  /** srv_message_send: ok | not_found | not_active | link_blocked. */
+  messageSend(input: {
+    userId: string;
+    tableId: string;
+    clientId: string;
+    body: string;
+    replyTo: string | null;
+    flags: Record<string, unknown>;
+  }): Promise<{ result: string; message?: Record<string, unknown> }>;
+  messagesRead(userId: string, tableId: string): Promise<number>;
+  tableFarewell(
+    userId: string,
+    tableId: string,
+    key: string,
+    note: string | null,
+  ): Promise<'ok' | 'not_found' | 'already_closed'>;
+  /** reopened | waiting_other | waiting_slot | not_found | too_late. */
+  tableReopen(userId: string, tableId: string): Promise<string>;
+  blockFromTable(userId: string, tableId: string): Promise<'ok' | 'not_found'>;
+  /** ok | invalid | limit | not_found. */
+  pauseStart(userId: string, days: number): Promise<{ result: string; until?: string }>;
+  pauseEnd(userId: string): Promise<string>;
+  myPause(userId: string): Promise<Record<string, unknown> | null>;
 }
 
 /** Image signals for decidePhoto (§7.2). */

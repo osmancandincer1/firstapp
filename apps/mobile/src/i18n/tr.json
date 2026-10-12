@@ -238,7 +238,11 @@
     "answer_duplicate": "Bu cevap son gönderdiklerine çok benziyor. Bu kişiye özel bir şey yaz.",
     "answer_limit": "Şu an daha fazla cevap gönderemezsin.",
     "tur_not_finished": "Önce bu Tur’daki kartlara karar ver.",
-    "tur_limit": "Bugünlük bu kadar. Yarın yeni kişiler seni bekliyor."
+    "tur_limit": "Bugünlük bu kadar. Yarın yeni kişiler seni bekliyor.",
+    "table_closed": "Bu masa artık açık değil; mesaj gönderilemez.",
+    "link_blocked": "Yeni hesaplar ilk 7 gün bağlantı gönderemez.",
+    "reopen_too_late": "Bu masa 7 günden uzun süredir soğuk; yeniden açılamaz.",
+    "pause_limit": "Bu ay iki molanı da kullandın."
   },
   "profile": {
     "saved": "Kaydedildi",

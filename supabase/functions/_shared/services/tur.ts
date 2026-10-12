@@ -30,7 +30,7 @@ export interface TurDeps {
 
 type Json = Record<string, unknown>;
 
-async function activeUser(deps: TurDeps, token: string | null) {
+export async function activeUser(deps: TurDeps, token: string | null) {
   const user = token ? await deps.auth.userFromToken(token) : null;
   if (!user) return { error: fail(401, 'not_authenticated') } as const;
   const state = await deps.db.profileState(user.id);
@@ -224,9 +224,30 @@ export async function tablesAction(
 ): Promise<Result<Json>> {
   const a = await activeUser(deps, token);
   if ('error' in a) return a.error!;
-  if (!tablesActionSchema.safeParse(raw).success) return fail(400, 'invalid_input');
-  const tables = await signItems(deps.store, await deps.tur.myTables(a.user.id));
-  return ok({ ok: true, tables });
+  const parsed = tablesActionSchema.safeParse(raw);
+  if (!parsed.success) return fail(400, 'invalid_input');
+  const req = parsed.data;
+  const userId = a.user.id;
+  switch (req.action) {
+    case 'list': {
+      const [items, pause] = await Promise.all([
+        deps.tur.myTables(userId),
+        deps.tur.myPause(userId),
+      ]);
+      return ok({ ok: true, tables: await signItems(deps.store, items), pause });
+    }
+    case 'pause': {
+      // Mola: the reply clocks stop for 1–7 days, at most twice a month (§4.4).
+      const r = await deps.tur.pauseStart(userId, req.days);
+      if (r.result === 'limit') return fail(429, 'pause_limit');
+      if (r.result !== 'ok') return fail(409, 'wrong_step');
+      return ok({ ok: true, until: r.until });
+    }
+    case 'pause_end': {
+      await deps.tur.pauseEnd(userId);
+      return ok({ ok: true });
+    }
+  }
 }
 
 export { signProfiles };

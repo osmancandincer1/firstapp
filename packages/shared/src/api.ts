@@ -128,8 +128,11 @@ export const answerActionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('pass'), answerId: z.uuid() }),
 ]);
 
+/** tables: the list, and Mola (a 1–7 day break that stops the reply clocks, §4.4). */
 export const tablesActionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('list') }),
+  z.object({ action: z.literal('pause'), days: z.number().int().min(1).max(7) }),
+  z.object({ action: z.literal('pause_end') }),
 ]);
 
 export type AnswerSendResponse = { ok: true; answerId: string; warning?: 'similar' };
@@ -216,6 +219,10 @@ export const API_ERROR_CODES = [
   'answer_limit',
   'tur_not_finished',
   'tur_limit',
+  'table_closed',
+  'link_blocked',
+  'reopen_too_late',
+  'pause_limit',
   'service_unavailable',
   'internal',
 ] as const;

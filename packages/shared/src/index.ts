@@ -1,5 +1,6 @@
 export * from './age.ts';
 export * from './api.ts';
+export * from './chat.ts';
 export * from './consents.ts';
 export * from './env.ts';
 export * from './identity.ts';

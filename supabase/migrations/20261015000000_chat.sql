@@ -161,8 +161,12 @@ $$;
 -- Messages
 -- ---------------------------------------------------------------------------
 
--- {result: ok | not_found | not_active, message?}. Re-sending the same client id returns the
--- stored message, so a retry after a lost response never duplicates (SOH-01, SOH-02).
+-- {result: ok | not_found | not_active | link_blocked, message?}. Re-sending the same client id
+-- returns the stored message, so a retry after a lost response never duplicates (SOH-01, SOH-02).
+-- p_flags come from the chat function's pattern check: {link, offPlatform, money}.
+--   * link from an account younger than 7 days is refused (SOH-04);
+--   * offPlatform is kept only in a table's first 48 hours, where the recipient sees a warning (SOH-05);
+--   * money stays on the message for moderation (SOH-06).
 create or replace function public.srv_message_send(
   p_user_id uuid, p_table_id uuid, p_client_id uuid, p_kind text, p_body text,
   p_media_path text default null, p_reply_to uuid default null, p_flags jsonb default '{}'
@@ -179,11 +183,16 @@ begin
   select * into m from public.messages where table_id = p_table_id and client_id = p_client_id;
   if found then return jsonb_build_object('result', 'ok', 'message', private.message_json(m)); end if;
   if t.status <> 'active' then return jsonb_build_object('result', 'not_active'); end if;
+  p_flags := coalesce(p_flags, '{}');
+  if p_flags ? 'link' and (select created_at from public.profiles where id = me) > now() - interval '7 days' then
+    return jsonb_build_object('result', 'link_blocked');
+  end if;
+  if t.created_at < now() - interval '48 hours' then p_flags := p_flags - 'offPlatform'; end if;
 
   insert into public.messages (table_id, sender_id, kind, body, media_path, reply_to, flags, client_id)
   values (p_table_id, me, p_kind, p_body, p_media_path,
           (select id from public.messages where id = p_reply_to and table_id = p_table_id),
-          coalesce(p_flags, '{}'), p_client_id)
+          p_flags, p_client_id)
   returning * into m;
   update public.tables set last_message_at = m.created_at,
          turn_of = case when a_id = me then b_id else a_id end

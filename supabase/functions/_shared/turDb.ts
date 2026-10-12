@@ -66,4 +66,48 @@ export class SupabaseTurDb implements TurDb {
   myTables(userId: string) {
     return rpc<Record<string, unknown>[]>(this.c, 'srv_my_tables', { p_user_id: userId });
   }
+  messageSend(i: Parameters<TurDb['messageSend']>[0]) {
+    return rpc<{ result: string; message?: Record<string, unknown> }>(this.c, 'srv_message_send', {
+      p_user_id: i.userId,
+      p_table_id: i.tableId,
+      p_client_id: i.clientId,
+      p_kind: 'text',
+      p_body: i.body,
+      p_media_path: null,
+      p_reply_to: i.replyTo,
+      p_flags: i.flags,
+    });
+  }
+  messagesRead(userId: string, tableId: string) {
+    return rpc<number>(this.c, 'srv_messages_read', { p_user_id: userId, p_table_id: tableId });
+  }
+  tableFarewell(userId: string, tableId: string, key: string, note: string | null) {
+    return rpc<'ok' | 'not_found' | 'already_closed'>(this.c, 'srv_table_farewell', {
+      p_user_id: userId,
+      p_table_id: tableId,
+      p_key: key,
+      p_note: note,
+    });
+  }
+  tableReopen(userId: string, tableId: string) {
+    return rpc<string>(this.c, 'srv_table_reopen', { p_user_id: userId, p_table_id: tableId });
+  }
+  blockFromTable(userId: string, tableId: string) {
+    return rpc<'ok' | 'not_found'>(this.c, 'srv_block_from_table', {
+      p_user_id: userId,
+      p_table_id: tableId,
+    });
+  }
+  pauseStart(userId: string, days: number) {
+    return rpc<{ result: string; until?: string }>(this.c, 'srv_pause_start', {
+      p_user_id: userId,
+      p_days: days,
+    });
+  }
+  pauseEnd(userId: string) {
+    return rpc<string>(this.c, 'srv_pause_end', { p_user_id: userId });
+  }
+  myPause(userId: string) {
+    return rpc<Record<string, unknown> | null>(this.c, 'srv_my_pause', { p_user_id: userId });
+  }
 }
