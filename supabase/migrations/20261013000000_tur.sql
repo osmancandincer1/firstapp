@@ -371,6 +371,10 @@ begin
   cd := coalesce(cd, '{}');
   cv := coalesce(cv, '{}');
 
+  -- This week's mood (private.mood_of comes with the mood migration, 20261014).
+  if private.mood_of(p_viewer) is not null and private.mood_of(p_viewer) = private.mood_of(p_candidate) then
+    reasons := reasons || jsonb_build_object('key', 'same_mood', 'value', private.mood_of(p_candidate));
+  end if;
   if v.intent = c.intent then
     reasons := reasons || jsonb_build_object('key', 'same_intent', 'value', c.intent);
   end if;
@@ -489,11 +493,12 @@ begin
         (w ->> 'activity')::numeric * f_act as p_act,
         (w ->> 'completeness')::numeric * f_comp as p_comp,
         coalesce((select sum(l.weight_delta) from public.less_like_this l
-                  where l.profile_id = v.id and (f.reasons -> 'all') ? l.reason_key), 0) as penalty
+                  where l.profile_id = v.id and (f.reasons -> 'all') ? l.reason_key), 0) as penalty,
+        case when (f.reasons -> 'all') ? 'same_mood' then private.flag_num('tur.mood_bonus', 5) else 0 end as mood_bonus
       from f
     )
     select s.id, s.reasons,
-      round(p_intent + p_common + p_fair + p_rel + p_act + p_comp - penalty, 2) as score,
+      round(p_intent + p_common + p_fair + p_rel + p_act + p_comp - penalty + mood_bonus, 2) as score,
       case greatest(p_intent, p_common, p_fair, p_rel, p_act, p_comp)
         when p_intent then 'intent' when p_common then 'common' when p_fair then 'fair'
         when p_rel then 'reliability' when p_act then 'activity' else 'completeness' end as dominant
