@@ -690,7 +690,9 @@
     "openedBody": "Mesajın Masa’da. Sıra artık onda.",
     "waitingTitle": "Masa bekliyor",
     "waitingBody": "Masalardan biri dolu. 72 saat içinde yer açılırsa sohbet başlar; açılmazsa ikinize de nedenini söyleriz.",
-    "goTables": "Masalara git"
+    "goTables": "Masalara git",
+    "yourQuestion": "Senin Kapı Sorun",
+    "theirAnswer": "{{name}} cevapladı"
   },
   "tables": {
     "title": "Masalar",

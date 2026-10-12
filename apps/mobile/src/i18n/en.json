@@ -690,7 +690,9 @@
     "openedBody": "Your message is on the table. It is their turn now.",
     "waitingTitle": "Table waiting",
     "waitingBody": "One of you has no free table. If a slot opens within 72 hours the chat starts; otherwise we tell you both why.",
-    "goTables": "Go to Tables"
+    "goTables": "Go to Tables",
+    "yourQuestion": "Your Door Question",
+    "theirAnswer": "{{name}} answered"
   },
   "tables": {
     "title": "Tables",

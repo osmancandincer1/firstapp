@@ -14,14 +14,15 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking } from 'react-native';
+import { Linking, StyleSheet } from 'react-native';
 
-import { AppText, Banner, Button, Card, Input, Screen, SegmentedControl } from '@/components';
+import { AppText, Banner, Button, Input, Screen, SegmentedControl } from '@/components';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
 import { uploadToQuarantine } from '@/features/profile/api';
 import type { ApiResult } from '@/lib/api';
 import { readBytes } from '@/lib/media';
 import { requestAnswerVoiceUpload, sendAnswer, type PublicProfile } from './api';
+import { PaperPlaneMoment, QuestionCard } from './Moments';
 import { PlayVoice } from './PublicProfileView';
 import { INBOX_KEY, SAVED_KEY, TUR_KEY, useInvalidate, useSaved, useTur } from './queries';
 
@@ -78,12 +79,19 @@ export function AnswerComposerScreen() {
   if (sent) {
     return (
       <Screen
-        title={t('answer.sentTitle')}
-        subtitle={t('answer.sentBody', { name: target.profile?.name ?? '' })}
+        title=""
         testID="answer-sent"
         footer={<Button label={t('answer.backToTur')} onPress={() => router.back()} />}
       >
-        {sent.warning ? <Banner tone="warning" message={t('answer.similarWarning')} /> : null}
+        <PaperPlaneMoment>
+          <AppText variant="display" accessibilityRole="header">
+            {t('answer.sentTitle')}
+          </AppText>
+          <AppText tone="secondary" style={styles.center}>
+            {t('answer.sentBody', { name: target.profile?.name ?? '' })}
+          </AppText>
+          {sent.warning ? <Banner tone="warning" message={t('answer.similarWarning')} /> : null}
+        </PaperPlaneMoment>
       </Screen>
     );
   }
@@ -166,14 +174,7 @@ export function AnswerComposerScreen() {
         </>
       }
     >
-      {question ? (
-        <Card>
-          <AppText variant="label" tone="secondary">
-            {t('profile.preview.door')}
-          </AppText>
-          <AppText variant="heading">{question}</AppText>
-        </Card>
-      ) : null}
+      {question ? <QuestionCard kicker={t('profile.preview.door')} question={question} /> : null}
       <SegmentedControl<Mode>
         label={t('answer.mode')}
         value={mode}
@@ -248,3 +249,5 @@ function FailureNotice({ failure }: { failure: Failure | null }) {
   if (!message) return <ErrorNotice error={failure.error} />;
   return <Banner tone="danger" message={message} testID="error-notice" />;
 }
+
+const styles = StyleSheet.create({ center: { textAlign: 'center' } });

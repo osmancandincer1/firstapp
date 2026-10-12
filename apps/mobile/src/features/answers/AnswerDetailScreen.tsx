@@ -1,15 +1,14 @@
-import { motion } from '@nokuzo/design-tokens';
 import { RECIPROCATION_MAX } from '@nokuzo/shared';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
 
 import { AppText, Banner, Button, Card, Input, Screen } from '@/components';
-import { useTheme } from '@/design/theme';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
 import type { ApiResult } from '@/lib/api';
 import { passAnswer, reciprocate } from '@/features/tur/api';
+import { CupsMoment, QuestionCard } from '@/features/tur/Moments';
 import { PlayVoice, PublicProfileView } from '@/features/tur/PublicProfileView';
 import { INBOX_KEY, TABLES_KEY, useInbox, useInvalidate } from '@/features/tur/queries';
 
@@ -81,12 +80,13 @@ export function AnswerDetailScreen() {
         </>
       }
     >
+      {answer.question ? (
+        <QuestionCard kicker={t('inbox.yourQuestion')} question={answer.question[lang]} />
+      ) : null}
       <Card>
-        {answer.question ? (
-          <AppText variant="label" tone="secondary">
-            {answer.question[lang]}
-          </AppText>
-        ) : null}
+        <AppText variant="label" tone="secondary">
+          {t('inbox.theirAnswer', { name: answer.profile?.name ?? t('inbox.someone') })}
+        </AppText>
         {answer.text ? <AppText variant="heading">{`“${answer.text}”`}</AppText> : null}
         {answer.voiceUrl ? <PlayVoice url={answer.voiceUrl} label={t('inbox.playAnswer')} /> : null}
       </Card>
@@ -113,13 +113,10 @@ export function AnswerDetailScreen() {
 function TableOpened({ status }: { status: 'active' | 'waiting_slot' }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { reduceMotion } = useTheme();
-  const entering = reduceMotion
-    ? FadeIn.duration(motion.reducedCrossfade)
-    : ZoomIn.duration(motion.celebrateMin);
+  const title = t(status === 'active' ? 'inbox.openedTitle' : 'inbox.waitingTitle');
   return (
     <Screen
-      title={t(status === 'active' ? 'inbox.openedTitle' : 'inbox.waitingTitle')}
+      title=""
       testID="table-opened"
       footer={
         <>
@@ -128,13 +125,16 @@ function TableOpened({ status }: { status: 'active' | 'waiting_slot' }) {
         </>
       }
     >
-      <Animated.View entering={entering}>
-        <Card>
-          <AppText accessibilityLiveRegion="polite">
-            {t(status === 'active' ? 'inbox.openedBody' : 'inbox.waitingBody')}
-          </AppText>
-        </Card>
-      </Animated.View>
+      <CupsMoment>
+        <AppText variant="display" accessibilityRole="header">
+          {title}
+        </AppText>
+        <AppText tone="secondary" accessibilityLiveRegion="polite" style={styles.center}>
+          {t(status === 'active' ? 'inbox.openedBody' : 'inbox.waitingBody')}
+        </AppText>
+      </CupsMoment>
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({ center: { textAlign: 'center' } });

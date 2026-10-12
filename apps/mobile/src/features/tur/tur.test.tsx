@@ -87,6 +87,7 @@ beforeEach(() => {
   Object.assign(mockRecState, { isRecording: false, durationMillis: 0 });
   useSession.setState({ status: 'signed_in', userId: 'u1' });
   pm.fetchCities.mockResolvedValue([]);
+  pm.fetchMyProfile.mockResolvedValue(null);
   m.viewTur.mockResolvedValue({ ok: true, data: { ok: true, tur: tur(nine()) } });
   m.listSaved.mockResolvedValue({ ok: true, data: { ok: true, saved: [] } });
   m.cardAction.mockResolvedValue({ ok: true, data: { ok: true } });
@@ -208,6 +209,7 @@ describe('TurScreen (§8.1 #18)', () => {
     expect(await screen.findByText(/^Kişi 2,/)).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Sonraya sakla' }));
     await waitFor(() => expect(m.cardAction).toHaveBeenCalledWith(UUID(2), 'save'));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Geç' })).toBeEnabled());
   });
 
   it('explains the saved limit (§4.1: 9 people)', async () => {
@@ -235,6 +237,9 @@ describe('TurScreen (§8.1 #18)', () => {
     expect(screen.getByTestId('card-decided')).toBeTruthy();
     await fireEvent.press(screen.getByText('Saklananlardan çıkar'));
     await waitFor(() => expect(m.cardAction).toHaveBeenCalledWith(UUID(2), 'unsave'));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Saklananlardan çıkar' })).toBeEnabled(),
+    );
   });
 
   it('is honest about a small pool and never pads it (§4.1)', async () => {
