@@ -4,6 +4,7 @@
  *
  *   node scripts/demo-people.mjs seed  --for you@example.com [--count 30]
  *   node scripts/demo-people.mjs tur   --for you@example.com   # regenerate today's Round now
+ *   node scripts/demo-people.mjs chat  --for you@example.com   # demo people at your tables write a message
  *   node scripts/demo-people.mjs fun                            # give demo people a mood and a two-truths game
  *   node scripts/demo-people.mjs reply                          # demo people reciprocate answers sent to them
  *   node scripts/demo-people.mjs clean                          # delete every demo person
@@ -455,6 +456,48 @@ async function seedPeople() {
   console.log(`${t.name}'s Round now has ${await refreshTur(t.id)} cards.`);
 }
 
+const CHAT_LINES = [
+  'Bu arada hafta sonu ne yapıyorsun?',
+  'Az önce aklıma geldin, o kahve yeri gerçekten güzel miydi?',
+  'Benim günüm yoğun geçti, seninki nasıldı?',
+  'Bir film önerin var mı? Bu akşam boşum.',
+  'Haha, buna gerçekten güldüm 😄',
+];
+
+/** Each demo person with an open table with the target writes one message (Realtime check). */
+async function chat() {
+  const target = await targetProfile(opt('for'));
+  const me = target.profile.id;
+  const tables = await must(
+    db
+      .from('tables')
+      .select('id, a_id, b_id')
+      .eq('status', 'active')
+      .or(`a_id.eq.${me},b_id.eq.${me}`),
+    'tables',
+  );
+  let n = 0;
+  for (const t of tables) {
+    const other = t.a_id === me ? t.b_id : t.a_id;
+    const { user_id: userId } = await must(
+      db.from('profiles').select('user_id').eq('id', other).single(),
+      'profile',
+    );
+    const r = await must(
+      db.rpc('srv_message_send', {
+        p_user_id: userId,
+        p_table_id: t.id,
+        p_client_id: crypto.randomUUID(),
+        p_kind: 'text',
+        p_body: pick(CHAT_LINES),
+      }),
+      'send',
+    );
+    if (r.result === 'ok') n += 1;
+  }
+  console.log(`${n} demo people wrote at ${target.profile.name}'s tables.`);
+}
+
 async function reply() {
   const demos = await demoUsers();
   const byProfile = new Map();
@@ -519,6 +562,7 @@ try {
     const t = await targetProfile(opt('for'));
     console.log(`${t.profile.name}'s Round now has ${await refreshTur(t.profile.id)} cards.`);
   } else if (command === 'reply') await reply();
+  else if (command === 'chat') await chat();
   else if (command === 'clean') await clean();
   else if (command === 'fun') {
     const demos = await demoUsers();
@@ -526,7 +570,7 @@ try {
     console.log(`${demos.length} demo people got a mood and/or a game.`);
   } else {
     console.log(
-      'Usage: node scripts/demo-people.mjs <seed|tur|fun|reply|clean> [--for email] [--count n]',
+      'Usage: node scripts/demo-people.mjs <seed|tur|fun|chat|reply|clean> [--for email] [--count n]',
     );
     process.exit(1);
   }

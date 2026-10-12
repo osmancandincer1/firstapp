@@ -50,6 +50,7 @@ npx supabase test db      # pgTAP testleri (Docker gerekir)
    EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon key>
    ```
 4. `npm run mobile` → Expo Go ile aç. Kodlar Edge Runtime günlüğünde `[DEV EMAIL]` / `[DEV SMS]` satırlarında görünür: `docker logs -f supabase_edge_runtime_nokuzo`.
+5. **Yeni bir dosya eklendiyse** (ör. `packages/shared/src` altında) Edge Functions "Module not found" verebilir: çalışma ortamı açıldığı andaki dosyaları bağlar. `npx supabase stop` ve ardından `npx supabase start` yeterli; veriler korunur. **`npx supabase db reset` kullanma** — yerel hesapları siler; yeni göçler için `npx supabase migration up --local`.
 
 ### Demo kişiler (yalnızca yerel)
 
@@ -59,6 +60,7 @@ Tur, cevap ve masa akışını denemek için yerel Supabase'e sahte ama doğrula
 node scripts/demo-people.mjs seed --for <senin test e-postan>   # ~30 kişi; çoğu seninle eşleşir, bir kısmı bilerek filtre dışında; 4'ü sana cevap gönderir
 node scripts/demo-people.mjs tur --for <e-posta>                # bugünkü Tur'u şimdi yeniden üretir
 node scripts/demo-people.mjs fun                                # var olan demo kişilere bu haftanın modunu ve "İki doğru, bir yalan" oyununu verir (seed bunu zaten yapar)
+node scripts/demo-people.mjs chat --for <e-posta>               # masalarındaki demo kişiler birer mesaj yazar (gerçek zamanlı deneme)
 node scripts/demo-people.mjs reply                              # cevap gönderdiğin demo kişiler karşılık verir → masa açılır
 node scripts/demo-people.mjs clean                              # demo kişileri siler
 ```

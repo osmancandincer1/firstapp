@@ -4,6 +4,50 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ---
 
+## Faz 4 — Masa ve sohbet (1. kısım: yuvalar, sohbet, zamanlayıcılar, Mola, Nazik Veda) · 2026-10-12
+
+**Ortam:** bu makine; Docker ile yerel Supabase (Realtime dahil), Android emülatörü (Pixel, Expo Go). Kararlar: D-067. Bu bölüm Faz 4'ün ilk kısmıdır; ses mesajı ve masada mini oyunlar sonraki kısımda.
+
+### Özet
+
+| Katman                              | Komut                                                               | Sonuç                                                        |
+| ----------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata**                                                   |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **153/153**                                                  |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                                    |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **190/190**                                                  |
+| Edge Functions                      | `npm run functions:check` (18 fonksiyon) + `npm run functions:test` | **0 tip hatası · 106/106**                                   |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db` (yerel Docker)                               | **240/240** (00: 13, 01: 57, 02: 55, 03: 62, 04: 13, 05: 40) |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                             |
+
+### Faz 4 kabul kriterleri (APP.md §21)
+
+| Kriter                  | Durum     | Kanıt                                                                                                                                                                                                                                      |
+| ----------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 4. masa açılamaz        | **Geçti** | `03_tur` MAS-05 (dolu kişiye karşılık "Masa bekliyor"); `05_chat`: yer açılınca en eski bekleyen açılıyor ve aktif sayı 3'ü geçmiyor; 72 saatte bekleyen düşüyor                                                                           |
+| Mesaj kaybı testi geçer | **Geçti** | pgTAP: aynı `client_id` bir kez saklanıyor; mobil: giden kutusu sırayla gönderiyor, ağ hatasında sırayı koruyup aynı kimlikle yeniden deniyor; **emülatörde uçak modu:** iki mesaj yazıldı, bağlantı gelince sırasıyla, birer kez iletildi |
+| Zamanlayıcılar doğru    | **Geçti** | `05_chat` MAS-06: 24 saatte "Sıra sende", 60 saatte son uyarı, 72 saatte soğuma; moladaki süre sayılmıyor; yanıt saati yeniden başlatıyor                                                                                                  |
+
+### Yeni testler
+
+- **pgTAP `05_chat.test.sql` (40):** gönderme ve sıranın geçmesi; tekrarlanan gönderim (SOH-01/02); masaya ait olmayan kişi okuyamaz ve yazamaz, mesaj tablosuna doğrudan yazılamaz (SOH-03); okundu işaretleme; yeni hesap bağlantı gönderemez (SOH-04); platform dışı uyarısı yalnızca ilk 48 saatte (SOH-05); zamanlayıcılar ve Mola (MAS-06); yuva açılması ve bekleyen masanın düşmesi (MAS-05); Nazik Veda, yazma engeli, vedayı yalnızca karşı tarafın görmesi, 180 günlük Tur dışı (MAS-07); soğuyan masanın iki tarafın isteğiyle açılması ve 7 gün sınırı; engelleme ve karşı tarafın yalnızca "sona erdi" görmesi (MAS-08); ayda en fazla 2 mola; yanıt güvenilirliği medyanı ve 5 masa altı rozet yokluğu (MAS-10).
+- **shared (5):** mesaj işaretleri (bağlantı, gizlenmiş platform adları, telefon, @kullanıcı adı, para ve kripto, IBAN) ve sohbet şemaları.
+- **Deno (4):** `chat` gönderme ve işaretler, hata eşlemeleri, veda notu denetimi, yeniden açma ve engelleme; `tables` Mola başlatma, sınır ve bitirme.
+- **mobil (14):** giden kutusu sırası, ağ hatasında devam, reddedilen mesajın gerekçesiyle kalması, canlı mesajların yinelenmeden birleşmesi; sohbet ekranı (gönderme, okundu, uyarı bandının yalnızca alıcıda çıkması, başarısız gönderim, Nazik Veda, engelleme, alınan veda, soğuk masayı açma, engellenen tarafın görünümü); Masalar (sohbete geçiş, son mesaj, okunmamış sayısı, arşiv, Mola).
+
+### Emülatörde elle denenenler
+
+- Masalar: yuvalar, son mesaj önizlemesi, okunmamış rozeti; satıra dokununca sohbet açılıyor.
+- Gerçek zamanlı: `node scripts/demo-people.mjs chat --for asd@gmail.com` ile Derya yazdı; mesaj ekrana yenilemeden geldi, başlık "Sıra sende" oldu. Uygulamadan gönderilen mesaj veritabanına yazıldı ve başlık "Sıra onda" oldu.
+- Uçak modu: yukarıdaki mesaj kaybı denemesi.
+
+### Çalıştırılamayanlar ve not
+
+- **Edge çalışma ortamı yeni paylaşılan dosyayı görmüyordu** (`chat.ts` "Module not found"): kapsayıcı açıldığı andaki dosyaları bağlıyor. `npx supabase stop` + `start` ile düzeldi; veri korundu (sıfırlama yok). SETUP'a not eklendi.
+- **iOS:** ÇALIŞTIRILAMADI — Windows makine.
+
+---
+
 ## Arayüz yenilemesi ("Alev"), mod etiketi ve "İki doğru, bir yalan" · 2026-10-12
 
 **Ortam:** bu makine; Docker Desktop çalışıyor, yerel Supabase (`npx supabase start`) ve Android emülatörü (Pixel, Expo Go) açık. Kararlar: D-065 (tasarım), D-066 (mod ve oyun).
