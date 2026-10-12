@@ -229,7 +229,9 @@
     "saved_limit": "En fazla 9 kişi saklayabilirsin. Önce birini çıkar.",
     "answer_invalid": "Cevap gönderilemedi. Metni ya da kaydı kontrol et.",
     "answer_duplicate": "Bu cevap son gönderdiklerine çok benziyor. Bu kişiye özel bir şey yaz.",
-    "answer_limit": "Şu an daha fazla cevap gönderemezsin."
+    "answer_limit": "Şu an daha fazla cevap gönderemezsin.",
+    "tur_not_finished": "Önce bu Tur’daki kartlara karar ver.",
+    "tur_limit": "Bugünlük bu kadar. Yarın yeni kişiler seni bekliyor."
   },
   "profile": {
     "saved": "Kaydedildi",
@@ -623,7 +625,12 @@
       "evening": "Akşam Tur’u",
       "welcome": "Hoş geldin Tur’u"
     },
-    "heading": "Tur"
+    "heading": "Tur",
+    "next": "Sıradaki 9 kişi",
+    "finishedOnDemand": "Bu Tur’daki herkese baktın. Hazırsan sıradaki 9 kişi hemen geliyor.",
+    "noneTitle": "Şu an sana uygun yeni kimse yok",
+    "noneBody": "Filtrelerine uyan herkesi gördün. Yeni kişiler katıldıkça burada çıkacaklar; filtrelerini biraz genişletmek de işe yarar.",
+    "retry": "Yeniden bak"
   },
   "answer": {
     "title": "Cevabın",

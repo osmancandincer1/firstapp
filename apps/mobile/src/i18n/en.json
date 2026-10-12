@@ -229,7 +229,9 @@
     "saved_limit": "You can save up to 9 people. Remove someone first.",
     "answer_invalid": "The answer could not be sent. Check the text or the recording.",
     "answer_duplicate": "This answer is very similar to your recent ones. Write something just for this person.",
-    "answer_limit": "You cannot send more answers right now."
+    "answer_limit": "You cannot send more answers right now.",
+    "tur_not_finished": "Decide on the cards in this Round first.",
+    "tur_limit": "That is all for today. New people are waiting tomorrow."
   },
   "profile": {
     "saved": "Saved",
@@ -623,7 +625,12 @@
       "evening": "Evening Round",
       "welcome": "Welcome Round"
     },
-    "heading": "Round"
+    "heading": "Round",
+    "next": "Next 9 people",
+    "finishedOnDemand": "You have seen everyone in this Round. When you are ready, the next 9 people are right here.",
+    "noneTitle": "Nobody new matches you right now",
+    "noneBody": "You have seen everyone who matches your filters. New people will show up here as they join; widening your filters a little also helps.",
+    "retry": "Check again"
   },
   "answer": {
     "title": "Your answer",

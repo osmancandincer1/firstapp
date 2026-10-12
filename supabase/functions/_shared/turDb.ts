@@ -14,6 +14,9 @@ export class SupabaseTurDb implements TurDb {
   currentTur(userId: string) {
     return rpc<Record<string, unknown> | null>(this.c, 'srv_current_tur', { p_user_id: userId });
   }
+  nextTur(userId: string) {
+    return rpc<{ result: string; batchId?: string }>(this.c, 'srv_next_tur', { p_user_id: userId });
+  }
   saved(userId: string) {
     return rpc<Record<string, unknown>[]>(this.c, 'srv_saved', { p_user_id: userId });
   }

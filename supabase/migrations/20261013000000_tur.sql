@@ -48,14 +48,15 @@ create table public.tur_batches (
   id uuid primary key default gen_random_uuid(),
   profile_id uuid not null references public.profiles (id) on delete cascade,
   tur_date date not null,
-  kind text not null check (kind in ('evening', 'welcome', 'noon')),
+  kind text not null check (kind in ('evening', 'welcome', 'noon', 'on_demand')),
+  seq smallint not null default 1, -- several on-demand Rounds a day (D-063)
   opens_at timestamptz not null,
   generated_at timestamptz,
   pool_size integer,
   hint jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (profile_id, tur_date, kind)
+  unique (profile_id, tur_date, kind, seq)
 );
 create index tur_batches_profile_idx on public.tur_batches (profile_id, opens_at desc);
 
@@ -184,6 +185,10 @@ insert into public.feature_flags (key, value) values
   ('tur.weights', '{"intent": 25, "common": 20, "fair": 20, "reliability": 15, "activity": 10, "completeness": 10}'),
   ('tur.min_weekly_impressions', '30'),
   ('tur.diversity_max', '4'),
+  -- 'on_demand': a new Round whenever the last one is done (launch); 'scheduled': 12:00 and 21:00 (D-062, D-063).
+  ('tur.mode', '"on_demand"'),
+  -- On-demand Rounds per day; 0 = no limit.
+  ('tur.daily_max', '0'),
   ('answers.daily_limit', '15'),
   ('answers.pending_limit', '15'),
   ('tables.free_slots', '3')
@@ -414,7 +419,7 @@ $$;
 -- ---------------------------------------------------------------------------
 -- Generation (§5). Payment, spending and device are not inputs (§9.1, TUR-07).
 -- ---------------------------------------------------------------------------
-create or replace function public.srv_generate_tur(p_profile_id uuid, p_tur_date date, p_kind text default 'evening')
+create or replace function public.srv_generate_tur(p_profile_id uuid, p_tur_date date, p_kind text default 'evening', p_seq smallint default 1)
 returns uuid language plpgsql security definer set search_path = '' as $$
 declare
   v public.profiles;
@@ -432,7 +437,7 @@ declare
   v_prefs public.preferences;
 begin
   select id into v_batch from public.tur_batches
-   where profile_id = p_profile_id and tur_date = p_tur_date and kind = p_kind;
+   where profile_id = p_profile_id and tur_date = p_tur_date and kind = p_kind and seq = p_seq;
   if found then return v_batch; end if;
 
   select * into v from public.profiles where id = p_profile_id;
@@ -441,15 +446,15 @@ begin
   end if;
   perform private.ensure_preferences(p_profile_id);
 
-  insert into public.tur_batches (profile_id, tur_date, kind, opens_at)
-  values (p_profile_id, p_tur_date, p_kind,
-          case when p_kind = 'welcome' then now() else private.tur_opens_at(p_tur_date, p_kind) end)
-  on conflict (profile_id, tur_date, kind) do nothing
+  insert into public.tur_batches (profile_id, tur_date, kind, seq, opens_at)
+  values (p_profile_id, p_tur_date, p_kind, p_seq,
+          case when p_kind in ('welcome', 'on_demand') then now() else private.tur_opens_at(p_tur_date, p_kind) end)
+  on conflict (profile_id, tur_date, kind, seq) do nothing
   returning id into v_batch;
   if v_batch is null then
     -- Another run created it a moment ago (TUR-01).
     select id into v_batch from public.tur_batches
-     where profile_id = p_profile_id and tur_date = p_tur_date and kind = p_kind;
+     where profile_id = p_profile_id and tur_date = p_tur_date and kind = p_kind and seq = p_seq;
     return v_batch;
   end if;
 
@@ -538,6 +543,11 @@ begin
 end;
 $$;
 
+create or replace function private.tur_mode()
+returns text language sql stable security definer set search_path = '' as $$
+  select coalesce((select value #>> '{}' from public.feature_flags where key = 'tur.mode'), 'on_demand');
+$$;
+
 -- Job for every active account, half an hour before each opening (§5, D-062).
 create or replace function public.srv_generate_all_turs(p_date date, p_kind text default 'evening')
 returns integer language plpgsql security definer set search_path = '' as $$
@@ -545,6 +555,7 @@ declare
   n int := 0;
   p record;
 begin
+  if private.tur_mode() <> 'scheduled' then return 0; end if;
   for p in select id from public.profiles
            where status = 'active' and verified_at is not null and not reverify_required
              and last_active_at > now() - interval '7 days'
@@ -571,7 +582,37 @@ create or replace function private.current_batch(p_profile_id uuid)
 returns uuid language sql stable security definer set search_path = '' as $$
   select id from public.tur_batches
   where profile_id = p_profile_id and opens_at <= now() and opens_at > now() - interval '24 hours'
-  order by opens_at desc, tur_date desc, created_at desc limit 1;
+  order by opens_at desc, tur_date desc, seq desc, created_at desc limit 1;
+$$;
+
+-- A new Round on demand (D-063): allowed when there is no open Round or every
+-- card of the current one has a decision. Returns
+-- {result: ok | not_finished | daily_limit | scheduled | not_active, batchId?}.
+create or replace function public.srv_next_tur(p_user_id uuid)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  me uuid := private.profile_id_of(p_user_id);
+  v_today date := (now() at time zone 'Europe/Istanbul')::date;
+  v_cur uuid;
+  v_seq int;
+  v_max int := private.flag_num('tur.daily_max', 0)::int;
+begin
+  if not exists (select 1 from public.profiles where id = me and status = 'active') then
+    return jsonb_build_object('result', 'not_active');
+  end if;
+  if private.tur_mode() <> 'on_demand' then return jsonb_build_object('result', 'scheduled'); end if;
+  -- One request at a time per person (double taps).
+  perform pg_advisory_xact_lock(hashtextextended('next_tur' || me::text, 0));
+  v_cur := private.current_batch(me);
+  if v_cur is not null and exists (select 1 from public.tur_cards where batch_id = v_cur and action = 'none') then
+    return jsonb_build_object('result', 'not_finished', 'batchId', v_cur);
+  end if;
+  select coalesce(max(seq), 0) into v_seq from public.tur_batches
+   where profile_id = me and tur_date = v_today and kind = 'on_demand';
+  if v_max > 0 and v_seq >= v_max then return jsonb_build_object('result', 'daily_limit'); end if;
+  return jsonb_build_object('result', 'ok',
+    'batchId', public.srv_generate_tur(me, v_today, 'on_demand', (v_seq + 1)::smallint));
+end;
 $$;
 
 -- ---------------------------------------------------------------------------

@@ -27,7 +27,17 @@ function useUserQuery<T>(key: readonly string[], fn: () => Promise<T>, staleTime
   return useQuery({ queryKey: [...key, userId], queryFn: fn, enabled: Boolean(userId), staleTime });
 }
 
-export const useTur = () => useUserQuery(TUR_KEY, async () => (await unwrap(viewTur())).tur);
+/** The current Round and how Rounds are opened; servers without a mode are scheduled. */
+export const useTurState = () =>
+  useUserQuery(TUR_KEY, async () => {
+    const r = await unwrap(viewTur());
+    return { tur: r.tur, mode: r.mode ?? ('scheduled' as const) };
+  });
+/** Just the current Round (other screens look up cards in it). */
+export function useTur() {
+  const q = useTurState();
+  return { ...q, data: q.data?.tur };
+}
 export const useSaved = () =>
   useUserQuery(SAVED_KEY, async () => (await unwrap(listSaved())).saved);
 export const useInbox = () => useUserQuery(INBOX_KEY, () => unwrap(fetchInbox()));

@@ -22,7 +22,7 @@ import { signItems, signProfiles } from './sign.ts';
 import { VOICE_MAX_BYTES } from './media.ts';
 
 export interface TurDeps {
-  db: Pick<Db, 'profileState'>;
+  db: Pick<Db, 'profileState' | 'flag'>;
   tur: TurDb;
   auth: AuthAdmin;
   store: MediaStore;
@@ -52,10 +52,25 @@ export async function turAction(
 
   switch (req.action) {
     case 'view': {
-      const tur = await deps.tur.currentTur(userId);
-      if (!tur) return ok({ ok: true, tur: null });
-      const cards = await signItems(deps.store, (tur.cards as Json[]) ?? []);
-      return ok({ ok: true, tur: { ...tur, cards } });
+      const mode = await deps.db.flag<string>('tur.mode', 'on_demand');
+      let tur = await deps.tur.currentTur(userId);
+      // No clock at launch (D-063): opening the tab with no Round starts one.
+      if (!tur && mode === 'on_demand') {
+        await deps.tur.nextTur(userId);
+        tur = await deps.tur.currentTur(userId);
+      }
+      return ok({ ok: true, mode, tur: await signTur(deps, tur) });
+    }
+    case 'next': {
+      const r = await deps.tur.nextTur(userId);
+      if (r.result === 'not_finished') return fail(409, 'tur_not_finished');
+      if (r.result === 'daily_limit') return fail(429, 'tur_limit');
+      if (r.result !== 'ok') return fail(409, 'wrong_step');
+      return ok({
+        ok: true,
+        mode: 'on_demand',
+        tur: await signTur(deps, await deps.tur.currentTur(userId)),
+      });
     }
     case 'saved': {
       const saved = await signItems(deps.store, await deps.tur.saved(userId));
@@ -72,6 +87,12 @@ export async function turAction(
       await deps.tur.lessLikeThis(userId, req.reasonKey);
       return ok({ ok: true });
   }
+}
+
+/** Replaces storage paths in the Round's cards with signed URLs. */
+async function signTur(deps: TurDeps, tur: Json | null) {
+  if (!tur) return null;
+  return { ...tur, cards: await signItems(deps.store, (tur.cards as Json[]) ?? []) };
 }
 
 /** Voice answers live under the sender's own folder, so ids cannot point at someone else's file. */

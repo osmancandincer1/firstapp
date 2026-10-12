@@ -1,6 +1,6 @@
 -- Phase 3 database tests: the Round, answers and tables.
 begin;
-select plan(55);
+select plan(62);
 
 create function pg_temp.uid(n int) returns uuid language sql as $$
   select ('00000000-0000-4000-8000-' || lpad(n::text, 12, '0'))::uuid $$;
@@ -157,7 +157,8 @@ create temp table b6 as select public.srv_generate_tur(pg_temp.pid(2), pg_temp.t
 select is((select candidate_id from public.tur_cards where batch_id = (select id from b6) and position = 0), pg_temp.pid(32),
   'TUR-08: the rarely shown person ranks first (fair exposure)');
 
--- Two Rounds a day (D-062) ---------------------------------------------------------------------------------------
+-- Two Rounds a day (D-062) — the scheduled mode ------------------------------------------------------------------
+update public.feature_flags set value = '"scheduled"' where key = 'tur.mode';
 do $$ begin
   perform pg_temp.mk(300, 'man', array['women'], 35, 'unsure', 10::smallint);
   perform pg_temp.mk(301, 'woman', array['men'], 35, 'unsure', 10::smallint);
@@ -170,6 +171,31 @@ select is((select array_agg(kind order by opens_at) from public.tur_batches
   'the same day has a noon and an evening Round');
 select is((select kind from public.tur_batches where id = private.current_batch(pg_temp.pid(300))), 'welcome',
   'the latest opened Round is current (older ones close when the next opens)');
+
+update public.feature_flags set value = '"on_demand"' where key = 'tur.mode';
+
+-- On-demand Rounds, no clock (D-063) ------------------------------------------------------------------------------
+do $$ declare i int; begin
+  perform pg_temp.mk(400, 'man', array['women'], 30, 'unsure', 11::smallint);
+  for i in 401..412 loop perform pg_temp.mk(i, 'woman', array['men'], 30, 'unsure', 11::smallint); end loop;
+end $$;
+select is(public.srv_generate_all_turs(pg_temp.today(), 'evening'), 0, 'in on-demand mode the scheduled job generates nothing');
+create temp table n1 as select public.srv_next_tur(pg_temp.uid(400)) as r;
+select is((select count(*)::int from public.tur_cards where batch_id = ((select r from n1) ->> 'batchId')::uuid), 9,
+  'the first on-demand Round has 9 cards right away');
+select is(public.srv_next_tur(pg_temp.uid(400)) ->> 'result', 'not_finished', 'no new Round while cards are still open');
+update public.tur_cards set action = 'passed', acted_at = now() where batch_id = ((select r from n1) ->> 'batchId')::uuid;
+create temp table n2 as select public.srv_next_tur(pg_temp.uid(400)) as r;
+select is((select count(*)::int from public.tur_cards where batch_id = ((select r from n2) ->> 'batchId')::uuid), 3,
+  'the next Round brings only people not seen yet (12 - 9)');
+select is(private.current_batch(pg_temp.pid(400)), ((select r from n2) ->> 'batchId')::uuid, 'the newest Round is current');
+update public.feature_flags set value = '2' where key = 'tur.daily_max';
+update public.tur_cards set action = 'passed', acted_at = now() where batch_id = ((select r from n2) ->> 'batchId')::uuid;
+select is(public.srv_next_tur(pg_temp.uid(400)) ->> 'result', 'daily_limit', 'tur.daily_max limits on-demand Rounds per day');
+update public.feature_flags set value = '0' where key = 'tur.daily_max';
+update public.feature_flags set value = '"scheduled"' where key = 'tur.mode';
+select is(public.srv_next_tur(pg_temp.uid(400)) ->> 'result', 'scheduled', 'in scheduled mode there is no on-demand Round');
+update public.feature_flags set value = '"on_demand"' where key = 'tur.mode';
 
 -- Diversity never leaves a slot empty (§4.1, D-061) ----------------------------------------------------------------
 -- Seven near-identical people are all chosen for the same reason; the cap of 4 must not drop the other three.

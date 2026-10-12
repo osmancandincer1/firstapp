@@ -10,9 +10,9 @@ import { AppText, Banner, Button, Card, Screen, Sheet, Skeleton } from '@/compon
 import { useTheme } from '@/design/theme';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
 import type { ClientErrorCode } from '@/lib/api';
-import { cardAction, lessLikeThis, type Tur, type TurCard } from './api';
+import { cardAction, lessLikeThis, nextTur, type Tur, type TurCard } from './api';
 import { PublicProfileView } from './PublicProfileView';
-import { isOffline, SAVED_KEY, TUR_KEY, useInvalidate, useTur } from './queries';
+import { isOffline, SAVED_KEY, TUR_KEY, useInvalidate, useTurState } from './queries';
 import {
   firstOpenIndex,
   isDecided,
@@ -27,10 +27,11 @@ import { useNow } from './useNow';
 export function TurScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const query = useTur();
+  const query = useTurState();
   const now = useNow();
   const countdownText = useCountdownText();
   const [browseAgain, setBrowseAgain] = useState(false);
+  const next = useNextTur(() => setBrowseAgain(false));
 
   const header = (
     <View style={styles.headerRow}>
@@ -62,8 +63,23 @@ export function TurScreen() {
   }
 
   const offline = query.isError && isOffline(query.error);
-  const view = turView(query.data ?? null, now);
+  const mode = query.data?.mode ?? 'scheduled';
+  const view = turView(query.data?.tur ?? null, now, mode);
   const offlineBanner = offline ? <Banner tone="warning" message={t('common.offline')} /> : null;
+
+  if (view.kind === 'none') {
+    return (
+      <Screen title={t('tur.heading')} testID="tur-none" header={header}>
+        {offlineBanner}
+        <Card>
+          <AppText variant="heading">{t('tur.noneTitle')}</AppText>
+          <AppText tone="secondary">{t('tur.noneBody')}</AppText>
+        </Card>
+        <Button label={t('tur.openFilters')} onPress={() => router.push('/filters')} />
+        <Button variant="ghost" label={t('tur.retry')} onPress={() => void query.refetch()} />
+      </Screen>
+    );
+  }
 
   if (view.kind === 'waiting') {
     return (
@@ -98,12 +114,22 @@ export function TurScreen() {
     return (
       <Screen title={t('tur.finishedTitle')} testID="tur-finished" header={header}>
         {offlineBanner}
-        <Card>
-          <AppText accessibilityLiveRegion="polite">{countdownText(now, view.nextAt)}</AppText>
-          <AppText tone="secondary">
-            {t('tur.finishedBody', { time: openingTime(view.nextAt) })}
-          </AppText>
-        </Card>
+        {mode === 'on_demand' ? (
+          <>
+            <Card>
+              <AppText tone="secondary">{t('tur.finishedOnDemand')}</AppText>
+            </Card>
+            <Button label={t('tur.next')} onPress={() => void next.run()} loading={next.pending} />
+            <ErrorNotice error={next.error} />
+          </>
+        ) : (
+          <Card>
+            <AppText accessibilityLiveRegion="polite">{countdownText(now, view.nextAt)}</AppText>
+            <AppText tone="secondary">
+              {t('tur.finishedBody', { time: openingTime(view.nextAt) })}
+            </AppText>
+          </Card>
+        )}
         <Button
           variant="secondary"
           label={t('tur.completeProfile')}
@@ -115,6 +141,27 @@ export function TurScreen() {
   }
 
   return <TurCards tur={view.tur} header={header} offlineBanner={offlineBanner} />;
+}
+
+/** "Sıradaki 9 kişi": asks for the next Round and shows it at once. */
+function useNextTur(onOpened: () => void) {
+  const invalidate = useInvalidate();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<ClientErrorCode | null>(null);
+  const run = async () => {
+    if (pending) return;
+    setPending(true);
+    setError(null);
+    const r = await nextTur();
+    setPending(false);
+    if (!r.ok) {
+      setError(r.error);
+      return;
+    }
+    await invalidate(TUR_KEY);
+    onOpened();
+  };
+  return { run, pending, error };
 }
 
 function TurCards({

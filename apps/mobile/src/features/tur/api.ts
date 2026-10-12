@@ -93,7 +93,12 @@ export interface TableItem {
   profile: PublicProfile | null;
 }
 
-export const viewTur = () => callFunction<{ ok: true; tur: Tur | null }>('tur', { action: 'view' });
+/** 'on_demand': a new Round whenever the last one is done (launch); 'scheduled': 12:00 and 21:00. */
+export type TurMode = 'on_demand' | 'scheduled';
+type TurResponse = { ok: true; tur: Tur | null; mode?: TurMode };
+export const viewTur = () => callFunction<TurResponse>('tur', { action: 'view' });
+/** Opens the next Round right away (D-063). */
+export const nextTur = () => callFunction<TurResponse>('tur', { action: 'next' });
 export const listSaved = () =>
   callFunction<{ ok: true; saved: SavedCard[] }>('tur', { action: 'saved' });
 export const cardAction = (cardId: string, action: 'pass' | 'save' | 'unsave') =>

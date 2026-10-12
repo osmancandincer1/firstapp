@@ -132,6 +132,8 @@ export interface MediaStore {
 /** Round, answers and tables (srv_* functions of the tur migration). */
 export interface TurDb {
   currentTur(userId: string): Promise<Record<string, unknown> | null>;
+  /** srv_next_tur: ok | not_finished | daily_limit | scheduled | not_active. */
+  nextTur(userId: string): Promise<{ result: string; batchId?: string }>;
   saved(userId: string): Promise<Record<string, unknown>[]>;
   turAction(
     userId: string,

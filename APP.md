@@ -202,7 +202,7 @@ Fiyat referansı (ABD, aylık; kaynaklar arasında fark var ve uygulamalar dinam
 
 ### 4.1 Tur
 
-- Günde iki Tur: **12:00** ve **21:00** (İstanbul saati). Her Tur bir sonrakine kadar erişilebilir. *(Sahibin kararı, 2026-10-12, D-062; önceki hâli: günde bir, 21:00.)*
+- **Başlangıçta saat sınırı yok:** Tur bitince sıradaki 9 kişi hemen açılabilir (D-063). İleride ayarla saatli moda geçilebilir: günde iki Tur, **12:00** ve **21:00** (İstanbul), her biri bir sonrakine kadar açık (D-062). *(Sahibin kararları, 2026-10-12; önceki hâli: günde bir, 21:00.)*
 - **9 kart.** Kartlar arasında serbestçe ileri-geri gezilir; karar geri alınamaz bir hareketle verilmez.
 - Her kartta iki eylem: **Cevapla** (Kapı Sorusunu yanıtla) ve **Geç**.
   - Geç → bu kişi 60 gün gösterilmez.

@@ -34,6 +34,9 @@ class FakeTurDb implements TurDb {
       ...a,
     );
   }
+  nextTur(...a: unknown[]) {
+    return this.r('nextTur', { result: 'ok', batchId: UUID(1) }, ...a);
+  }
   saved(...a: unknown[]) {
     return this.r('saved', [{ candidateId: UUID(3), profile: profile('Mert') }], ...a);
   }
@@ -113,14 +116,40 @@ Deno.test('tur view: cards with signed media URLs and no raw storage paths (PRO-
   assert(store.signed.every((s) => s.ttl === 600));
 });
 
-Deno.test('tur view: no Round yet', async () => {
+Deno.test(
+  'tur view: with no Round, on-demand mode starts one; scheduled mode waits (D-063)',
+  async () => {
+    const onDemand = deps();
+    onDemand.tur.results.currentTur = null;
+    assertEquals(await turAction(onDemand.d, 'tok', { action: 'view' }), {
+      ok: true,
+      status: 200,
+      body: { ok: true, mode: 'on_demand', tur: null },
+    });
+    assertEquals(onDemand.tur.called('nextTur').length, 1);
+
+    const scheduled = deps();
+    scheduled.db.flags.set('tur.mode', 'scheduled');
+    scheduled.tur.results.currentTur = null;
+    const r = await turAction(scheduled.d, 'tok', { action: 'view' });
+    assertEquals(r.ok && r.body.mode, 'scheduled');
+    assertEquals(scheduled.tur.called('nextTur').length, 0);
+  },
+);
+
+Deno.test('tur next: a new Round when the last one is done, with clear refusals', async () => {
   const { d, tur } = deps();
-  tur.results.currentTur = null;
-  assertEquals(await turAction(d, 'tok', { action: 'view' }), {
-    ok: true,
-    status: 200,
-    body: { ok: true, tur: null },
-  });
+  const r = await turAction(d, 'tok', { action: 'next' });
+  assert(r.ok);
+  assert(!JSON.stringify(r.body).includes('"path"'), 'cards are signed');
+  for (const [result, status, error] of [
+    ['not_finished', 409, 'tur_not_finished'],
+    ['daily_limit', 429, 'tur_limit'],
+    ['scheduled', 409, 'wrong_step'],
+  ] as const) {
+    tur.results.nextTur = { result };
+    assertEquals(await turAction(d, 'tok', { action: 'next' }), { ok: false, status, error });
+  }
 });
 
 Deno.test('tur: only active accounts, valid actions and clear errors', async () => {

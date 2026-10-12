@@ -92,6 +92,8 @@ export const profileUpdateSchema = z.discriminatedUnion('section', [
 /** tur: read the current Round and act on its cards (§4.1). */
 export const turActionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('view') }),
+  // A new Round right away when the last one is done (D-063).
+  z.object({ action: z.literal('next') }),
   z.object({ action: z.literal('saved') }),
   z.object({ action: z.literal('pass'), cardId: z.uuid() }),
   z.object({ action: z.literal('save'), cardId: z.uuid() }),
@@ -208,6 +210,8 @@ export const API_ERROR_CODES = [
   'answer_invalid',
   'answer_duplicate',
   'answer_limit',
+  'tur_not_finished',
+  'tur_limit',
   'service_unavailable',
   'internal',
 ] as const;

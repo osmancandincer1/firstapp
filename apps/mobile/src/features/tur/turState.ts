@@ -2,13 +2,14 @@ import { countdown, nextTurOpening, TUR_SIZE } from '@nokuzo/shared';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { Reason, Tur, TurCard } from './api';
+import type { Reason, Tur, TurCard, TurMode } from './api';
 
 /** Decisions that close a card for this Round; 'none' keeps it open. */
 const DECIDED = new Set(['answered', 'passed', 'saved']);
 export const isDecided = (card: TurCard) => DECIDED.has(card.action);
 
 export type TurView =
+  | { kind: 'none' }
   | { kind: 'waiting'; opensAt: Date }
   | { kind: 'empty'; tur: Tur }
   | { kind: 'cards'; tur: Tur; small: boolean }
@@ -18,8 +19,12 @@ export type TurView =
  * What the Round tab shows (§8.1 #18): not open yet (countdown), cards, an
  * honest empty pool, or "Tur bitti" once every card has a decision.
  */
-export function turView(tur: Tur | null, now: Date): TurView {
-  if (!tur) return { kind: 'waiting', opensAt: nextTurOpening(now) };
+export function turView(tur: Tur | null, now: Date, mode: TurMode = 'scheduled'): TurView {
+  // On demand, "no Round" means nobody new is left to show (D-063).
+  if (!tur)
+    return mode === 'on_demand'
+      ? { kind: 'none' }
+      : { kind: 'waiting', opensAt: nextTurOpening(now) };
   const opensAt = new Date(tur.opensAt);
   if (opensAt.getTime() > now.getTime()) return { kind: 'waiting', opensAt };
   if (tur.cards.length === 0) return { kind: 'empty', tur };

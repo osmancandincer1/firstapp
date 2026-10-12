@@ -272,6 +272,52 @@ describe('TurScreen (§8.1 #18)', () => {
   });
 });
 
+describe('TurScreen on demand, no clock (D-063)', () => {
+  const finished = () => tur([card(1, 'answered'), card(2, 'passed')]);
+
+  it('offers the next 9 people right away instead of a countdown', async () => {
+    m.viewTur.mockResolvedValue({
+      ok: true,
+      data: { ok: true, tur: finished(), mode: 'on_demand' },
+    });
+    m.nextTur.mockResolvedValue({
+      ok: true,
+      data: { ok: true, tur: tur(nine()), mode: 'on_demand' },
+    });
+    await renderWithProviders(<TurScreen />);
+    expect(await screen.findByText('Tur bitti')).toBeTruthy();
+    expect(screen.queryByText(/sa \d+ dk kaldı/)).toBeNull();
+    m.viewTur.mockResolvedValue({
+      ok: true,
+      data: { ok: true, tur: tur(nine()), mode: 'on_demand' },
+    });
+    await fireEvent.press(screen.getByText('Sıradaki 9 kişi'));
+    expect(m.nextTur).toHaveBeenCalled();
+    expect(await screen.findByText('Kişi 1')).toBeTruthy();
+  });
+
+  it('explains a daily limit', async () => {
+    m.viewTur.mockResolvedValue({
+      ok: true,
+      data: { ok: true, tur: finished(), mode: 'on_demand' },
+    });
+    m.nextTur.mockResolvedValue({ ok: false, error: 'tur_limit' });
+    await renderWithProviders(<TurScreen />);
+    await fireEvent.press(await screen.findByText('Sıradaki 9 kişi'));
+    expect(await screen.findByText(/Bugünlük bu kadar/)).toBeTruthy();
+  });
+
+  it('says honestly when nobody new is left, with a way to the filters', async () => {
+    m.viewTur.mockResolvedValue({ ok: true, data: { ok: true, tur: null, mode: 'on_demand' } });
+    await renderWithProviders(<TurScreen />);
+    expect(await screen.findByText('Şu an sana uygun yeni kimse yok')).toBeTruthy();
+    expect(screen.queryByText(/açılıyor/)).toBeNull();
+    await fireEvent.press(screen.getByText('Filtreleri aç'));
+    expect(router.push).toHaveBeenCalledWith('/filters');
+    expect(turView(null, new Date(), 'on_demand')).toEqual({ kind: 'none' });
+  });
+});
+
 // --- Answer composer --------------------------------------------------------------------
 
 describe('AnswerComposerScreen (§4.2, §8.1 #20)', () => {
