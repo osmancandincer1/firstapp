@@ -444,6 +444,9 @@ export class FakeTurDb implements TurDb {
       ...a,
     );
   }
+  messageMedia(...a: unknown[]) {
+    return this.r<string | null>('messageMedia', 'u_user-1/messages/v.m4a', ...a);
+  }
   messagesRead(...a: unknown[]) {
     return this.r('messagesRead', 1, ...a);
   }
@@ -473,4 +476,30 @@ export class FakeTurDb implements TurDb {
       ...a,
     );
   }
+}
+
+/** A minimal M4A file whose header says it lasts `ms` milliseconds. */
+export function m4a(ms: number) {
+  const enc = new TextEncoder();
+  const be32 = (n: number) => [(n >>> 24) & 255, (n >> 16) & 255, (n >> 8) & 255, n & 255];
+  const box = (type: string, payload: number[]) => [
+    ...be32(payload.length + 8),
+    ...enc.encode(type),
+    ...payload,
+  ];
+  const mvhd = [
+    0,
+    0,
+    0,
+    0,
+    ...be32(0),
+    ...be32(0),
+    ...be32(1000),
+    ...be32(ms),
+    ...new Array(80).fill(0),
+  ];
+  return new Uint8Array([
+    ...box('ftyp', [...enc.encode('M4A '), 0, 0, 0, 0]),
+    ...box('moov', box('mvhd', mvhd)),
+  ]);
 }

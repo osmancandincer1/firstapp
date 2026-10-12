@@ -9,6 +9,9 @@ import { foldText } from './moderation.ts';
 
 export const MESSAGE_MAX = 1000;
 export const FAREWELL_NOTE_MAX = 140;
+/** Voice message length in seconds (SOH-10). */
+export const VOICE_MESSAGE_MIN_SECONDS = 1;
+export const VOICE_MESSAGE_MAX_SECONDS = 60;
 export const PAUSE_DAYS_MIN = 1;
 export const PAUSE_DAYS_MAX = 7;
 /** Hours of silence before "Sıra sende", the last call and cooling (flags tables.*_hours). */
@@ -32,6 +35,15 @@ export const chatActionSchema = z.discriminatedUnion('action', [
     text: z.string().trim().min(1).max(MESSAGE_MAX),
     replyTo: z.uuid().optional(),
   }),
+  z.object({ action: z.literal('voice_upload_url'), tableId: z.uuid() }),
+  z.object({
+    action: z.literal('send_voice'),
+    tableId: z.uuid(),
+    clientId: z.uuid(),
+    voiceId: z.uuid(),
+  }),
+  /** A short-lived URL for a voice message, for the table's parties only. */
+  z.object({ action: z.literal('media_url'), messageId: z.uuid() }),
   z.object({ action: z.literal('read'), tableId: z.uuid() }),
   z.object({
     action: z.literal('farewell'),
@@ -57,6 +69,8 @@ export interface ChatMessage {
 }
 
 export interface MessageFlags {
+  /** Voice messages: the checked length. */
+  durationMs?: number;
   link?: true;
   offPlatform?: true;
   money?: true;

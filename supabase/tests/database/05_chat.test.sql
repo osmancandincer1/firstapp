@@ -1,6 +1,6 @@
 -- Tables and chat (APP.md §4.4, §13.5; MAS-05..MAS-10, SOH-01..SOH-03; D-067).
 begin;
-select plan(40);
+select plan(42);
 
 create function pg_temp.uid(n int) returns uuid language sql as $$
   select ('00000000-0000-4000-8000-' || lpad(n::text, 12, '0'))::uuid $$;
@@ -69,11 +69,19 @@ select ok(not (public.srv_message_send(pg_temp.uid(601), (select id from t1), ge
   'WhatsApp’tan yazsana', null, null, '{"offPlatform": true}') -> 'message' -> 'flags' ? 'offPlatform'),
   'after 48 hours it is not flagged any more');
 
+-- Voice messages (SOH-10): only the parties can resolve the recording's path.
+create temp table v1 as select public.srv_message_send(pg_temp.uid(601), (select id from t1), gen_random_uuid(),
+  'voice', null, 'u_x/messages/v1.m4a') -> 'message' ->> 'id' as id;
+select is(public.srv_message_media(pg_temp.uid(602), (select id::uuid from v1)), 'u_x/messages/v1.m4a',
+  'a party gets the voice message path');
+select is(public.srv_message_media(pg_temp.uid(603), (select id::uuid from v1)), null,
+  'someone else does not');
+
 set local role authenticated;
 do $$ begin perform set_config('request.jwt.claims', json_build_object('sub', pg_temp.uid(603), 'role', 'authenticated')::text, true); end $$;
 select is((select count(*)::int from public.messages), 0, 'SOH-03: an outsider reads no messages');
 do $$ begin perform set_config('request.jwt.claims', json_build_object('sub', pg_temp.uid(602), 'role', 'authenticated')::text, true); end $$;
-select is((select count(*)::int from public.messages), 3, 'a party reads the table''s messages');
+select is((select count(*)::int from public.messages), 4, 'a party reads the table''s messages');
 select throws_ok($$insert into public.messages (table_id, sender_id, kind, body)
   values ((select id from t1), pg_temp.pid(602), 'text', 'doğrudan')$$, '42501', null,
   'messages cannot be written directly');

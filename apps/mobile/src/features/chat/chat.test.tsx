@@ -25,6 +25,25 @@ let mockUuid = 0;
 jest.mock('expo-crypto', () => ({
   randomUUID: () => `00000000-0000-4000-8000-${String(++mockUuid).padStart(12, '0')}`,
 }));
+const mockRecorder = {
+  prepareToRecordAsync: jest.fn(() => Promise.resolve()),
+  record: jest.fn(),
+  stop: jest.fn(() => Promise.resolve()),
+  uri: 'file:///voice.m4a',
+  currentTime: 0,
+};
+const mockRecState = { isRecording: false, durationMillis: 0 };
+const mockPlay = jest.fn();
+jest.mock('expo-audio', () => ({
+  RecordingPresets: { HIGH_QUALITY: {} },
+  AudioModule: { requestRecordingPermissionsAsync: () => Promise.resolve({ granted: true }) },
+  setAudioModeAsync: () => Promise.resolve(),
+  useAudioRecorder: () => mockRecorder,
+  useAudioRecorderState: () => mockRecState,
+  useAudioPlayer: () => ({ play: mockPlay, pause: jest.fn() }),
+  useAudioPlayerStatus: () => ({ playing: true, didJustFinish: false }),
+}));
+jest.mock('@/lib/media', () => ({ readBytes: () => Promise.resolve(new Uint8Array([1])) }));
 
 const m = jest.mocked(api);
 const tur = jest.mocked(turApi);
@@ -151,10 +170,11 @@ describe('ChatScreen (§8.1 #24)', () => {
     expect(await screen.findByText('Sıra sende')).toBeTruthy();
     await waitFor(() => expect(m.markRead).toHaveBeenCalledWith(TABLE));
 
-    const send = screen.getByRole('button', { name: 'Gönder' });
-    expect(send).toBeDisabled();
+    // Empty: the microphone; with text: send.
+    expect(screen.getByRole('button', { name: 'Ses mesajı kaydet' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Gönder' })).toBeNull();
     await fireEvent.changeText(screen.getByLabelText('Mesaj yaz'), '  Saat 10 olur mu?  ');
-    await fireEvent.press(send);
+    await fireEvent.press(screen.getByRole('button', { name: 'Gönder' }));
     await waitFor(() =>
       expect(m.sendMessage).toHaveBeenCalledWith(
         TABLE,
@@ -275,5 +295,60 @@ describe('TablesScreen with chat', () => {
     await renderWithProviders(<TablesScreen />);
     await fireEvent.press((await screen.findAllByRole('button', { name: 'Moladan dön' })).at(-1)!);
     expect(m.endPause).toHaveBeenCalled();
+  });
+});
+
+describe('voice messages (SOH-10)', () => {
+  it('records, uploads and sends a voice message', async () => {
+    m.requestVoiceUpload.mockResolvedValue({
+      ok: true,
+      data: { ok: true, id: UUID(70), bucket: 'quarantine', path: 'u/x.m4a', token: 't' },
+    });
+    jest.mocked(profileApi).uploadToQuarantine.mockResolvedValue({ ok: true, data: true });
+    m.sendVoice.mockResolvedValue({
+      ok: true,
+      data: {
+        ok: true,
+        message: msg(71, ME, '', { kind: 'voice', body: null, flags: { durationMs: 4000 } }),
+      },
+    });
+    const view = await renderWithProviders(<ChatScreen tableId={TABLE} />);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Ses mesajı kaydet' }));
+    await waitFor(() => expect(mockRecorder.record).toHaveBeenCalled());
+    Object.assign(mockRecState, { isRecording: true, durationMillis: 4000 });
+    mockRecorder.currentTime = 4;
+    await view.rerender(<ChatScreen tableId={TABLE} />);
+    expect(screen.queryByLabelText('Mesaj yaz')).toBeNull();
+    Object.assign(mockRecState, { isRecording: false });
+    await fireEvent.press(screen.getByRole('button', { name: 'Ses mesajını gönder' }));
+    await waitFor(() =>
+      expect(m.sendVoice).toHaveBeenCalledWith(TABLE, expect.any(String), UUID(70)),
+    );
+    expect(await screen.findByText('0:04')).toBeTruthy();
+  });
+
+  it('refuses a recording shorter than a second', async () => {
+    const view = await renderWithProviders(<ChatScreen tableId={TABLE} />);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Ses mesajı kaydet' }));
+    await waitFor(() => expect(mockRecorder.record).toHaveBeenCalled());
+    Object.assign(mockRecState, { isRecording: true });
+    mockRecorder.currentTime = 0.4;
+    await view.rerender(<ChatScreen tableId={TABLE} />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Ses mesajını gönder' }));
+    expect(await screen.findByText('Ses mesajı en az 1, en fazla 60 saniye olmalı.')).toBeTruthy();
+    expect(m.requestVoiceUpload).not.toHaveBeenCalled();
+    Object.assign(mockRecState, { isRecording: false });
+  });
+
+  it('plays a voice message with a URL only the parties get', async () => {
+    m.fetchMessages.mockResolvedValue([
+      msg(1, THEM, '', { kind: 'voice', body: null, flags: { durationMs: 12_000 } }),
+    ]);
+    m.voiceUrl.mockResolvedValue({ ok: true, data: { ok: true, url: 'https://signed/v.m4a' } });
+    await renderWithProviders(<ChatScreen tableId={TABLE} />);
+    expect(await screen.findByText('0:12')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Ses mesajını dinle' }));
+    expect(m.voiceUrl).toHaveBeenCalledWith(UUID(1));
+    await waitFor(() => expect(mockPlay).toHaveBeenCalled());
   });
 });

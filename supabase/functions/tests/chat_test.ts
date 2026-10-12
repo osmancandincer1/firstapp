@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { chatAction } from '../_shared/services/chat.ts';
 import { tablesAction, type TurDeps } from '../_shared/services/tur.ts';
-import { FakeAuth, FakeDb, FakeStore, FakeTurDb, UUID } from './fakes.ts';
+import { FakeAuth, FakeDb, FakeStore, FakeTurDb, m4a, UUID } from './fakes.ts';
 
 function deps(status: 'active' | 'onboarding' = 'active') {
   const db = new FakeDb();
@@ -9,8 +9,9 @@ function deps(status: 'active' | 'onboarding' = 'active') {
   const auth = new FakeAuth();
   auth.addUser('tok', 'user-1');
   const tur = new FakeTurDb();
-  const d: TurDeps = { db, tur, auth, store: new FakeStore() };
-  return { d, tur };
+  const store = new FakeStore();
+  const d: TurDeps = { db, tur, auth, store };
+  return { d, tur, store };
 }
 const send = (text: string) => ({ action: 'send', tableId: UUID(8), clientId: UUID(9), text });
 
@@ -82,4 +83,33 @@ Deno.test('tables: the list carries the break; Mola start, limit and end', async
   const limit = await tablesAction(d, 'tok', { action: 'pause', days: 2 });
   assert(!limit.ok && limit.error === 'pause_limit');
   assertEquals((await tablesAction(d, 'tok', { action: 'pause_end' })).status, 200);
+});
+
+Deno.test('chat: voice messages are checked (SOH-10) and only parties get a URL', async () => {
+  const { d, tur, store } = deps();
+  const up = await chatAction(d, 'tok', { action: 'voice_upload_url', tableId: UUID(8) });
+  assert(up.ok);
+  const path = up.body.path as string;
+  assertEquals(path, `u_user-1/messages/${up.body.id}.m4a`);
+
+  store.objects.set(`quarantine/${path}`, m4a(7_000));
+  const voice = { action: 'send_voice', tableId: UUID(8), clientId: UUID(9), voiceId: up.body.id };
+  assertEquals((await chatAction(d, 'tok', voice)).status, 200);
+  const sent = tur.called('messageSend')[0]!.args[0] as Record<string, unknown>;
+  assertEquals([sent.kind, sent.mediaPath, sent.flags], ['voice', path, { durationMs: 7_000 }]);
+  assert(store.objects.has(`public-voice/${path}`) && !store.objects.has(`quarantine/${path}`));
+
+  for (const bytes of [m4a(61_000), new Uint8Array([1, 2, 3])]) {
+    store.objects.set(`quarantine/${path}`, bytes);
+    assertEquals((await chatAction(d, 'tok', voice)).status, 400);
+  }
+  assertEquals((await chatAction(d, 'tok', voice)).status, 404, 'nothing uploaded');
+
+  const url = await chatAction(d, 'tok', { action: 'media_url', messageId: UUID(20) });
+  assert(url.ok && String(url.body.url).startsWith('https://signed/public-voice/'));
+  tur.results.messageMedia = null;
+  assertEquals(
+    (await chatAction(d, 'tok', { action: 'media_url', messageId: UUID(20) })).status,
+    404,
+  );
 });

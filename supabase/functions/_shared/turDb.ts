@@ -71,11 +71,17 @@ export class SupabaseTurDb implements TurDb {
       p_user_id: i.userId,
       p_table_id: i.tableId,
       p_client_id: i.clientId,
-      p_kind: 'text',
+      p_kind: i.kind ?? 'text',
       p_body: i.body,
-      p_media_path: null,
+      p_media_path: i.mediaPath ?? null,
       p_reply_to: i.replyTo,
       p_flags: i.flags,
+    });
+  }
+  messageMedia(userId: string, messageId: string) {
+    return rpc<string | null>(this.c, 'srv_message_media', {
+      p_user_id: userId,
+      p_message_id: messageId,
     });
   }
   messagesRead(userId: string, tableId: string) {

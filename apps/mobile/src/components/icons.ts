@@ -50,3 +50,4 @@ export const EyeIcon: Icon = require('phosphor-react-native/src/icons/Eye').EyeI
 export const ClockIcon: Icon = require('phosphor-react-native/src/icons/Clock').ClockIcon;
 export const DotsThreeIcon: Icon =
   require('phosphor-react-native/src/icons/DotsThree').DotsThreeIcon;
+export const PauseIcon: Icon = require('phosphor-react-native/src/icons/Pause').PauseIcon;

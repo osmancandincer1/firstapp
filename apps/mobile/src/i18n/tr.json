@@ -844,6 +844,17 @@
       "title": "{{name}} engellensin mi?",
       "body": "Masa iki tarafta da kapanır, veda mesajı gitmez. Bu kişi Tur’unda bir daha görünmez; o da seni görmez.",
       "confirm": "Engelle"
+    },
+    "voice": {
+      "record": "Ses mesajı kaydet",
+      "cancel": "Kaydı iptal et",
+      "send": "Ses mesajını gönder",
+      "recording": "Kaydediliyor {{time}}",
+      "play": "Ses mesajını dinle",
+      "pause": "Duraklat",
+      "failed": "Ses açılamadı",
+      "tooShort": "Ses mesajı en az 1, en fazla 60 saniye olmalı.",
+      "micDenied": "Mikrofon izni verilmedi. Ayarlar’dan açabilirsin."
     }
   },
   "mola": {

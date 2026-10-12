@@ -1,4 +1,4 @@
-import type { ChatMessage, FarewellKey } from '@nokuzo/shared';
+import type { ChatMessage, FarewellKey, UploadTarget } from '@nokuzo/shared';
 
 import { callFunction } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
@@ -74,3 +74,17 @@ export const blockFromTable = (tableId: string) =>
 export const startPause = (days: number) =>
   callFunction<{ ok: true; until: string }>('tables', { action: 'pause', days });
 export const endPause = () => callFunction<{ ok: true }>('tables', { action: 'pause_end' });
+
+/** Voice messages: upload target in quarantine, then the server checks and sends it (SOH-10). */
+export const requestVoiceUpload = (tableId: string) =>
+  callFunction<UploadTarget>('chat', { action: 'voice_upload_url', tableId });
+export const sendVoice = (tableId: string, clientId: string, voiceId: string) =>
+  callFunction<{ ok: true; message: ChatMessage }>('chat', {
+    action: 'send_voice',
+    tableId,
+    clientId,
+    voiceId,
+  });
+/** A short-lived URL to play a voice message; only the table's parties get one. */
+export const voiceUrl = (messageId: string) =>
+  callFunction<{ ok: true; url: string }>('chat', { action: 'media_url', messageId });

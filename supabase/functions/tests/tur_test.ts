@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { answerAction, tablesAction, turAction, type TurDeps } from '../_shared/services/tur.ts';
 import { updateProfile } from '../_shared/services/profile.ts';
-import { ctx, FakeAuth, FakeDb, FakeProfileDb, FakeStore, FakeTurDb, UUID } from './fakes.ts';
+import { ctx, FakeAuth, FakeDb, FakeProfileDb, FakeStore, FakeTurDb, m4a, UUID } from './fakes.ts';
 
 function deps(status: 'active' | 'onboarding' = 'active') {
   const db = new FakeDb();
@@ -164,31 +164,6 @@ Deno.test('answer: server-side refusals map to clear errors (MAS-02)', async () 
     'text or voice required',
   );
 });
-
-function m4a(ms: number) {
-  const enc = new TextEncoder();
-  const be32 = (n: number) => [(n >>> 24) & 255, (n >> 16) & 255, (n >> 8) & 255, n & 255];
-  const box = (type: string, payload: number[]) => [
-    ...be32(payload.length + 8),
-    ...enc.encode(type),
-    ...payload,
-  ];
-  const mvhd = [
-    0,
-    0,
-    0,
-    0,
-    ...be32(0),
-    ...be32(0),
-    ...be32(1000),
-    ...be32(ms),
-    ...new Array(80).fill(0),
-  ];
-  return new Uint8Array([
-    ...box('ftyp', [...enc.encode('M4A '), 0, 0, 0, 0]),
-    ...box('moov', box('mvhd', mvhd)),
-  ]);
-}
 
 Deno.test(
   'answer: voice answers of 3–20 seconds are published from the sender’s own folder',

@@ -20,7 +20,7 @@ export function mergeMessages(list: ChatMessage[], incoming: ChatMessage[]): Cha
   return [...byId.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
-function useAddMessage(tableId: string) {
+export function useAddMessage(tableId: string) {
   const qc = useQueryClient();
   const userId = useSession((s) => s.userId);
   return useCallback(

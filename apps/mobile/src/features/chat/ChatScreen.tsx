@@ -44,7 +44,8 @@ import { TABLES_KEY, useInvalidate, useTables } from '@/features/tur/queries';
 import type { ClientErrorCode } from '@/lib/api';
 import { blockFromTable, markRead, reopenTable, sayFarewell } from './api';
 import { useOutbox, type Pending } from './outbox';
-import { useChat, useOutboxFlush } from './useChat';
+import { useAddMessage, useChat, useOutboxFlush } from './useChat';
+import { VoiceBody, VoiceRecorder } from './Voice';
 
 type Row =
   | { type: 'day'; key: string; label: string }
@@ -238,6 +239,7 @@ export function ChatScreen({ tableId }: { tableId: string }) {
         {table && !open ? <TableState table={table} name={name} /> : null}
         {open ? (
           <Composer
+            tableId={tableId}
             value={text}
             onChange={(v) => {
               setText(v);
@@ -297,7 +299,11 @@ function Bubble({
       ) : null}
       <View style={[styles.bubble, mine ? styles.mine : styles.theirs]}>
         {mine ? <FlameGradient style={StyleSheet.absoluteFill} /> : null}
-        <AppText tone={mine ? 'onAccent' : 'primary'}>{message.body}</AppText>
+        {message.kind === 'voice' ? (
+          <VoiceBody message={message} mine={mine} />
+        ) : (
+          <AppText tone={mine ? 'onAccent' : 'primary'}>{message.body}</AppText>
+        )}
         <AppText
           variant="caption"
           tone={mine ? 'onAccent' : 'secondary'}
@@ -361,10 +367,12 @@ function PendingBubble({ pending, onRetry }: { pending: Pending; onRetry: () => 
 }
 
 function Composer({
+  tableId,
   value,
   onChange,
   onSend,
 }: {
+  tableId: string;
   value: string;
   onChange: (v: string) => void;
   onSend: () => void;
@@ -373,30 +381,65 @@ function Composer({
   const { colors } = useTheme();
   const input = useRef<TextInput>(null);
   const can = value.trim().length > 0;
+  const add = useAddMessage(tableId);
+  const invalidate = useInvalidate();
+  const [recording, setRecording] = useState(false);
+  const [voiceError, setVoiceError] = useState<
+    ClientErrorCode | 'voice_duration' | 'mic_denied' | null
+  >(null);
+  const voiceMessage =
+    voiceError === 'voice_duration'
+      ? t('chat.voice.tooShort')
+      : voiceError === 'mic_denied'
+        ? t('chat.voice.micDenied')
+        : voiceError
+          ? t(`errors.${voiceError}`)
+          : null;
   return (
-    <View style={[styles.composer, { borderColor: flame.glassBorder }]}>
-      <TextInput
-        ref={input}
-        value={value}
-        onChangeText={onChange}
-        placeholder={t('chat.placeholder')}
-        placeholderTextColor={colors.textSecondary}
-        accessibilityLabel={t('chat.placeholder')}
-        multiline
-        maxLength={MESSAGE_MAX}
-        style={[styles.input, { color: colors.textPrimary }]}
-      />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('chat.send')}
-        accessibilityState={{ disabled: !can }}
-        disabled={!can}
-        onPress={onSend}
-        style={[styles.sendButton, !can && styles.disabled]}
-      >
-        <FlameGradient style={StyleSheet.absoluteFill} />
-        <Icon icon={PaperPlaneTiltIcon} size={20} color={colors.onAccent} />
-      </Pressable>
+    <View>
+      {voiceMessage ? (
+        <View style={styles.pad}>
+          <Banner tone="warning" message={voiceMessage} />
+        </View>
+      ) : null}
+      <View style={[styles.composer, { borderColor: flame.glassBorder }]}>
+        {recording ? null : (
+          <TextInput
+            ref={input}
+            value={value}
+            onChangeText={onChange}
+            placeholder={t('chat.placeholder')}
+            placeholderTextColor={colors.textSecondary}
+            accessibilityLabel={t('chat.placeholder')}
+            multiline
+            maxLength={MESSAGE_MAX}
+            style={[styles.input, { color: colors.textPrimary }]}
+          />
+        )}
+        {can ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('chat.send')}
+            accessibilityState={{ disabled: !can }}
+            disabled={!can}
+            onPress={onSend}
+            style={[styles.sendButton, !can && styles.disabled]}
+          >
+            <FlameGradient style={StyleSheet.absoluteFill} />
+            <Icon icon={PaperPlaneTiltIcon} size={20} color={colors.onAccent} />
+          </Pressable>
+        ) : (
+          <VoiceRecorder
+            tableId={tableId}
+            onRecording={setRecording}
+            onError={setVoiceError}
+            onSent={(m) => {
+              add(m);
+              void invalidate(TABLES_KEY);
+            }}
+          />
+        )}
+      </View>
     </View>
   );
 }

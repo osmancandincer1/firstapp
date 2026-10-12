@@ -844,6 +844,17 @@
       "title": "Block {{name}}?",
       "body": "The table closes for both of you and no goodbye is sent. This person will not appear in your Round again, and you will not appear in theirs.",
       "confirm": "Block"
+    },
+    "voice": {
+      "record": "Record a voice message",
+      "cancel": "Cancel the recording",
+      "send": "Send the voice message",
+      "recording": "Recording {{time}}",
+      "play": "Play the voice message",
+      "pause": "Pause",
+      "failed": "Could not play",
+      "tooShort": "A voice message is 1 to 60 seconds long.",
+      "micDenied": "Microphone access was not given. You can turn it on in Settings."
     }
   },
   "mola": {

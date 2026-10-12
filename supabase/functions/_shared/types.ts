@@ -170,10 +170,14 @@ export interface TurDb {
     userId: string;
     tableId: string;
     clientId: string;
-    body: string;
+    kind?: 'text' | 'voice';
+    body: string | null;
+    mediaPath?: string | null;
     replyTo: string | null;
     flags: Record<string, unknown>;
   }): Promise<{ result: string; message?: Record<string, unknown> }>;
+  /** A message's media path, for one of its table's parties only. */
+  messageMedia(userId: string, messageId: string): Promise<string | null>;
   messagesRead(userId: string, tableId: string): Promise<number>;
   tableFarewell(
     userId: string,
