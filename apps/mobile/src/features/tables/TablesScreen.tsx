@@ -22,7 +22,9 @@ import {
   FlameGradient,
   Screen,
   Skeleton,
+  EmptyState,
 } from '@/components';
+import { CoffeeIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
 import type { TableItem } from '@/features/tur/api';
 import { isOffline, useTables } from '@/features/tur/queries';
@@ -67,9 +69,7 @@ export function TablesScreen() {
       ) : null}
       <Slots tables={active} total={FREE_TABLE_SLOTS} />
       {active.length === 0 && waiting.length === 0 ? (
-        <AppText tone="secondary" testID="tables-empty">
-          {t('tables.empty')}
-        </AppText>
+        <EmptyState icon={CoffeeIcon} message={t('tables.empty')} testID="tables-empty" />
       ) : null}
       {active.map((x) => (
         <TableRow key={x.tableId} table={x} />

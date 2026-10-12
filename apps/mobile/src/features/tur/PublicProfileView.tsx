@@ -119,7 +119,7 @@ export function PublicProfileView({
         </Card>
       ) : null}
       {p.details && Object.keys(p.details).length ? (
-        <Card>
+        <Card testID="profile-details">
           {Object.entries(p.details).map(([k, v]) => (
             <AppText key={k}>
               <AppText variant="label">{`${t(`profile.details.fields.${k}`)}: `}</AppText>

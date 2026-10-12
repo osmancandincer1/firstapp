@@ -1,4 +1,4 @@
-import { space } from '@nokuzo/design-tokens';
+import { flame, motion, radius, space } from '@nokuzo/design-tokens';
 import {
   AGE_FILTER_MAX,
   AGE_FILTER_MIN,
@@ -13,8 +13,20 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { AppText, Banner, Button, Card, Checkbox, ChipGroup, Screen, Skeleton } from '@/components';
+import {
+  AppText,
+  Banner,
+  Button,
+  Card,
+  Checkbox,
+  ChipGroup,
+  FlameGradient,
+  Screen,
+  Skeleton,
+} from '@/components';
+import { useTheme } from '@/design/theme';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
 import { updateSection } from '@/features/profile/api';
 import { useInitialValues } from '@/features/profile/useInitialValues';
@@ -140,6 +152,7 @@ export function FiltersScreen() {
     >
       <Card>
         <AppText variant="label">{t('filters.age')}</AppText>
+        <AgeRange min={prefs.ageMin} max={prefs.ageMax} />
         <AgeStepper
           label={t('filters.ageMin')}
           value={prefs.ageMin}
@@ -209,6 +222,35 @@ export function FiltersScreen() {
   );
 }
 
+/** The chosen range drawn on the 18–99 track; the steppers below are the controls. */
+function AgeRange({ min, max }: { min: number; max: number }) {
+  const { reduceMotion } = useTheme();
+  const span = AGE_FILTER_MAX - AGE_FILTER_MIN;
+  const left = ((min - AGE_FILTER_MIN) / span) * 100;
+  const width = ((max - min) / span) * 100;
+  const l = useSharedValue(left);
+  const w = useSharedValue(width);
+  useEffect(() => {
+    const to = (v: number) => (reduceMotion ? v : withTiming(v, { duration: motion.durationBase }));
+    l.set(to(left));
+    w.set(to(width));
+  }, [left, width, reduceMotion, l, w]);
+  const fill = useAnimatedStyle(() => ({
+    left: `${l.value}%` as `${number}%`,
+    width: `${w.value}%` as `${number}%`,
+  }));
+  return (
+    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <AppText variant="title">{`${min} – ${max}`}</AppText>
+      <View style={styles.track}>
+        <Animated.View style={[styles.fill, fill]}>
+          <FlameGradient style={StyleSheet.absoluteFill} />
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
 function AgeStepper({
   label,
   value,
@@ -242,4 +284,12 @@ const styles = StyleSheet.create({
   gap: { gap: space(2) },
   flex: { flex: 1 },
   stepper: { flexDirection: 'row', alignItems: 'center', gap: space(1) },
+  track: {
+    height: 8,
+    borderRadius: radius.pill,
+    backgroundColor: flame.chip,
+    marginTop: space(1),
+    overflow: 'hidden',
+  },
+  fill: { position: 'absolute', top: 0, bottom: 0, borderRadius: radius.pill, overflow: 'hidden' },
 });

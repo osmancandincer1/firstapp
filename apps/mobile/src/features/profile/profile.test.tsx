@@ -19,6 +19,7 @@ import { TwoTruthsScreen } from './TwoTruthsScreen';
 
 jest.mock('expo-router', () => require('@/test/router').routerMock);
 jest.mock('./api');
+jest.mock('expo-audio', () => ({ useAudioPlayer: () => ({ seekTo: jest.fn(), play: jest.fn() }) }));
 jest.mock('expo-image', () => {
   const { View } = require('react-native');
   return { Image: (props: object) => <View testID="image" {...props} /> };
@@ -538,13 +539,15 @@ describe('PreviewScreen (§6.4)', () => {
       },
     });
     await renderWithProviders(<PreviewScreen />);
-    expect(await screen.findByText('Ece')).toBeOnTheScreen();
-    expect(screen.getByText('29 · İstanbul')).toBeOnTheScreen();
-    expect(screen.getByText('Doğrulandı')).toBeOnTheScreen();
+    expect(await screen.findByText('Ece, 29')).toBeOnTheScreen();
+    expect(screen.getByText('İstanbul')).toBeOnTheScreen();
     expect(screen.getByText('En son neye kahkahayla güldün?')).toBeOnTheScreen();
-    expect(screen.getByTestId('preview-details')).toHaveTextContent(/İçmem/);
-    expect(screen.getByTestId('preview-details')).toHaveTextContent(/172 cm/);
-    expect(screen.getByTestId('preview-details')).toHaveTextContent(/Türkçe, İngilizce/);
+    expect(screen.getByText('Koşu')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-details')).toHaveTextContent(/İçmem/);
+    expect(screen.getByTestId('profile-details')).toHaveTextContent(/172 cm/);
+    expect(screen.getByTestId('profile-details')).toHaveTextContent(/Türkçe, İngilizce/);
+    // Own preview: no "Neden bu kişi?" button.
+    expect(screen.queryByRole('button', { name: 'Neden bu kişi?' })).toBeNull();
     expect(screen.getByLabelText('Kapadokya')).toBeOnTheScreen();
   });
 

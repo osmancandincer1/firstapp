@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Nokuzo",
-    "tagline": "Noon and evening, nine people each."
+    "tagline": "Nine people, one question, a real table."
   },
   "foundation": {
     "title": "Foundation",
@@ -69,7 +69,7 @@
     "cards": [
       {
         "title": "The Round",
-        "body": "Nine verified people at 12:00 and again at 21:00 every day. No endless swiping."
+        "body": "Nine verified people per Round. Finish them and the next nine arrive; no endless swiping."
       },
       {
         "title": "The Door Question",
@@ -87,7 +87,13 @@
     "title": "How would you like to continue?",
     "email": "Continue with email",
     "apple": "Continue with Apple",
-    "google": "Continue with Google"
+    "google": "Continue with Google",
+    "subtitle": "No password: we email you a code. Phone and face checks come in the next steps.",
+    "points": {
+      "verified": "Everyone is verified by phone and face",
+      "answers": "No likes; you show interest by answering a question",
+      "tables": "At most 3 tables at a time, nobody just vanishes"
+    }
   },
   "email": {
     "title": "Your email address",

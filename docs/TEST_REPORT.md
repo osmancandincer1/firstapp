@@ -12,7 +12,7 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 | Katman                              | Komut                                                               | Sonuç                                                |
 | ----------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
-| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 599 = EN 599 anahtar                 |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 603 = EN 603 anahtar                 |
 | Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **148/148**                                          |
 | Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                            |
 | Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **176/176**                                          |
@@ -32,6 +32,7 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 - "Ben" ekranı: portre, mod çipleri, Oyunlar, Keşif ve Profilin listeleri; menü altında kalan içerik yok.
 - Mod seçildi → veritabanında `walk` ve `mood_set_at` yazıldı. Oyun düzenleyiciden üç cümle girildi → `profile_games` kaydı oluştu, satırda "Eklendi" göründü.
 - Tur yeniden üretildi (`node scripts/demo-people.mjs tur`): aynı moddaki kişi 1. sırada; kart çevrilince "İkiniz de ‘yürüyüş’…" nedeni görünüyor. Kartın altında oyun kartı; tahmin sonrası yalan alev rengiyle işaretleniyor.
+- Alev tasarımına geçen diğer ekranlar elle gezildi: Karşılama (yeni slogan, kayan tanıtım kartları, alev ilerleme hapları), Giriş, E-posta ve Kod (çıkış yapıp yerel kodla yeniden giriş), Sakladıklarım (portre, kalan süre hapı, boş durum), Filtreler (yaş aralığı çubuğu), Başkası nasıl görüyor? (Tur kartının ön yüzüyle aynı). Cevaplar ve Masalar boş durumları ortak `EmptyState` ile.
 
 ### Çalıştırılamayanlar
 

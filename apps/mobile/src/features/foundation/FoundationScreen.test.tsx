@@ -21,7 +21,7 @@ beforeEach(async () => {
 describe('FoundationScreen — Phase 0 acceptance: theme and language switch', () => {
   it('starts in Turkish, following the system color scheme (light in the test renderer)', async () => {
     await renderWithProviders(<FoundationScreen />);
-    expect(screen.getByText('Öğlen ve akşam, dokuzar kişi.')).toBeOnTheScreen();
+    expect(screen.getByText('Dokuz kişi, bir soru, gerçek bir masa.')).toBeOnTheScreen();
     expect(screen.getByRole('radio', { name: 'Sistem' })).toBeSelected();
     expect(background()).toBe(colors.day.bgBase);
   });
@@ -43,7 +43,7 @@ describe('FoundationScreen — Phase 0 acceptance: theme and language switch', (
     await act(async () => {
       await i18n.changeLanguage(usePreferences.getState().language);
     });
-    expect(screen.getByText('Noon and evening, nine people each.')).toBeOnTheScreen();
+    expect(screen.getByText('Nine people, one question, a real table.')).toBeOnTheScreen();
     expect(screen.getByRole('radio', { name: 'Day' })).toBeOnTheScreen();
   });
 

@@ -38,7 +38,8 @@ export function Chip({ label, tone = 'glass' }: { label: string; tone?: 'glass' 
 }
 
 /** The front: photos (tap left/right to move), and who this is over a soft dark fade. */
-function PhotoFace({ profile, onWhy }: { profile: PublicProfile; onWhy: () => void }) {
+/** The photo side of a Round card; without `onWhy` (own preview) there is no "Neden bu kişi?". */
+export function PhotoFace({ profile, onWhy }: { profile: PublicProfile; onWhy?: () => void }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const photos = profile.photos ?? [];
@@ -87,18 +88,20 @@ function PhotoFace({ profile, onWhy }: { profile: PublicProfile; onWhy: () => vo
         locations={[0, 0.45, 1]}
         style={styles.fade}
       />
-      <Pressable
-        onPress={onWhy}
-        accessibilityRole="button"
-        accessibilityLabel={t('tur.why')}
-        accessibilityHint={t('tur.whyHint')}
-        style={styles.whyPill}
-      >
-        <Icon icon={SparkleIcon} size={16} color={colors.accentSecondary} />
-        <AppText variant="caption" style={styles.whyText}>
-          {t('tur.why')}
-        </AppText>
-      </Pressable>
+      {onWhy ? (
+        <Pressable
+          onPress={onWhy}
+          accessibilityRole="button"
+          accessibilityLabel={t('tur.why')}
+          accessibilityHint={t('tur.whyHint')}
+          style={styles.whyPill}
+        >
+          <Icon icon={SparkleIcon} size={16} color={colors.accentSecondary} />
+          <AppText variant="caption" style={styles.whyText}>
+            {t('tur.why')}
+          </AppText>
+        </Pressable>
+      ) : null}
       <View style={styles.who} pointerEvents="box-none">
         <View style={styles.nameRow}>
           <AppText variant="title" style={styles.name}>

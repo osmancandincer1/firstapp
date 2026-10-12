@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Nokuzo",
-    "tagline": "Öğlen ve akşam, dokuzar kişi."
+    "tagline": "Dokuz kişi, bir soru, gerçek bir masa."
   },
   "foundation": {
     "title": "Temel",
@@ -69,7 +69,7 @@
     "cards": [
       {
         "title": "Tur",
-        "body": "Her gün 12:00 ve 21:00'de doğrulanmış 9'ar kişi. Sonsuz kaydırma yok."
+        "body": "Her Tur’da doğrulanmış 9 kişi. Bitirince sıradaki 9 gelir; sonsuz kaydırma yok."
       },
       {
         "title": "Kapı Sorusu",
@@ -87,7 +87,13 @@
     "title": "Nasıl devam etmek istersin?",
     "email": "E-posta ile devam et",
     "apple": "Apple ile devam et",
-    "google": "Google ile devam et"
+    "google": "Google ile devam et",
+    "subtitle": "Şifre yok: e-postana bir kod göndeririz. Telefon ve yüz doğrulaması sonraki adımlarda.",
+    "points": {
+      "verified": "Herkes telefon ve yüzle doğrulanmış",
+      "answers": "Beğeni yok; ilgini soruya cevap yazarak gösterirsin",
+      "tables": "Aynı anda en fazla 3 masa, sessizce kaybolmak yok"
+    }
   },
   "email": {
     "title": "E-posta adresin",

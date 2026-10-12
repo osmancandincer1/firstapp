@@ -14,7 +14,9 @@ import {
   Screen,
   SegmentedControl,
   Skeleton,
+  EmptyState,
 } from '@/components';
+import { ChatCircleIcon, PaperPlaneTiltIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
 import type { IncomingAnswer, OutgoingAnswer } from '@/features/tur/api';
 import { isOffline, useInbox } from '@/features/tur/queries';
@@ -69,16 +71,20 @@ export function InboxScreen() {
         incoming.length ? (
           incoming.map((a, i) => <IncomingRow key={a.answerId} answer={a} index={i} />)
         ) : (
-          <AppText tone="secondary" testID="inbox-empty">
-            {t('inbox.emptyIncoming')}
-          </AppText>
+          <EmptyState
+            icon={ChatCircleIcon}
+            message={t('inbox.emptyIncoming')}
+            testID="inbox-empty"
+          />
         )
       ) : outgoing.length ? (
         outgoing.map((a, i) => <OutgoingRow key={a.answerId} answer={a} index={i} />)
       ) : (
-        <AppText tone="secondary" testID="outbox-empty">
-          {t('inbox.emptyOutgoing')}
-        </AppText>
+        <EmptyState
+          icon={PaperPlaneTiltIcon}
+          message={t('inbox.emptyOutgoing')}
+          testID="outbox-empty"
+        />
       )}
     </Screen>
   );

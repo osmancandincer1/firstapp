@@ -1,11 +1,25 @@
-import { space } from '@nokuzo/design-tokens';
+import { flame, radius, space } from '@nokuzo/design-tokens';
 import { countdown, SAVED_MAX } from '@nokuzo/shared';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Banner, Button, Card, Screen, Skeleton } from '@/components';
+import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated';
+
+import {
+  AppText,
+  Avatar,
+  Banner,
+  Button,
+  Card,
+  EmptyState,
+  Icon,
+  Screen,
+  Skeleton,
+} from '@/components';
+import { BookmarkSimpleIcon, ClockIcon } from '@/components/icons';
+import { useTheme } from '@/design/theme';
 import { ErrorNotice } from '@/features/onboarding/ErrorNotice';
 import type { ClientErrorCode } from '@/lib/api';
 import { cardAction, type SavedCard } from './api';
@@ -52,18 +66,17 @@ export function SavedScreen() {
         <Banner tone="warning" message={t('common.offline')} />
       ) : null}
       {query.data.length === 0 ? (
-        <AppText tone="secondary" testID="saved-empty">
-          {t('saved.empty')}
-        </AppText>
+        <EmptyState icon={BookmarkSimpleIcon} message={t('saved.empty')} testID="saved-empty" />
       ) : (
-        query.data.map((s) => <SavedRow key={s.candidateId} item={s} />)
+        query.data.map((s, i) => <SavedRow key={s.candidateId} item={s} index={i} />)
       )}
     </Screen>
   );
 }
 
-function SavedRow({ item }: { item: SavedCard }) {
+function SavedRow({ item, index }: { item: SavedCard; index: number }) {
   const { t } = useTranslation();
+  const { colors, reduceMotion } = useTheme();
   const router = useRouter();
   const now = useNow();
   const invalidate = useInvalidate();
@@ -82,36 +95,79 @@ function SavedRow({ item }: { item: SavedCard }) {
   };
 
   return (
-    <Card testID="saved-row">
-      <AppText variant="heading">{item.profile?.name ?? t('inbox.someone')}</AppText>
-      <AppText variant="caption" tone="secondary">
-        {t('saved.left', { days: Math.floor(left.hours / 24), hours: left.hours % 24 })}
-      </AppText>
-      {item.profile ? (
+    <Animated.View
+      entering={
+        reduceMotion
+          ? undefined
+          : FadeInDown.delay(60 * index)
+              .springify()
+              .damping(18)
+      }
+      layout={reduceMotion ? undefined : LinearTransition}
+    >
+      <Card testID="saved-row">
+        <View style={styles.head}>
+          <Avatar
+            uri={item.profile?.photos?.[0]?.url}
+            name={item.profile?.name}
+            size={64}
+            shape="portrait"
+          />
+          <View style={styles.headText}>
+            <AppText variant="heading">
+              {[item.profile?.name ?? t('inbox.someone'), item.profile?.age]
+                .filter(Boolean)
+                .join(', ')}
+            </AppText>
+            <View style={styles.pill}>
+              <Icon icon={ClockIcon} size={14} color={colors.accentSecondary} />
+              <AppText variant="caption" tone="secondary">
+                {t('saved.left', { days: Math.floor(left.hours / 24), hours: left.hours % 24 })}
+              </AppText>
+            </View>
+          </View>
+        </View>
+        {item.profile ? (
+          <Button
+            variant="secondary"
+            label={open ? t('saved.hideProfile') : t('saved.showProfile')}
+            onPress={() => setOpen(!open)}
+          />
+        ) : null}
+        {open && item.profile ? <PublicProfileView profile={item.profile} /> : null}
         <Button
-          variant="secondary"
-          label={open ? t('saved.hideProfile') : t('saved.showProfile')}
-          onPress={() => setOpen(!open)}
+          label={t('tur.answer')}
+          onPress={() =>
+            router.push({ pathname: '/answer', params: { candidateId: item.candidateId } })
+          }
         />
-      ) : null}
-      {open && item.profile ? <PublicProfileView profile={item.profile} /> : null}
-      <Button
-        label={t('tur.answer')}
-        onPress={() =>
-          router.push({ pathname: '/answer', params: { candidateId: item.candidateId } })
-        }
-      />
-      {item.cardId ? (
-        <Button
-          variant="ghost"
-          label={t('tur.unsave')}
-          onPress={() => void unsave()}
-          disabled={busy}
-        />
-      ) : null}
-      <ErrorNotice error={error} />
-    </Card>
+        {item.cardId ? (
+          <Button
+            variant="ghost"
+            label={t('tur.unsave')}
+            onPress={() => void unsave()}
+            disabled={busy}
+          />
+        ) : null}
+        <ErrorNotice error={error} />
+      </Card>
+    </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({ gap: { gap: space(2) } });
+const styles = StyleSheet.create({
+  gap: { gap: space(2) },
+  head: { flexDirection: 'row', alignItems: 'center', gap: space(1.5) },
+  headText: { flex: 1, gap: space(0.75), alignItems: 'flex-start' },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: space(1.25),
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    backgroundColor: flame.chip,
+    borderWidth: 1,
+    borderColor: flame.chipBorder,
+  },
+});
