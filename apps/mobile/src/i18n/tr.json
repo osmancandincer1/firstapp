@@ -62,7 +62,8 @@
     "optional": "İsteğe bağlı",
     "progress": "Adım {{index}} / {{total}}",
     "offline": "İnternet bağlantısı yok. Bağlanınca yeniden dene.",
-    "dev": "GELİŞTİRME"
+    "dev": "GELİŞTİRME",
+    "save": "Kaydet"
   },
   "welcome": {
     "cards": [
@@ -554,7 +555,10 @@
         "details": "Diğer bilgiler",
         "voice": "Ses kartı"
       },
-      "pending": "{{count}} değişiklik inceleniyor"
+      "pending": "{{count}} değişiklik inceleniyor",
+      "games": "Oyunlar ve mod",
+      "profileParts": "Profilin",
+      "discover": "Keşif"
     },
     "reverify": {
       "title": "Ana fotoğrafın değişti",
@@ -613,7 +617,8 @@
       "same_tempo": "Temponuz aynı: {{value}}",
       "same_first_date": "İlk buluşma fikriniz aynı: {{value}}",
       "both_non_smokers": "İkiniz de sigara içmiyorsunuz",
-      "both_active": "İkiniz de düzenli spor yapıyorsunuz"
+      "both_active": "İkiniz de düzenli spor yapıyorsunuz",
+      "same_mood": "Bu hafta ikiniz de {{value}} modundasınız"
     },
     "difference": "Bir fark: {{field}} — o “{{theirs}}”, sen “{{yours}}”",
     "small": "Bugün kriterlerine uyan {{count}} kişi var.",
@@ -745,6 +750,28 @@
       "game_night": "oyun gecesi",
       "concert": "konser",
       "quiet": "sakin bir akşam"
+    },
+    "title": "Bu haftaki modun",
+    "hint": "Pazartesi sıfırlanır. Aynı moddakiler Tur’da biraz öne çıkar. Kaldırmak için seçili olana yeniden dokun."
+  },
+  "games": {
+    "title": "Oyunlar",
+    "twoTruths": {
+      "title": "İki doğru, bir yalan",
+      "subtitle": "Kendin hakkında üç cümle yaz, biri yalan olsun. Profilini görenler hangisi olduğunu tahmin etsin.",
+      "statement": "{{index}}. cümle",
+      "statementHelp": "8–80 karakter",
+      "pickLie": "Hangisi yalan?",
+      "lieOption": "{{index}}. cümle yalan",
+      "distinct": "Üç cümle birbirinden farklı olmalı.",
+      "remove": "Oyunu kaldır",
+      "empty": "Henüz eklemedin",
+      "added": "Eklendi",
+      "guess": "Hangisi yalan? Dokun, tahmin et.",
+      "right": "Bildin! Yalan buydu.",
+      "wrong": "Bu doğruymuş. Yalanı işaretledik.",
+      "lie": "Yalan",
+      "truth": "Doğru"
     }
   }
 }

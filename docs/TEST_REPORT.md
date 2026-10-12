@@ -4,6 +4,42 @@ Biçim (APP.md §16.1): her fazın sonunda çalıştırılan komutlar, sonuç sa
 
 ---
 
+## Arayüz yenilemesi ("Alev"), mod etiketi ve "İki doğru, bir yalan" · 2026-10-12
+
+**Ortam:** bu makine; Docker Desktop çalışıyor, yerel Supabase (`npx supabase start`) ve Android emülatörü (Pixel, Expo Go) açık. Kararlar: D-065 (tasarım), D-066 (mod ve oyun).
+
+### Özet
+
+| Katman                              | Komut                                                               | Sonuç                                                |
+| ----------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
+| Statik + çeviri                     | `npm run typecheck`, `lint`, `format:check`, `i18n:check`           | **0 hata** · TR 599 = EN 599 anahtar                 |
+| Birim: iş kuralları                 | `npm test -w @nokuzo/shared`                                        | **148/148**                                          |
+| Birim: tasarım belirteçleri         | `npm test -w @nokuzo/design-tokens`                                 | **38/38**                                            |
+| Birim + bileşen: mobil              | `npm test -w @nokuzo/mobile`                                        | **176/176**                                          |
+| Edge Functions                      | `npm run functions:check` (17 fonksiyon) + `npm run functions:test` | **0 tip hatası · 102/102**                           |
+| Veritabanı (pgTAP), gerçek Supabase | `npx supabase test db` (yerel Docker)                               | **200/200** (00: 13, 01: 57, 02: 55, 03: 62, 04: 13) |
+| Hepsi bir arada                     | `npm run ci`                                                        | **çıkış kodu 0**                                     |
+
+### Yeni testler
+
+- **pgTAP `04_mood_games.test.sql` (13):** mod kaydedilir ve herkese açık profilde görünür; geçen haftanın modu görünmez; mod temizlenir; aynı modda "Neden bu kişi?" nedeni çıkar, farklı modda çıkmaz; aynı mod Tur sırasında öne geçer (`tur.mood_bonus`); oyun kaydedilir ve herkese açık profilde yer alır; kısa cümle ve iki cümle `23514` ile reddedilir; oyun kaldırılır; `profile_games` doğrudan okunamaz (RLS).
+- **Deno (3):** `profile-update` mod bölümü (kaydet, temizle, bilinmeyen modu reddet); oyun bölümü (üç farklı cümle, 8–80 karakter, yalan 0–2; iletişim bilgisi içeren cümle `text_blocked`; kaldırma).
+- **shared (2):** `moodSchema`, `twoTruthsSchema` (Türkçe büyük/küçük harfle aynı cümle de tekrar sayılır).
+- **mobil (6):** "Ben" ekranında tek dokunuşla mod kaydı ve ikinci dokunuşla temizleme; Oyunlar satırından düzenleyiciye geçiş; düzenleyici üç farklı cümle ve yalan seçilmeden kaydetmiyor, tekrar uyarısı veriyor; kayıtlı oyun yükleniyor ve kaldırılabiliyor; tahmin kartı doğru ve yanlış tahminde yalanı gösterip kilitleniyor.
+
+### Emülatörde elle denenenler
+
+- "Ben" ekranı: portre, mod çipleri, Oyunlar, Keşif ve Profilin listeleri; menü altında kalan içerik yok.
+- Mod seçildi → veritabanında `walk` ve `mood_set_at` yazıldı. Oyun düzenleyiciden üç cümle girildi → `profile_games` kaydı oluştu, satırda "Eklendi" göründü.
+- Tur yeniden üretildi (`node scripts/demo-people.mjs tur`): aynı moddaki kişi 1. sırada; kart çevrilince "İkiniz de ‘yürüyüş’…" nedeni görünüyor. Kartın altında oyun kartı; tahmin sonrası yalan alev rengiyle işaretleniyor.
+
+### Çalıştırılamayanlar
+
+- **Mobil paketleme (`expo export`) bu turda yeniden çalıştırılmadı;** uygulama Expo Go'da çalışıyor. Yayın öncesi `npx expo export --platform android` ile denenmeli.
+- **iOS:** ÇALIŞTIRILAMADI — Windows makine. Sahibi nasıl çalıştırır: bir Mac'te ya da EAS Build ile.
+
+---
+
 ## Faz 3 — Tur ve Cevap · 2026-10-11
 
 **Ortam:** önceki fazlarla aynı makine; Docker hâlâ çalışmıyor (BIOS sanallaştırma kapalı).

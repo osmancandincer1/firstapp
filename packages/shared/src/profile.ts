@@ -25,11 +25,16 @@ export const HEIGHT_MIN = 140;
 export const HEIGHT_MAX = 220;
 export const VOICE_MIN_SECONDS = 5;
 export const VOICE_MAX_SECONDS = 20;
+export const TWO_TRUTHS_MIN = 8;
+export const TWO_TRUTHS_MAX = 80;
 
 export const GENDERS = ['woman', 'man', 'nonbinary', 'self_described'] as const;
 export const SEEKING = ['women', 'men', 'nonbinary'] as const;
 export const INTENTS = ['long_term', 'serious_unhurried', 'unsure', 'friendship'] as const;
 export const TEMPOS = ['meet_soon', 'chat_first', 'slow'] as const;
+/** This week's mood tag (D-066); shown until Monday 00:00 Istanbul. */
+export const MOODS = ['coffee', 'walk', 'game_night', 'concert', 'quiet'] as const;
+export type Mood = (typeof MOODS)[number];
 
 /** Optional lifestyle fields with fixed choices (§6.4 İsteğe bağlı alanlar). */
 export const DETAIL_CHOICES = {
@@ -150,6 +155,22 @@ export const interestsSchema = z.object({
     .max(INTERESTS_MAX)
     .refine((ids) => new Set(ids).size === ids.length),
 });
+
+/** null clears the mood. */
+export const moodSchema = z.object({ mood: z.enum(MOODS).nullable() });
+
+/** "İki doğru, bir yalan": three statements, `lie` is the index of the false one; null removes it. */
+export const twoTruthsSchema = z.union([
+  z.object({
+    statements: z
+      .array(z.string().trim().min(TWO_TRUTHS_MIN).max(TWO_TRUTHS_MAX))
+      .length(3)
+      .refine((xs) => new Set(xs.map((x) => x.toLocaleLowerCase('tr'))).size === 3),
+    lie: z.number().int().min(0).max(2),
+  }),
+  z.object({ statements: z.null() }),
+]);
+export type TwoTruths = { statements: string[]; lie: number };
 
 const shortText = z.string().trim().min(1).max(SHORT_TEXT_MAX);
 const optional = <T extends z.ZodTypeAny>(s: T) => s.nullable().optional();

@@ -1,8 +1,10 @@
 import type {
   MediaResult,
+  Mood,
   ProfileUpdate,
   ProfileUpdateResponse,
   ProfileViewResponse,
+  TwoTruths,
   UploadTarget,
 } from '@nokuzo/shared';
 
@@ -126,4 +128,17 @@ export async function uploadToQuarantine(
     .from(target.bucket)
     .uploadToSignedUrl(target.path, target.token, bytes.buffer as ArrayBuffer, { contentType });
   return error ? { ok: false, error: 'network' } : { ok: true, data: true };
+}
+
+/** This week's mood and the "İki doğru, bir yalan" game (my_fun(), D-066). */
+export interface MyFun {
+  mood: Mood | null;
+  twoTruths: TwoTruths | null;
+}
+
+export async function fetchMyFun(): Promise<MyFun | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc('my_fun');
+  if (error) throw new Error(error.message);
+  return (data as MyFun | null) ?? null;
 }

@@ -150,6 +150,27 @@ export async function updateProfile(
       return ok({ ok: true });
     }
 
+    case 'mood': {
+      // Light and frequent: no onboarding step depends on it.
+      const r = await deps.profile.updateMood(user.id, req.data.mood);
+      return r === 'ok' ? ok({ ok: true }) : fail(404, 'not_found');
+    }
+
+    case 'two_truths': {
+      const d = req.data;
+      if (d.statements === null) {
+        const r = await deps.profile.updateTwoTruths(user.id, null, null);
+        return r === 'ok' ? ok({ ok: true }) : fail(404, 'not_found');
+      }
+      // Public text: anything short of "allow" is refused, since the game has no pending state.
+      for (const [i, text] of d.statements.entries()) {
+        const v = moderateText(text);
+        if (v.action !== 'allow') return blocked(`statements.${i}`, v.reason);
+      }
+      const r = await deps.profile.updateTwoTruths(user.id, d.statements, d.lie);
+      return r === 'ok' ? ok({ ok: true }) : fail(404, 'not_found');
+    }
+
     case 'location': {
       const d = req.data;
       const grid = d.coords ? roundToGrid(d.coords) : null;

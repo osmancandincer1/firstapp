@@ -14,6 +14,8 @@ import {
   intentSchema,
   interestsSchema,
   locationSchema,
+  moodSchema,
+  twoTruthsSchema,
   PHOTOS_MAX,
   visibilitySchema,
 } from './profile.ts';
@@ -87,6 +89,8 @@ export const profileUpdateSchema = z.discriminatedUnion('section', [
   }),
   z.object({ section: z.literal('location'), data: locationSchema }),
   z.object({ section: z.literal('preferences'), data: preferencesSchema }),
+  z.object({ section: z.literal('mood'), data: moodSchema }),
+  z.object({ section: z.literal('two_truths'), data: twoTruthsSchema }),
 ]);
 
 /** tur: read the current Round and act on its cards (§4.1). */

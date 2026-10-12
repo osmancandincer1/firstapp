@@ -15,6 +15,7 @@ import { LocationScreen } from './LocationScreen';
 import { moved, PhotosScreen } from './PhotosScreen';
 import { PreviewScreen } from './PreviewScreen';
 import { ProfileHomeScreen } from './ProfileHomeScreen';
+import { TwoTruthsScreen } from './TwoTruthsScreen';
 
 jest.mock('expo-router', () => require('@/test/router').routerMock);
 jest.mock('./api');
@@ -120,6 +121,7 @@ beforeEach(() => {
     { id: 35, name: 'İzmir' },
   ]);
   m.fetchDistricts.mockResolvedValue([]);
+  m.fetchMyFun.mockResolvedValue({ mood: null, twoTruths: null });
 });
 
 describe('BasicsScreen', () => {
@@ -565,5 +567,65 @@ describe('ProfileHomeScreen', () => {
     expect(router.push).toHaveBeenCalledWith('/profile/edit/door-question');
     await fireEvent.press(screen.getByRole('button', { name: 'Başkası nasıl görüyor?' }));
     expect(router.push).toHaveBeenCalledWith('/profile/preview');
+  });
+});
+
+describe('mood and two truths one lie (D-066)', () => {
+  it('saves a mood with one tap and clears it with a second', async () => {
+    await renderWithProviders(<ProfileHomeScreen />);
+    const walk = await screen.findByRole('radio', { name: 'yürüyüş' });
+    m.fetchMyFun.mockResolvedValue({ mood: 'walk', twoTruths: null });
+    await fireEvent.press(walk);
+    expect(m.updateSection).toHaveBeenCalledWith({ section: 'mood', data: { mood: 'walk' } });
+    await waitFor(() => expect(screen.getByRole('radio', { name: 'yürüyüş' })).toBeSelected());
+    await fireEvent.press(screen.getByRole('radio', { name: 'yürüyüş' }));
+    expect(m.updateSection).toHaveBeenLastCalledWith({ section: 'mood', data: { mood: null } });
+  });
+
+  it('opens the game editor from the Games list', async () => {
+    await renderWithProviders(<ProfileHomeScreen />);
+    await fireEvent.press(
+      await screen.findByRole('button', { name: 'İki doğru, bir yalan, Henüz eklemedin' }),
+    );
+    expect(router.push).toHaveBeenCalledWith('/profile/edit/two-truths');
+  });
+
+  it('needs three different sentences and a lie before saving', async () => {
+    await renderWithProviders(<TwoTruthsScreen />);
+    await screen.findByLabelText('1. cümle');
+    const save = screen.getByRole('button', { name: 'Kaydet' });
+    const lines = ['Hiç deniz görmedim.', 'Üç kez Kars’a gittim.', 'Fotoğrafım dergide çıktı.'];
+    for (const [i, line] of lines.entries())
+      await fireEvent.changeText(screen.getByLabelText(`${i + 1}. cümle`), line);
+    expect(save).toBeDisabled();
+    await fireEvent.press(screen.getByRole('radio', { name: '2. cümle yalan' }));
+    expect(save).toBeEnabled();
+    await fireEvent.changeText(screen.getByLabelText('3. cümle'), lines[0]!);
+    expect(screen.getByText('Üç cümle birbirinden farklı olmalı.')).toBeOnTheScreen();
+    expect(save).toBeDisabled();
+    await fireEvent.changeText(screen.getByLabelText('3. cümle'), lines[2]!);
+    await fireEvent.press(save);
+    expect(m.updateSection).toHaveBeenCalledWith({
+      section: 'two_truths',
+      data: { statements: lines, lie: 1 },
+    });
+    expect(router.back).toHaveBeenCalled();
+  });
+
+  it('loads a saved game and can remove it', async () => {
+    m.fetchMyFun.mockResolvedValue({
+      mood: null,
+      twoTruths: {
+        statements: ['Bir cümle burada.', 'İki cümle burada.', 'Üç cümle burada.'],
+        lie: 0,
+      },
+    });
+    await renderWithProviders(<TwoTruthsScreen />);
+    expect(await screen.findByDisplayValue('İki cümle burada.')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Oyunu kaldır' }));
+    expect(m.updateSection).toHaveBeenCalledWith({
+      section: 'two_truths',
+      data: { statements: null },
+    });
   });
 });

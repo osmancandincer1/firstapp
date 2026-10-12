@@ -6,6 +6,8 @@ import {
   intentSchema,
   interestsSchema,
   locationSchema,
+  moodSchema,
+  twoTruthsSchema,
   nameSchema,
   roundToGrid,
   visibilitySchema,
@@ -143,5 +145,37 @@ describe('change limits', () => {
     expect(canChange(null, now, 30)).toBe(true);
     expect(canChange(new Date('2026-09-11T12:00:00Z'), now, 30)).toBe(true);
     expect(canChange(new Date('2026-09-12T12:00:00Z'), now, 30)).toBe(false);
+  });
+});
+
+describe('mood and two truths one lie (D-066)', () => {
+  it('takes a known mood or null', () => {
+    expect(moodSchema.safeParse({ mood: 'game_night' }).success).toBe(true);
+    expect(moodSchema.safeParse({ mood: null }).success).toBe(true);
+    expect(moodSchema.safeParse({ mood: 'party' }).success).toBe(false);
+  });
+
+  it('needs three distinct 8–80 character statements and a lie index', () => {
+    const st: [string, string, string] = [
+      'Hiç deniz görmedim.',
+      'Üç kez Kars’a gittim.',
+      'Fotoğrafım dergide çıktı.',
+    ];
+    expect(twoTruthsSchema.safeParse({ statements: st, lie: 1 }).success).toBe(true);
+    expect(twoTruthsSchema.safeParse({ statements: null }).success).toBe(true);
+    expect(twoTruthsSchema.safeParse({ statements: st.slice(0, 2), lie: 0 }).success).toBe(false);
+    expect(twoTruthsSchema.safeParse({ statements: st, lie: 3 }).success).toBe(false);
+    expect(twoTruthsSchema.safeParse({ statements: ['kısa', st[1], st[2]], lie: 0 }).success).toBe(
+      false,
+    );
+    expect(
+      twoTruthsSchema.safeParse({
+        statements: [st[0], st[0].toLocaleUpperCase('tr'), st[2]],
+        lie: 0,
+      }).success,
+    ).toBe(false);
+    expect(
+      twoTruthsSchema.safeParse({ statements: ['x'.repeat(81), st[1], st[2]], lie: 0 }).success,
+    ).toBe(false);
   });
 });

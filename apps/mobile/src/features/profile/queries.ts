@@ -7,6 +7,7 @@ import {
   fetchCities,
   fetchDistricts,
   fetchInterests,
+  fetchMyFun,
   fetchMyProfile,
   fetchPresets,
   fetchVoicePrompts,
@@ -15,12 +16,23 @@ import {
 
 export const MY_PROFILE_KEY = ['my-profile'] as const;
 export const PROFILE_VIEW_KEY = ['profile-view'] as const;
+export const MY_FUN_KEY = ['my-fun'] as const;
 
 export function useMyProfile() {
   const userId = useSession((s) => s.userId);
   return useQuery({
     queryKey: [...MY_PROFILE_KEY, userId],
     queryFn: fetchMyProfile,
+    enabled: Boolean(userId),
+  });
+}
+
+/** Mood and the two-truths game, edited on the "Ben" tab. */
+export function useMyFun() {
+  const userId = useSession((s) => s.userId);
+  return useQuery({
+    queryKey: [...MY_FUN_KEY, userId],
+    queryFn: fetchMyFun,
     enabled: Boolean(userId),
   });
 }
@@ -59,6 +71,7 @@ export function useRefreshProfile() {
     await Promise.all([
       qc.invalidateQueries({ queryKey: MY_PROFILE_KEY }),
       qc.invalidateQueries({ queryKey: PROFILE_VIEW_KEY }),
+      qc.invalidateQueries({ queryKey: MY_FUN_KEY }),
       qc.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY }),
     ]);
   }, [qc]);

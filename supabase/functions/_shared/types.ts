@@ -52,6 +52,12 @@ export interface ProfileDb {
     customText: string | null,
   ): Promise<'ok' | 'locked' | 'invalid_preset' | 'not_found'>;
   setInterests(userId: string, ids: string[]): Promise<'ok' | 'invalid' | 'not_found'>;
+  updateMood(userId: string, mood: string | null): Promise<'ok' | 'not_found'>;
+  updateTwoTruths(
+    userId: string,
+    statements: string[] | null,
+    lie: number | null,
+  ): Promise<'ok' | 'not_found'>;
   updateDetails(
     userId: string,
     data: Record<string, unknown>,

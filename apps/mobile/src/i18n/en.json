@@ -62,7 +62,8 @@
     "optional": "Optional",
     "progress": "Step {{index}} of {{total}}",
     "offline": "No internet connection. Try again once you are online.",
-    "dev": "DEVELOPMENT"
+    "dev": "DEVELOPMENT",
+    "save": "Save"
   },
   "welcome": {
     "cards": [
@@ -554,7 +555,10 @@
         "details": "More about you",
         "voice": "Voice card"
       },
-      "pending": "{{count}} change(s) in review"
+      "pending": "{{count}} change(s) in review",
+      "games": "Games and mood",
+      "profileParts": "Your profile",
+      "discover": "Discover"
     },
     "reverify": {
       "title": "Your main photo changed",
@@ -613,7 +617,8 @@
       "same_tempo": "Same pace: {{value}}",
       "same_first_date": "Same first-date idea: {{value}}",
       "both_non_smokers": "Neither of you smokes",
-      "both_active": "You both exercise regularly"
+      "both_active": "You both exercise regularly",
+      "same_mood": "You both picked “{{value}}” for this week"
     },
     "difference": "One difference: {{field}} — they “{{theirs}}”, you “{{yours}}”",
     "small": "{{count}} people match your criteria today.",
@@ -745,6 +750,28 @@
       "game_night": "game night",
       "concert": "a concert",
       "quiet": "a quiet evening"
+    },
+    "title": "Your mood this week",
+    "hint": "Resets on Monday. People in the same mood come up a little earlier in your Round. Tap the selected one again to clear it."
+  },
+  "games": {
+    "title": "Games",
+    "twoTruths": {
+      "title": "Two truths, one lie",
+      "subtitle": "Write three sentences about yourself, one of them a lie. People who see your profile guess which.",
+      "statement": "Sentence {{index}}",
+      "statementHelp": "8–80 characters",
+      "pickLie": "Which one is the lie?",
+      "lieOption": "Sentence {{index}} is the lie",
+      "distinct": "The three sentences must be different.",
+      "remove": "Remove the game",
+      "empty": "Not added yet",
+      "added": "Added",
+      "guess": "Which one is the lie? Tap to guess.",
+      "right": "You got it! That was the lie.",
+      "wrong": "That one’s true. We marked the lie.",
+      "lie": "Lie",
+      "truth": "True"
     }
   }
 }

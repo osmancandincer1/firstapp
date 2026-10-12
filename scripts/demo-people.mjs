@@ -4,6 +4,7 @@
  *
  *   node scripts/demo-people.mjs seed  --for you@example.com [--count 30]
  *   node scripts/demo-people.mjs tur   --for you@example.com   # regenerate today's Round now
+ *   node scripts/demo-people.mjs fun                            # give demo people a mood and a two-truths game
  *   node scripts/demo-people.mjs reply                          # demo people reciprocate answers sent to them
  *   node scripts/demo-people.mjs clean                          # delete every demo person
  *
@@ -94,6 +95,32 @@ const MEN = [
   'Kerem',
   'Umut',
 ];
+const MOODS = ['coffee', 'walk', 'game_night', 'concert', 'quiet'];
+// [truth, truth, lie] sets; the lie's position is shuffled when stored.
+const TWO_TRUTHS = [
+  ['Üç farklı ülkede yaşadım.', 'Sabah kahvesiz konuşamam.', 'Hiç uçağa binmedim.'],
+  ['Bir kez maratonu bitirdim.', 'Kedimin adı Pamuk.', 'Akrebe dokunmuştum, korkmadım.'],
+  ['Çocukken TRT’de bir yarışmaya çıktım.', 'Gitar çalabiliyorum.', 'Sushi’yi hayatımda tatmadım.'],
+  ['Ardahan’da kar 2 metreyi gördü.', 'Bir yılda 40 kitap okudum.', 'Yüzme bilmiyorum.'],
+  ['Kendi ekmeğimi kendim yapıyorum.', 'Bir konserde sahneye çıkarıldım.', 'Hiç deniz görmedim.'],
+];
+
+/** About half get this week's mood, about half the game. */
+async function giveFun(userId) {
+  if (rand() < 0.6)
+    await must(db.rpc('srv_update_mood', { p_user_id: userId, p_mood: pick(MOODS) }), 'mood');
+  if (rand() < 0.6) {
+    const [a, b, lieText] = pick(TWO_TRUTHS);
+    const lie = between(0, 2);
+    const statements = [a, b];
+    statements.splice(lie, 0, lieText);
+    await must(
+      db.rpc('srv_update_two_truths', { p_user_id: userId, p_statements: statements, p_lie: lie }),
+      'two truths',
+    );
+  }
+}
+
 const ANSWERS = [
   'Kesinlikle serpme! Ama simidi de masadan eksik etmem, çay da demli olsun.',
   'Geçen hafta arkadaşımın kedisi pizzamı çaldı, hâlâ gülüyorum.',
@@ -361,6 +388,7 @@ async function seedPeople() {
       db.from('door_questions').insert({ profile_id: id, preset_id: pick(presets) }),
       'door question',
     );
+    await giveFun(created.user.id);
     // Some shared interests with the target so "Neden bu kişi?" has something to say.
     const interests = [
       ...new Set([...pickSome(target.interests, between(0, 2)), ...pickSome(allInterests, 5)]),
@@ -492,9 +520,13 @@ try {
     console.log(`${t.profile.name}'s Round now has ${await refreshTur(t.profile.id)} cards.`);
   } else if (command === 'reply') await reply();
   else if (command === 'clean') await clean();
-  else {
+  else if (command === 'fun') {
+    const demos = await demoUsers();
+    for (const u of demos) await giveFun(u.id);
+    console.log(`${demos.length} demo people got a mood and/or a game.`);
+  } else {
     console.log(
-      'Usage: node scripts/demo-people.mjs <seed|tur|reply|clean> [--for email] [--count n]',
+      'Usage: node scripts/demo-people.mjs <seed|tur|fun|reply|clean> [--for email] [--count n]',
     );
     process.exit(1);
   }

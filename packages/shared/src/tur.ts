@@ -204,6 +204,7 @@ export const REASON_KEYS = [
   'same_first_date',
   'both_non_smokers',
   'both_active',
+  'same_mood',
 ] as const;
 export const DIFFERENCE_KEYS = ['smoking', 'alcohol', 'wants_children', 'tempo'] as const;
 export type ReasonKey = (typeof REASON_KEYS)[number];

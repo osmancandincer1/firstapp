@@ -58,6 +58,7 @@ Tur, cevap ve masa akışını denemek için yerel Supabase'e sahte ama doğrula
 ```bash
 node scripts/demo-people.mjs seed --for <senin test e-postan>   # ~30 kişi; çoğu seninle eşleşir, bir kısmı bilerek filtre dışında; 4'ü sana cevap gönderir
 node scripts/demo-people.mjs tur --for <e-posta>                # bugünkü Tur'u şimdi yeniden üretir
+node scripts/demo-people.mjs fun                                # var olan demo kişilere bu haftanın modunu ve "İki doğru, bir yalan" oyununu verir (seed bunu zaten yapar)
 node scripts/demo-people.mjs reply                              # cevap gönderdiğin demo kişiler karşılık verir → masa açılır
 node scripts/demo-people.mjs clean                              # demo kişileri siler
 ```

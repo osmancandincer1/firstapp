@@ -49,6 +49,13 @@
 
 **Not:** "Geç" bilgisi gönderene hiçbir yanıtta dönmez (D-058). Tur sıralaması abonelik, ödeme ya da cihaz verisi kullanmaz (TUR-07).
 
+## Mod etiketi ve profil oyunu (D-066)
+
+| Veri                                                       | Nerede                                    | Kim görür                                                                        | Saklama                                                                             |
+| ---------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Bu haftaki mod                                             | `profiles.mood`, `mood_set_at`            | Profiline erişebilenler, yalnızca o hafta; aynı moddakiler Tur'da nedenini görür | Kişi değiştirene ya da temizleyene kadar (hafta bitince görünmez ama satırda kalır) |
+| "İki doğru, bir yalan" cümleleri ve yalanın hangisi olduğu | `profile_games` (doğrudan okuma yok, RLS) | Profiline erişebilenler; tahminler cihazda kalır, sunucuya gitmez                | Kaldırılana ya da hesap silinene kadar                                              |
+
 ## Planlanan veri (APP.md'den; her faz eklendikçe bu tablo gerçek uygulamayla güncellenecek)
 
 | Veri sınıfı                              | Örnek            | Özel nitelikli mi | Faz | Not                                               |

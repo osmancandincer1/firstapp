@@ -42,6 +42,16 @@ export class SupabaseProfileDb implements ProfileDb {
       p_ids: ids,
     });
   }
+  updateMood(userId: string, mood: string | null) {
+    return rpc<'ok' | 'not_found'>(this.c, 'srv_update_mood', { p_user_id: userId, p_mood: mood });
+  }
+  updateTwoTruths(userId: string, statements: string[] | null, lie: number | null) {
+    return rpc<'ok' | 'not_found'>(this.c, 'srv_update_two_truths', {
+      p_user_id: userId,
+      p_statements: statements,
+      p_lie: lie,
+    });
+  }
   updateDetails(
     userId: string,
     data: Record<string, unknown>,

@@ -62,6 +62,7 @@ export function useReasonText() {
       if (key === 'same_intent' || key === 'neighbour_intent')
         return t(`profile.intent.intents.${value}`);
       if (key === 'same_tempo' || key === 'tempo') return t(`profile.intent.tempos.${value}`);
+      if (key === 'same_mood') return t(`mood.options.${value}`);
       if (key === 'same_first_date') return t(`profile.details.options.first_date.${value}`);
       return t(`profile.details.options.${key}.${value}`);
     },

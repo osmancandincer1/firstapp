@@ -244,6 +244,12 @@ export class FakeProfileDb implements ProfileDb {
   setInterests(...a: unknown[]) {
     return this.r('setInterests', 'ok' as const, ...a);
   }
+  updateMood(...a: unknown[]) {
+    return this.r('updateMood', 'ok' as const, ...a);
+  }
+  updateTwoTruths(...a: unknown[]) {
+    return this.r('updateTwoTruths', 'ok' as const, ...a);
+  }
   updateDetails(...a: unknown[]) {
     return this.r('updateDetails', 'ok', ...a);
   }

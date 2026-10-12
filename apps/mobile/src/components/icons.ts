@@ -43,3 +43,7 @@ export const CaretLeftIcon: Icon =
   require('phosphor-react-native/src/icons/CaretLeft').CaretLeftIcon;
 export const MicrophoneIcon: Icon =
   require('phosphor-react-native/src/icons/Microphone').MicrophoneIcon;
+export const CaretRightIcon: Icon =
+  require('phosphor-react-native/src/icons/CaretRight').CaretRightIcon;
+export const DiceFiveIcon: Icon = require('phosphor-react-native/src/icons/DiceFive').DiceFiveIcon;
+export const EyeIcon: Icon = require('phosphor-react-native/src/icons/Eye').EyeIcon;

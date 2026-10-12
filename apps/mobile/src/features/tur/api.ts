@@ -27,6 +27,8 @@ export interface PublicProfile {
   voice?: { url: string; durationMs?: number; promptTr?: string; promptEn?: string };
   /** This week's mood tag (D-064). */
   mood?: string;
+  /** "İki doğru, bir yalan": the lie is public on purpose, the guess is a light ice-breaker (D-066). */
+  twoTruths?: { statements: string[]; lie: number };
 }
 
 export interface Reason {

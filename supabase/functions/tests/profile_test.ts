@@ -546,3 +546,56 @@ Deno.test(
     );
   },
 );
+
+// --- mood and "İki doğru, bir yalan" (D-066) -------------------------------------------
+
+Deno.test('profile-update: a mood is set and cleared; unknown moods are refused', async () => {
+  const { d, profile } = profileDeps();
+  const set = await updateProfile(d, 'tok', { section: 'mood', data: { mood: 'walk' } }, ctx);
+  assertEquals(set, { ok: true, status: 200, body: { ok: true } });
+  await updateProfile(d, 'tok', { section: 'mood', data: { mood: null } }, ctx);
+  assertEquals(
+    profile.called('updateMood').map((c) => c.args[1]),
+    ['walk', null],
+  );
+  const bad = await updateProfile(d, 'tok', { section: 'mood', data: { mood: 'party' } }, ctx);
+  assertEquals(bad.status, 400);
+});
+
+Deno.test('profile-update: two truths one lie is checked, moderated and removable', async () => {
+  const statements = ['Hiç deniz görmedim.', 'Üç kez Kars’a gittim.', 'Fotoğrafım dergide çıktı.'];
+  const { d, profile } = profileDeps();
+  const r = await updateProfile(
+    d,
+    'tok',
+    { section: 'two_truths', data: { statements, lie: 2 } },
+    ctx,
+  );
+  assertEquals(r.status, 200);
+  assertEquals(profile.called('updateTwoTruths')[0]!.args.slice(1), [statements, 2]);
+
+  for (const data of [
+    { statements: statements.slice(0, 2), lie: 0 },
+    { statements: ['kısa', ...statements.slice(1)], lie: 0 },
+    { statements, lie: 3 },
+    { statements: [statements[0], statements[0], statements[1]], lie: 0 },
+  ]) {
+    assertEquals((await updateProfile(d, 'tok', { section: 'two_truths', data }, ctx)).status, 400);
+  }
+
+  const contact = await updateProfile(
+    d,
+    'tok',
+    {
+      section: 'two_truths',
+      data: { statements: [statements[0], 'Instagram: @ece_kars_99', statements[2]], lie: 1 },
+    },
+    ctx,
+  );
+  assertEquals(contact.status, 400);
+  assert(!contact.ok && contact.error === 'text_blocked');
+  assertEquals(profile.called('updateTwoTruths').length, 1);
+
+  await updateProfile(d, 'tok', { section: 'two_truths', data: { statements: null } }, ctx);
+  assertEquals(profile.called('updateTwoTruths')[1]!.args.slice(1), [null, null]);
+});

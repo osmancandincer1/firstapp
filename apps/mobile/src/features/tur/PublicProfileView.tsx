@@ -9,6 +9,7 @@ import { CheckIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
 import { useDetailText } from '@/features/profile/useDetailText';
 import type { PublicProfile } from './api';
+import { TwoTruthsGame } from './TwoTruthsGame';
 
 /** Plays a signed voice URL; mounted only when there is something to play. */
 export function PlayVoice({ url, label }: { url: string; label: string }) {
@@ -83,6 +84,11 @@ export function PublicProfileView({
             </View>
           ) : null}
           {p.intent ? <AppText>{t(`profile.intent.intents.${p.intent}`)}</AppText> : null}
+          {p.mood ? (
+            <AppText tone="accent">
+              {t('mood.this_week', { mood: t(`mood.options.${p.mood}`) })}
+            </AppText>
+          ) : null}
         </View>
       )}
       {!below && p.doorQuestion ? (
@@ -92,6 +98,9 @@ export function PublicProfileView({
           </AppText>
           <AppText variant="heading">{p.doorQuestion[lang]}</AppText>
         </Card>
+      ) : null}
+      {p.twoTruths ? (
+        <TwoTruthsGame statements={p.twoTruths.statements} lie={p.twoTruths.lie} />
       ) : null}
       {p.voice ? (
         <Card>
