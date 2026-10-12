@@ -1,9 +1,9 @@
 /**
- * Color tokens — APP.md §12.1.
+ * Color tokens — APP.md §12.1, "Alev" palette (D-065).
  *
- * Night is the default theme. Values given in APP.md are used verbatim; the
- * remaining Day values (marked "derived") were chosen to pass WCAG AA and are
- * logged in docs/DECISIONS.md so the owner can override them.
+ * Night ("Alev": black ground, ember and flame tones) is the only theme the
+ * app shows; Day is kept for later and is not offered in the UI. Every
+ * foreground/background pair below passes WCAG AA (tested).
  */
 
 export type ThemeName = 'night' | 'day';
@@ -14,6 +14,8 @@ export interface ColorTokens {
   bgSunken: string;
   accentPrimary: string;
   accentSecondary: string;
+  /** Far end of the flame gradient (accentPrimary → accentDeep). */
+  accentDeep: string;
   /** Text/icon drawn on top of accentPrimary (e.g. primary button label). */
   onAccent: string;
   textPrimary: string;
@@ -29,20 +31,21 @@ export interface ColorTokens {
 
 export const colors: Record<ThemeName, ColorTokens> = {
   night: {
-    bgBase: '#0F1021',
-    bgRaised: '#1A1B33',
-    bgSunken: '#0A0B18',
-    accentPrimary: '#FFB37A',
-    accentSecondary: '#B9A5FF',
-    onAccent: '#0F1021', // derived: bgBase on apricot
-    textPrimary: '#F5F3FF',
-    textSecondary: '#A9A8C7',
-    success: '#7EE0B5',
-    warning: '#FFD166',
-    danger: '#FF6B7A',
-    bannerWarningBg: '#3A3018', // derived
-    bannerDangerBg: '#3D1A24', // derived
-    border: '#2C2D4A', // derived
+    bgBase: '#0E0907',
+    bgRaised: '#1C120D',
+    bgSunken: '#080504',
+    accentPrimary: '#FF8A2A',
+    accentSecondary: '#FFB48A',
+    accentDeep: '#E2412F',
+    onAccent: '#1A0B06',
+    textPrimary: '#FFF4EC',
+    textSecondary: '#C9AFA3',
+    success: '#6BD39A',
+    warning: '#FFB43A',
+    danger: '#FF7A6B',
+    bannerWarningBg: '#33240F',
+    bannerDangerBg: '#3A1512',
+    border: '#3A2820',
   },
   day: {
     bgBase: '#FBF8F4',
@@ -50,6 +53,7 @@ export const colors: Record<ThemeName, ColorTokens> = {
     bgSunken: '#F1ECE5', // derived
     accentPrimary: '#E8843C',
     accentSecondary: '#5B45B8', // derived: darker lilac for light backgrounds
+    accentDeep: '#B8321F', // derived
     onAccent: '#171830', // derived: textPrimary on apricot
     textPrimary: '#171830',
     textSecondary: '#55546E', // derived
@@ -104,3 +108,19 @@ export function contrastRatio(a: string, b: string): number {
   ];
   return (hi + 0.05) / (lo + 0.05);
 }
+
+/**
+ * The flame gradient and soft glows of the "Alev" look (D-065). Glows are
+ * translucent and only ever drawn behind content, never as text backgrounds.
+ */
+export const flame = {
+  start: '#FF8A2A',
+  mid: '#F2552C',
+  end: '#D63A26',
+  glowWarm: 'rgba(255,122,26,0.42)',
+  glowEmber: 'rgba(226,65,47,0.30)',
+  glass: 'rgba(28,17,12,0.86)',
+  glassBorder: 'rgba(255,190,150,0.14)',
+  chip: 'rgba(255,255,255,0.07)',
+  chipBorder: 'rgba(255,255,255,0.10)',
+} as const;

@@ -3,18 +3,18 @@ export * from './colors';
 /** APP.md §12.1 — type scale. */
 export const fontSize = { xs: 12, sm: 14, md: 16, lg: 20, xl: 28, xxl: 40 } as const;
 
-/** Families are loaded in the app (Fraunces + Inter, both OFL). */
+/** Families are loaded in the app (Bricolage Grotesque + Manrope, both OFL; D-065). */
 export const fontFamily = {
-  heading: 'Fraunces_600SemiBold',
-  body: 'Inter_400Regular',
-  bodyMedium: 'Inter_500Medium',
-  bodyBold: 'Inter_600SemiBold',
+  heading: 'BricolageGrotesque_700Bold',
+  body: 'Manrope_400Regular',
+  bodyMedium: 'Manrope_500Medium',
+  bodyBold: 'Manrope_700Bold',
 } as const;
 
 /** 8-point grid. */
 export const space = (steps: number): number => steps * 8;
 
-export const radius = { sm: 12, md: 20, lg: 28 } as const;
+export const radius = { sm: 12, md: 20, lg: 28, xl: 34, pill: 999 } as const;
 
 /** Minimum touch target (pt / dp) — §12.5, §16.7. */
 export const minTouchTarget = 44;

@@ -1,8 +1,8 @@
-import { minTouchTarget, radius, space } from '@nokuzo/design-tokens';
+import { flame, minTouchTarget, radius, space } from '@nokuzo/design-tokens';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { useTheme } from '@/design/theme';
 import { AppText } from './AppText';
+import { FlameGradient } from './Flame';
 
 export interface ChipOption<T extends string> {
   value: T;
@@ -28,7 +28,6 @@ export function ChipGroup<T extends string>({
   multiple = false,
   testID,
 }: ChipGroupProps<T>) {
-  const { colors } = useTheme();
   return (
     <View
       accessibilityRole={multiple ? undefined : 'radiogroup'}
@@ -47,10 +46,12 @@ export function ChipGroup<T extends string>({
             onPress={() => onToggle(o.value)}
             style={[
               styles.chip,
-              { borderColor: on ? colors.accentPrimary : colors.border },
-              on && { backgroundColor: colors.accentPrimary },
+              on
+                ? { borderColor: 'transparent' }
+                : { borderColor: flame.chipBorder, backgroundColor: flame.chip },
             ]}
           >
+            {on ? <FlameGradient style={StyleSheet.absoluteFill} /> : null}
             <AppText variant="label" tone={on ? 'onAccent' : 'primary'}>
               {o.label}
             </AppText>
@@ -66,8 +67,9 @@ const styles = StyleSheet.create({
   chip: {
     minHeight: minTouchTarget,
     paddingHorizontal: space(2),
-    borderRadius: radius.lg,
+    borderRadius: radius.pill,
     borderWidth: 1,
     justifyContent: 'center',
+    overflow: 'hidden',
   },
 });

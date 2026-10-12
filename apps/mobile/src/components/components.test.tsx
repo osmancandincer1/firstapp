@@ -1,4 +1,4 @@
-import { colors } from '@nokuzo/design-tokens';
+import { flame } from '@nokuzo/design-tokens';
 import { act, fireEvent, screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
@@ -102,14 +102,14 @@ describe('Banner', () => {
 });
 
 describe('Card and AppText', () => {
-  it('uses theme surface colors', async () => {
+  it('draws the warm glass surface of the Alev look (D-065)', async () => {
     await renderWithProviders(
       <Card testID="card">
         <AppText variant="heading">Başlık</AppText>
       </Card>,
     );
     const style = StyleSheet.flatten(screen.getByTestId('card').props.style);
-    expect(style.backgroundColor).toBe(colors.night.bgRaised);
+    expect(style.borderColor).toBe(flame.glassBorder);
     expect(screen.getByRole('header', { name: 'Başlık' })).toBeOnTheScreen();
   });
 });

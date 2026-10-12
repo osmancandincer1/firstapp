@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/design/theme';
 import { AppText } from './AppText';
+import { GlowBackdrop } from './Flame';
 
 export interface ScreenProps {
   title: string;
@@ -22,6 +23,7 @@ export function Screen({ title, subtitle, header, children, footer, testID }: Sc
   const { colors } = useTheme();
   return (
     <SafeAreaView style={[styles.flex, { backgroundColor: colors.bgBase }]} testID={testID}>
+      <GlowBackdrop />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -42,7 +44,7 @@ export function Screen({ title, subtitle, header, children, footer, testID }: Sc
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  content: { padding: space(3), gap: space(3), flexGrow: 1 },
+  content: { padding: space(2.5), paddingTop: space(3), gap: space(2.5), flexGrow: 1 },
   titles: { gap: space(1) },
-  footer: { paddingHorizontal: space(3), paddingBottom: space(3), gap: space(1.5) },
+  footer: { paddingHorizontal: space(2.5), paddingBottom: space(3), gap: space(1) },
 });

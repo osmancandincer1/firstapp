@@ -1,31 +1,33 @@
-import { radius, space } from '@nokuzo/design-tokens';
+import { flame, radius, space } from '@nokuzo/design-tokens';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
-
-import { useTheme } from '@/design/theme';
+import { StyleSheet, type ViewProps } from 'react-native';
 
 export interface CardProps extends ViewProps {
   children: ReactNode;
 }
 
-/** Raised content surface. No glass/blur on content cards (§12.1). */
+/** Content surface of the "Alev" look: a faint top-lit glass with a warm hairline (D-065). */
 export function Card({ children, style, ...rest }: CardProps) {
-  const { colors } = useTheme();
   return (
-    <View
-      style={[styles.card, { backgroundColor: colors.bgRaised, borderColor: colors.border }, style]}
+    <LinearGradient
+      colors={['rgba(255,255,255,0.075)', 'rgba(255,255,255,0.03)']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0.6, y: 1 }}
+      style={[styles.card, style]}
       {...rest}
     >
       {children}
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space(2),
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: flame.glassBorder,
+    padding: space(2.25),
     gap: space(1),
   },
 });

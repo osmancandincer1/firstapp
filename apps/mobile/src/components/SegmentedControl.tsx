@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useTheme } from '@/design/theme';
 import { AppText } from './AppText';
+import { FlameGradient } from './Flame';
 
 export interface SegmentedControlProps<T extends string> {
   label: string;
@@ -34,8 +35,9 @@ export function SegmentedControl<T extends string>({
             accessibilityLabel={o.label}
             accessibilityState={{ selected, checked: selected }}
             onPress={() => onChange(o.value)}
-            style={[styles.option, selected && { backgroundColor: colors.accentPrimary }]}
+            style={styles.option}
           >
+            {selected ? <FlameGradient style={StyleSheet.absoluteFill} /> : null}
             <AppText variant="label" tone={selected ? 'onAccent' : 'primary'}>
               {o.label}
             </AppText>
@@ -49,15 +51,16 @@ export function SegmentedControl<T extends string>({
 const styles = StyleSheet.create({
   group: {
     flexDirection: 'row',
-    borderRadius: radius.sm,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    padding: space(0.5),
+    padding: space(0.625),
     gap: space(0.5),
   },
   option: {
     flex: 1,
     minHeight: minTouchTarget,
-    borderRadius: radius.sm - 4,
+    borderRadius: radius.pill,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: space(1),

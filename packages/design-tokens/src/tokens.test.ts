@@ -26,9 +26,9 @@ describe('contrastRatio', () => {
 describe('theme tokens (§12.1, §16.7)', () => {
   const themes = Object.keys(colors) as ThemeName[];
 
-  it('keeps the values fixed by APP.md', () => {
-    expect(colors.night.bgBase).toBe('#0F1021');
-    expect(colors.night.accentPrimary).toBe('#FFB37A');
+  it('keeps the values fixed by APP.md and D-065 ("Alev")', () => {
+    expect(colors.night.bgBase).toBe('#0E0907');
+    expect(colors.night.accentPrimary).toBe('#FF8A2A');
     expect(colors.day.bgBase).toBe('#FBF8F4');
     expect(colors.day.textPrimary).toBe('#171830');
     expect(colors.day.accentPrimary).toBe('#E8843C');

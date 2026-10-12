@@ -38,7 +38,7 @@ export function Banner({ tone = 'info', message, testID }: BannerProps) {
       accessibilityRole={role}
       accessibilityLabel={message}
       testID={testID}
-      style={[styles.banner, { backgroundColor: bg, borderLeftColor: fg }]}
+      style={[styles.banner, { backgroundColor: bg, borderColor: fg }]}
     >
       <Icon icon={Glyph} color={fg} />
       <AppText style={styles.text}>{message}</AppText>
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: space(1.5),
     padding: space(2),
-    borderRadius: radius.sm,
-    borderLeftWidth: 4,
+    borderRadius: radius.md,
+    borderWidth: 1,
   },
   text: { flex: 1 },
 });

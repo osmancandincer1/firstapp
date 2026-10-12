@@ -12,3 +12,4 @@ export * from './Screen';
 export * from './StepProgress';
 export * from './Chips';
 export * from './WheelPicker';
+export * from './Flame';

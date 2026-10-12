@@ -22,7 +22,8 @@ interface PreferencesState {
  * server sync (AYR-01) arrives with the settings work in Phase 7.
  */
 export const usePreferences = create<PreferencesState>((set) => ({
-  theme: 'system',
+  // "Alev" is the app's only look for now (D-065); Day stays for the dev showcase.
+  theme: 'night',
   language: detectLanguage(getLocales()[0]?.languageCode),
   reduceMotion: 'system',
   setTheme: (theme) => set({ theme }),

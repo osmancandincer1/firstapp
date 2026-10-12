@@ -1,5 +1,5 @@
 import { fontFamily, fontSize, minTouchTarget, radius, space } from '@nokuzo/design-tokens';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +21,7 @@ export function Input({ label, help, error, showCounter, value, maxLength, ...re
   const { colors } = useTheme();
   const { t } = useTranslation();
   const id = useId();
+  const [focused, setFocused] = useState(false);
   const count = value?.length ?? 0;
   const describedBy = error ?? help;
 
@@ -42,12 +43,20 @@ export function Input({ label, help, error, showCounter, value, maxLength, ...re
         style={[
           styles.input,
           {
-            backgroundColor: colors.bgSunken,
+            backgroundColor: 'rgba(255,255,255,0.05)',
             color: colors.textPrimary,
-            borderColor: error ? colors.danger : colors.border,
+            borderColor: error ? colors.danger : focused ? colors.accentPrimary : colors.border,
           },
         ]}
         {...rest}
+        onFocus={(e) => {
+          setFocused(true);
+          rest.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          rest.onBlur?.(e);
+        }}
       />
       <View style={styles.footer}>
         <View style={styles.help}>
@@ -76,7 +85,7 @@ const styles = StyleSheet.create({
   wrapper: { gap: space(1) },
   input: {
     minHeight: minTouchTarget,
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
     borderWidth: 1,
     paddingHorizontal: space(2),
     paddingVertical: space(1.5),
