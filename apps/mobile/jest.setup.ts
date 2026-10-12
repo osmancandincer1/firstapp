@@ -29,3 +29,8 @@ jest.mock('expo-crypto', () => ({ randomUUID: () => '00000000-0000-4000-8000-000
 // Async queries (findBy*, waitFor) wait up to 3 s: the default 1 s is flaky when
 // the machine or CI runner is busy, and a passing test returns as soon as it can.
 require('@testing-library/react-native').configure({ asyncUtilTimeout: 3000 });
+
+// The chat outbox persists to AsyncStorage; tests use the library's in-memory mock.
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+);

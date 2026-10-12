@@ -41,8 +41,20 @@ export function useTur() {
 export const useSaved = () =>
   useUserQuery(SAVED_KEY, async () => (await unwrap(listSaved())).saved);
 export const useInbox = () => useUserQuery(INBOX_KEY, () => unwrap(fetchInbox()));
-export const useTables = () =>
-  useUserQuery(TABLES_KEY, async () => (await unwrap(listTables())).tables);
+/** The tables list and the Mola state, fetched together. */
+export const useTablesState = () =>
+  useUserQuery(
+    TABLES_KEY,
+    async () => {
+      const r = await unwrap(listTables());
+      return { tables: r.tables, pause: r.pause ?? null };
+    },
+    60_000,
+  );
+export function useTables() {
+  const q = useTablesState();
+  return { ...q, data: q.data?.tables };
+}
 export const useDiscoveryPreferences = () =>
   useUserQuery(PREFERENCES_KEY, fetchPreferences, 60_000);
 

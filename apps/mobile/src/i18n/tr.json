@@ -715,11 +715,22 @@
     "slots": "{{used}} / {{total}} masa dolu",
     "empty": "Henüz masan yok. Bir cevaba karşılık verdiğinde ya da cevabına karşılık geldiğinde burada görünür.",
     "yourTurn": "Sıra sende",
-    "chatSoon": "Sohbet bir sonraki güncellemeyle açılacak.",
     "waitingTitle": "Masa bekliyor",
     "waitingBody": "Bir masa boşalınca sırayla açılır.",
     "waitingLeft": "Yer açılması için {{hours}} sa {{minutes}} dk",
-    "emptySlot": "Boş masa"
+    "emptySlot": "Boş masa",
+    "archiveTitle": "Arşiv",
+    "noMessages": "Henüz mesaj yok. İlk adımı at.",
+    "you": "Sen: {{text}}",
+    "unread": "{{count}} yeni mesaj",
+    "theirTurn": "Sıra onda",
+    "status": {
+      "cooled": "Soğudu",
+      "closed": "Kapandı",
+      "expired": "Düştü",
+      "blocked": "Engellendi",
+      "ended": "Sona erdi"
+    }
   },
   "filters": {
     "title": "Filtreler",
@@ -783,5 +794,67 @@
       "lie": "Yalan",
       "truth": "Doğru"
     }
+  },
+  "chat": {
+    "back": "Masalara dön",
+    "menu": "Masa seçenekleri",
+    "placeholder": "Mesaj yaz",
+    "send": "Gönder",
+    "typing": "{{name}} yazıyor…",
+    "yourTurn": "Sıra sende",
+    "theirTurn": "Sıra onda",
+    "paused": "{{name}}, {{date}} tarihine kadar molada",
+    "sending": "Gönderiliyor",
+    "failed": "Gönderilemedi",
+    "retry": "Tekrar dene",
+    "discard": "Sil",
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "offPlatform": "Dolandırıcılar genelde hemen başka uygulamaya geçmek ister. Acele etme.",
+    "loadError": "Mesajlar yüklenemedi.",
+    "state": {
+      "waiting_slot": "Masa bekliyor: ikinizden birinde yer açılınca sohbet başlar.",
+      "cooled": "Bu masa soğudu. 7 gün içinde ikiniz de isterseniz yeniden açılır.",
+      "cooledAsked": "İsteğin iletildi. {{name}} de isterse masa yeniden açılır.",
+      "cooledTheyAsked": "{{name}} masayı yeniden açmak istiyor.",
+      "closedByMe": "Vedalaştın. Bu masa kapandı.",
+      "closed": "{{name}} vedalaştı.",
+      "expired": "Yer açılmadığı için masa düştü.",
+      "blocked": "Bu kişiyi engelledin. Sohbet iki tarafta da kapandı.",
+      "ended": "Sohbet sona erdi."
+    },
+    "reopen": "Yeniden açmak istiyorum",
+    "menuFarewell": "Nazik Veda",
+    "menuBlock": "Engelle",
+    "farewell": {
+      "title": "Nazik Veda",
+      "body": "{{name}} vedanı görür ama yanıt yazamaz. Masa kapanır ve 180 gün boyunca birbirinizin Tur’una çıkmazsınız.",
+      "pick": "Bir cümle seç",
+      "note": "Kısa bir not (isteğe bağlı)",
+      "send": "Vedalaş",
+      "keys": {
+        "not_a_match": "Sohbet güzeldi ama aradığım uyum bu değil. Sana iyi şanslar.",
+        "enjoyed_but_no": "Konuşmak keyifliydi ama devam etmek istemiyorum.",
+        "met_someone": "Başka biriyle tanışmaya başladım; dürüst olmak istedim.",
+        "not_ready": "Şu an buna hazır değilim. Kendine iyi bak.",
+        "take_care": "Burada bırakmak istiyorum. Kendine iyi bak."
+      }
+    },
+    "block": {
+      "title": "{{name}} engellensin mi?",
+      "body": "Masa iki tarafta da kapanır, veda mesajı gitmez. Bu kişi Tur’unda bir daha görünmez; o da seni görmez.",
+      "confirm": "Engelle"
+    }
+  },
+  "mola": {
+    "title": "Mola",
+    "action": "Mola ver",
+    "body": "Birkaç gün yoksan masalarındaki sayaçlar durur. Karşı taraf “{{name}}, Cuma’ya kadar molada” gibi bir not görür.",
+    "days": "{{count}} gün",
+    "pick": "Ne kadar?",
+    "used": "Bu ay {{used}} / {{max}} mola kullandın.",
+    "start": "Molaya başla",
+    "active": "{{date}} tarihine kadar moladasın; masalarındaki sayaçlar durdu.",
+    "end": "Moladan dön"
   }
 }

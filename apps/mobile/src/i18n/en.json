@@ -715,11 +715,22 @@
     "slots": "{{used}} of {{total}} tables in use",
     "empty": "No tables yet. They appear here when you reply to an answer or someone replies to yours.",
     "yourTurn": "Your turn",
-    "chatSoon": "Chat arrives with the next update.",
     "waitingTitle": "Tables waiting",
     "waitingBody": "They open in order when a table frees up.",
     "waitingLeft": "{{hours}} h {{minutes}} min for a slot to open",
-    "emptySlot": "Free table"
+    "emptySlot": "Free table",
+    "archiveTitle": "Archive",
+    "noMessages": "No messages yet. Make the first move.",
+    "you": "You: {{text}}",
+    "unread": "{{count}} new messages",
+    "theirTurn": "Their turn",
+    "status": {
+      "cooled": "Gone cold",
+      "closed": "Closed",
+      "expired": "Dropped",
+      "blocked": "Blocked",
+      "ended": "Ended"
+    }
   },
   "filters": {
     "title": "Filters",
@@ -783,5 +794,67 @@
       "lie": "Lie",
       "truth": "True"
     }
+  },
+  "chat": {
+    "back": "Back to tables",
+    "menu": "Table options",
+    "placeholder": "Write a message",
+    "send": "Send",
+    "typing": "{{name}} is typing…",
+    "yourTurn": "Your turn",
+    "theirTurn": "Their turn",
+    "paused": "{{name}} is on a break until {{date}}",
+    "sending": "Sending",
+    "failed": "Not sent",
+    "retry": "Try again",
+    "discard": "Delete",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "offPlatform": "Scammers usually want to move to another app right away. Take your time.",
+    "loadError": "Messages could not be loaded.",
+    "state": {
+      "waiting_slot": "Table waiting: the chat starts when one of you has a free table.",
+      "cooled": "This table has gone cold. It reopens if you both want it within 7 days.",
+      "cooledAsked": "Request sent. The table reopens if {{name}} wants it too.",
+      "cooledTheyAsked": "{{name}} would like to reopen this table.",
+      "closedByMe": "You said goodbye. This table is closed.",
+      "closed": "{{name}} said goodbye.",
+      "expired": "The table dropped because no seat opened up.",
+      "blocked": "You blocked this person. The chat is closed for both of you.",
+      "ended": "This chat has ended."
+    },
+    "reopen": "I’d like to reopen it",
+    "menuFarewell": "Kind goodbye",
+    "menuBlock": "Block",
+    "farewell": {
+      "title": "Kind goodbye",
+      "body": "{{name}} sees your goodbye but cannot reply. The table closes and you will not appear in each other’s Round for 180 days.",
+      "pick": "Pick a sentence",
+      "note": "A short note (optional)",
+      "send": "Say goodbye",
+      "keys": {
+        "not_a_match": "This was a nice chat, but it is not the match I am looking for. Good luck.",
+        "enjoyed_but_no": "I enjoyed talking, but I do not want to continue.",
+        "met_someone": "I have started seeing someone; I wanted to be honest.",
+        "not_ready": "I am not ready for this right now. Take care.",
+        "take_care": "I would like to leave it here. Take care."
+      }
+    },
+    "block": {
+      "title": "Block {{name}}?",
+      "body": "The table closes for both of you and no goodbye is sent. This person will not appear in your Round again, and you will not appear in theirs.",
+      "confirm": "Block"
+    }
+  },
+  "mola": {
+    "title": "Break",
+    "action": "Take a break",
+    "body": "If you are away for a few days, the clocks on your tables stop. The other side sees a note like “{{name}} is on a break until Friday”.",
+    "days": "{{count}} days",
+    "pick": "How long?",
+    "used": "You have used {{used}} of {{max}} breaks this month.",
+    "start": "Start the break",
+    "active": "You are on a break until {{date}}; the clocks on your tables are stopped.",
+    "end": "End the break"
   }
 }

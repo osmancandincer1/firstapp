@@ -88,13 +88,34 @@ export interface OutgoingAnswer {
   profile: PublicProfile | null;
 }
 
+/** A table as the list and the chat header see it (srv_my_tables, §4.4). */
 export interface TableItem {
   tableId: string;
-  status: 'active' | 'waiting_slot';
+  /** "ended" is what the blocked side sees: only that the chat is over. */
+  status: 'active' | 'waiting_slot' | 'cooled' | 'closed' | 'expired' | 'blocked' | 'ended';
   waitingExpiresAt: string | null;
   lastMessageAt: string | null;
   myTurn: boolean;
+  turnSince?: string;
+  cooledAt?: string | null;
+  closedAt?: string | null;
+  closedByMe?: boolean;
+  /** The goodbye, shown only to the side that received it. */
+  farewell?: { key: string; note: string | null } | null;
+  iAskedReopen?: boolean;
+  theyAskedReopen?: boolean;
+  otherPausedUntil?: string | null;
+  unread?: number;
+  lastMessage?: { body: string | null; kind: string; mine: boolean } | null;
+  otherId?: string;
   profile: PublicProfile | null;
+}
+
+/** Mola state (srv_my_pause). */
+export interface PauseState {
+  until: string | null;
+  usedThisMonth: number;
+  perMonth: number;
 }
 
 /** 'on_demand': a new Round whenever the last one is done (launch); 'scheduled': 12:00 and 21:00. */
@@ -125,7 +146,9 @@ export const passAnswer = (answerId: string) =>
   callFunction<{ ok: true }>('answer', { action: 'pass', answerId });
 
 export const listTables = () =>
-  callFunction<{ ok: true; tables: TableItem[] }>('tables', { action: 'list' });
+  callFunction<{ ok: true; tables: TableItem[]; pause?: PauseState | null }>('tables', {
+    action: 'list',
+  });
 
 /** Own discovery preferences (my_preferences, RLS-scoped to the caller). */
 export async function fetchPreferences(): Promise<Preferences | null> {

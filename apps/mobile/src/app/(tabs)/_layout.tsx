@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { TabBar } from '@/components';
 import { ChatCircleIcon, CoffeeIcon, FireIcon, UserIcon } from '@/components/icons';
 import { useTheme } from '@/design/theme';
+import { useGlobalOutboxFlush } from '@/features/chat/useChat';
 import { useForegroundActivity } from '@/features/tur/useForegroundActivity';
 
 const TABS = [
@@ -18,6 +19,7 @@ export default function TabsLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   useForegroundActivity();
+  useGlobalOutboxFlush();
   const items = TABS.map(([key, icon]) => ({ key, icon, label: t(`tabs.${key}`) }));
   return (
     <Tabs
