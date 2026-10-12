@@ -242,7 +242,11 @@
     "table_closed": "This table is no longer open; messages cannot be sent.",
     "link_blocked": "New accounts cannot send links in their first 7 days.",
     "reopen_too_late": "This table has been cold for more than 7 days and cannot be reopened.",
-    "pause_limit": "You have used both of this month’s breaks."
+    "pause_limit": "You have used both of this month’s breaks.",
+    "game_busy": "A game is already going on at this table.",
+    "not_your_turn": "It is the other side’s turn.",
+    "game_over": "This game is over.",
+    "game_conflict": "You both moved at once; the board was refreshed, try again."
   },
   "profile": {
     "saved": "Saved",
@@ -793,6 +797,73 @@
       "wrong": "That one’s true. We marked the lie.",
       "lie": "Lie",
       "truth": "True"
+    },
+    "table": {
+      "open": "Start a game",
+      "pick": "A game together",
+      "start": "Start",
+      "yourTurn": "Your turn",
+      "theirTurn": "Their turn",
+      "abandon": "End the game",
+      "close": "Close",
+      "newGame": "New game",
+      "kinds": {
+        "word_hunt": {
+          "title": "Word Hunt",
+          "body": "Take turns guessing the hidden five-letter word; six tries between you."
+        },
+        "hangman": {
+          "title": "Hangman",
+          "body": "You pick a word, they find it letter by letter. Each miss puts out a flame."
+        },
+        "categories": {
+          "title": "Name-City-Animal",
+          "body": "Five categories, one letter. A different answer scores 10, the same one 5."
+        }
+      },
+      "wordHunt": {
+        "guessLabel": "Five-letter guess",
+        "guess": "Guess",
+        "left": "{{count}} tries left",
+        "won": "You found it together!",
+        "lost": "Not this time. The word was “{{word}}”.",
+        "marks": {
+          "hit": "right place",
+          "near": "in the word",
+          "miss": "not in it"
+        }
+      },
+      "hangman": {
+        "wordLabel": "Your word (4–12 letters)",
+        "wordHelp": "The other side will try to find it letter by letter.",
+        "yourWord": "Your word: {{word}}",
+        "lives": "{{count}} flames left",
+        "letter": "Letter {{letter}}",
+        "won": "Word found: {{word}}",
+        "lost": "The flames went out. The word was “{{word}}”."
+      },
+      "categories": {
+        "letter": "Letter",
+        "fields": {
+          "name": "Name",
+          "city": "City",
+          "animal": "Animal",
+          "plant": "Plant",
+          "thing": "Thing"
+        },
+        "submit": "Send my answers",
+        "waiting": "Your answers are in. They open when you have both sent yours.",
+        "theyDone": "{{name}} has sent their answers.",
+        "you": "You",
+        "total": "{{points}} points"
+      },
+      "system": {
+        "game_started": "{{game}} started",
+        "game_won": "{{game}}: won",
+        "game_lost": "{{game}}: not this time",
+        "game_finished": "{{game}} finished",
+        "game_abandoned": "{{game}} was left unfinished"
+      }
     }
   },
   "chat": {

@@ -33,6 +33,7 @@ import {
   CaretLeftIcon,
   ClockIcon,
   DotsThreeIcon,
+  GameControllerIcon,
   PaperPlaneTiltIcon,
   WarningCircleIcon,
 } from '@/components/icons';
@@ -44,6 +45,7 @@ import { TABLES_KEY, useInvalidate, useTables } from '@/features/tur/queries';
 import type { ClientErrorCode } from '@/lib/api';
 import { blockFromTable, markRead, reopenTable, sayFarewell } from './api';
 import { useOutbox, type Pending } from './outbox';
+import { GamePanel, GamePicker } from '@/features/games/GamePanel';
 import { useAddMessage, useChat, useOutboxFlush } from './useChat';
 import { VoiceBody, VoiceRecorder } from './Voice';
 
@@ -81,7 +83,7 @@ export function ChatScreen({ tableId }: { tableId: string }) {
   const invalidate = useInvalidate();
   const dayLabel = useDayLabel();
   const [text, setText] = useState('');
-  const [menu, setMenu] = useState<null | 'menu' | 'farewell' | 'block'>(null);
+  const [menu, setMenu] = useState<null | 'menu' | 'farewell' | 'block' | 'game'>(null);
   const name = table?.profile?.name ?? t('inbox.someone');
   const open = table?.status === 'active';
   const messages = query.data;
@@ -185,6 +187,16 @@ export function ChatScreen({ tableId }: { tableId: string }) {
             </AppText>
           ) : null}
         </View>
+        {open ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('games.table.open')}
+            onPress={() => setMenu('game')}
+            style={styles.iconButton}
+          >
+            <Icon icon={GameControllerIcon} size={22} color={colors.accentPrimary} />
+          </Pressable>
+        ) : null}
         {table && ['active', 'waiting_slot', 'cooled'].includes(table.status) ? (
           <Pressable
             accessibilityRole="button"
@@ -224,6 +236,8 @@ export function ChatScreen({ tableId }: { tableId: string }) {
               <AppText variant="caption" tone="secondary" style={styles.day}>
                 {item.label}
               </AppText>
+            ) : item.type === 'msg' && item.message.kind === 'system' ? (
+              <SystemLine body={item.message.body} />
             ) : item.type === 'msg' ? (
               <Bubble
                 message={item.message}
@@ -237,6 +251,7 @@ export function ChatScreen({ tableId }: { tableId: string }) {
           }
         />
         {table && !open ? <TableState table={table} name={name} /> : null}
+        {open ? <GamePanel tableId={tableId} me={me.data?.id} otherName={name} /> : null}
         {open ? (
           <Composer
             tableId={tableId}
@@ -258,6 +273,7 @@ export function ChatScreen({ tableId }: { tableId: string }) {
         />
         <Button variant="danger" label={t('chat.menuBlock')} onPress={() => setMenu('block')} />
       </Sheet>
+      <GamePicker tableId={tableId} visible={menu === 'game'} onClose={() => setMenu(null)} />
       <FarewellSheet
         visible={menu === 'farewell'}
         tableId={tableId}
@@ -271,6 +287,18 @@ export function ChatScreen({ tableId }: { tableId: string }) {
         onClose={() => setMenu(null)}
       />
     </SafeAreaView>
+  );
+}
+
+/** A line from the table itself, e.g. "Kelime Avı başladı". */
+function SystemLine({ body }: { body: string | null }) {
+  const { t } = useTranslation();
+  const [event, kind] = (body ?? '').split(':');
+  if (!event?.startsWith('game_') || !kind) return null;
+  return (
+    <AppText variant="caption" tone="accent" style={styles.day}>
+      {t(`games.table.system.${event}`, { game: t(`games.table.kinds.${kind}.title`) })}
+    </AppText>
   );
 }
 

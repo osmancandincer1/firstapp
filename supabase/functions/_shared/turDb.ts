@@ -1,6 +1,6 @@
 /** TurDb on the srv_* functions of the tur migration (service role). */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { TurDb } from './types.ts';
+import type { GameLoad, TurDb } from './types.ts';
 
 async function rpc<T>(c: SupabaseClient, fn: string, args: Record<string, unknown>): Promise<T> {
   const { data, error } = await c.rpc(fn, args);
@@ -112,6 +112,36 @@ export class SupabaseTurDb implements TurDb {
   }
   pauseEnd(userId: string) {
     return rpc<string>(this.c, 'srv_pause_end', { p_user_id: userId });
+  }
+  gameContext(userId: string, tableId: string) {
+    return rpc<{ me: string; other: string; status: string } | null>(this.c, 'srv_game_context', {
+      p_user_id: userId,
+      p_table_id: tableId,
+    });
+  }
+  gameStart(i: Parameters<TurDb['gameStart']>[0]) {
+    return rpc<{ result: string; game?: Record<string, unknown> }>(this.c, 'srv_game_start', {
+      p_user_id: i.userId,
+      p_table_id: i.tableId,
+      p_kind: i.kind,
+      p_state: i.state,
+      p_secret: i.secret,
+      p_turn_of: i.turnOf,
+    });
+  }
+  gameLoad(userId: string, gameId: string) {
+    return rpc<GameLoad | null>(this.c, 'srv_game_load', { p_user_id: userId, p_game_id: gameId });
+  }
+  gameSave(i: Parameters<TurDb['gameSave']>[0]) {
+    return rpc<{ result: string; game?: Record<string, unknown> }>(this.c, 'srv_game_save', {
+      p_user_id: i.userId,
+      p_game_id: i.gameId,
+      p_version: i.version,
+      p_status: i.status,
+      p_turn_of: i.turnOf,
+      p_state: i.state,
+      p_secret: i.secret,
+    });
   }
   myPause(userId: string) {
     return rpc<Record<string, unknown> | null>(this.c, 'srv_my_pause', { p_user_id: userId });

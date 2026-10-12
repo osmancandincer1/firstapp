@@ -469,6 +469,31 @@ export class FakeTurDb implements TurDb {
   pauseEnd(...a: unknown[]) {
     return this.r('pauseEnd', 'ok', ...a);
   }
+  game: import('../_shared/types.ts').GameLoad | null = null;
+  gameContext(...a: unknown[]) {
+    return this.r<{ me: string; other: string; status: string } | null>(
+      'gameContext',
+      { me: 'p-me', other: 'p-other', status: 'active' },
+      ...a,
+    );
+  }
+  gameStart(...a: unknown[]) {
+    return this.r<{ result: string; game?: Record<string, unknown> }>(
+      'gameStart',
+      { result: 'ok', game: { id: UUID(30) } },
+      ...a,
+    );
+  }
+  gameLoad(...a: unknown[]) {
+    return this.r('gameLoad', this.game, ...a);
+  }
+  gameSave(...a: unknown[]) {
+    return this.r<{ result: string; game?: Record<string, unknown> }>(
+      'gameSave',
+      { result: 'ok', game: { id: UUID(30) } },
+      ...a,
+    );
+  }
   myPause(...a: unknown[]) {
     return this.r<Record<string, unknown> | null>(
       'myPause',

@@ -192,6 +192,46 @@ export interface TurDb {
   pauseStart(userId: string, days: number): Promise<{ result: string; until?: string }>;
   pauseEnd(userId: string): Promise<string>;
   myPause(userId: string): Promise<Record<string, unknown> | null>;
+  /** Mini games (games migration). Null when the user is not at the table. */
+  gameContext(
+    userId: string,
+    tableId: string,
+  ): Promise<{ me: string; other: string; status: string } | null>;
+  /** ok | not_found | not_active | busy. */
+  gameStart(input: {
+    userId: string;
+    tableId: string;
+    kind: string;
+    state: unknown;
+    secret: unknown;
+    turnOf: string | null;
+  }): Promise<{ result: string; game?: Record<string, unknown> }>;
+  gameLoad(userId: string, gameId: string): Promise<GameLoad | null>;
+  /** ok | conflict | not_found. */
+  gameSave(input: {
+    userId: string;
+    gameId: string;
+    version: number;
+    status: string;
+    turnOf: string | null;
+    state: unknown;
+    secret: unknown;
+  }): Promise<{ result: string; game?: Record<string, unknown> }>;
+}
+
+export interface GameLoad {
+  game: {
+    id: string;
+    kind: string;
+    status: string;
+    turnOf: string | null;
+    state: unknown;
+    version: number;
+  };
+  secret: unknown;
+  me: string;
+  other: string;
+  tableStatus: string;
 }
 
 /** Image signals for decidePhoto (§7.2). */

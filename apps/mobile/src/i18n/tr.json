@@ -242,7 +242,11 @@
     "table_closed": "Bu masa artık açık değil; mesaj gönderilemez.",
     "link_blocked": "Yeni hesaplar ilk 7 gün bağlantı gönderemez.",
     "reopen_too_late": "Bu masa 7 günden uzun süredir soğuk; yeniden açılamaz.",
-    "pause_limit": "Bu ay iki molanı da kullandın."
+    "pause_limit": "Bu ay iki molanı da kullandın.",
+    "game_busy": "Bu masada zaten süren bir oyun var.",
+    "not_your_turn": "Sıra karşı tarafta.",
+    "game_over": "Bu oyun bitti.",
+    "game_conflict": "Aynı anda hamle yapıldı; tahta yenilendi, tekrar dene."
   },
   "profile": {
     "saved": "Kaydedildi",
@@ -793,6 +797,73 @@
       "wrong": "Bu doğruymuş. Yalanı işaretledik.",
       "lie": "Yalan",
       "truth": "Doğru"
+    },
+    "table": {
+      "open": "Oyun aç",
+      "pick": "Birlikte bir oyun",
+      "start": "Başlat",
+      "yourTurn": "Sıra sende",
+      "theirTurn": "Sıra onda",
+      "abandon": "Oyunu bitir",
+      "close": "Kapat",
+      "newGame": "Yeni oyun",
+      "kinds": {
+        "word_hunt": {
+          "title": "Kelime Avı",
+          "body": "5 harfli gizli kelimeyi sırayla tahmin edin; toplam 6 hakkınız var."
+        },
+        "hangman": {
+          "title": "Adam Asmaca",
+          "body": "Sen bir kelime seç, o harf harf bulsun. Her yanlışta bir alev söner."
+        },
+        "categories": {
+          "title": "İsim-Şehir-Hayvan",
+          "body": "Aynı harfle beş kategori. Farklı cevap 10, aynı cevap 5 puan."
+        }
+      },
+      "wordHunt": {
+        "guessLabel": "5 harfli tahmin",
+        "guess": "Tahmin et",
+        "left": "{{count}} hak kaldı",
+        "won": "Birlikte bildiniz!",
+        "lost": "Bu sefer olmadı. Kelime “{{word}}” idi.",
+        "marks": {
+          "hit": "doğru yerde",
+          "near": "kelimede var",
+          "miss": "yok"
+        }
+      },
+      "hangman": {
+        "wordLabel": "Kelimen (4–12 harf)",
+        "wordHelp": "Karşı taraf bu kelimeyi harf harf bulmaya çalışacak.",
+        "yourWord": "Kelimen: {{word}}",
+        "lives": "{{count}} alev kaldı",
+        "letter": "{{letter}} harfi",
+        "won": "Kelime bulundu: {{word}}",
+        "lost": "Alevler söndü. Kelime “{{word}}” idi."
+      },
+      "categories": {
+        "letter": "Harf",
+        "fields": {
+          "name": "İsim",
+          "city": "Şehir",
+          "animal": "Hayvan",
+          "plant": "Bitki",
+          "thing": "Eşya"
+        },
+        "submit": "Cevaplarımı gönder",
+        "waiting": "Cevapların gitti. İkiniz de gönderince açılacak.",
+        "theyDone": "{{name}} cevaplarını gönderdi.",
+        "you": "Sen",
+        "total": "{{points}} puan"
+      },
+      "system": {
+        "game_started": "{{game}} başladı",
+        "game_won": "{{game}}: kazanıldı",
+        "game_lost": "{{game}}: bu sefer olmadı",
+        "game_finished": "{{game}} bitti",
+        "game_abandoned": "{{game}} yarıda kaldı"
+      }
     }
   },
   "chat": {

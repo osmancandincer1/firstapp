@@ -223,6 +223,10 @@ export const API_ERROR_CODES = [
   'link_blocked',
   'reopen_too_late',
   'pause_limit',
+  'game_busy',
+  'not_your_turn',
+  'game_over',
+  'game_conflict',
   'service_unavailable',
   'internal',
 ] as const;

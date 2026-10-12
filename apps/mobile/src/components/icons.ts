@@ -51,3 +51,8 @@ export const ClockIcon: Icon = require('phosphor-react-native/src/icons/Clock').
 export const DotsThreeIcon: Icon =
   require('phosphor-react-native/src/icons/DotsThree').DotsThreeIcon;
 export const PauseIcon: Icon = require('phosphor-react-native/src/icons/Pause').PauseIcon;
+export const CaretUpIcon: Icon = require('phosphor-react-native/src/icons/CaretUp').CaretUpIcon;
+export const CaretDownIcon: Icon =
+  require('phosphor-react-native/src/icons/CaretDown').CaretDownIcon;
+export const GameControllerIcon: Icon =
+  require('phosphor-react-native/src/icons/GameController').GameControllerIcon;
